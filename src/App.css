@@ -1954,3 +1954,602 @@
     gap: 2rem;
   }
 }
+
+/* ==========================================================================
+   ADMIN LOGIN PANEL & CONSOLE STYLES
+   ========================================================================== */
+.admin-page-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.admin-login-overlay {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, rgba(20, 16, 35, 0.9) 0%, var(--bg-primary) 80%);
+  position: relative;
+  padding: 2rem;
+}
+
+.back-home-btn {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.02);
+  transition: var(--transition);
+}
+
+.back-home-btn:hover {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: var(--neon-cyan-glow);
+}
+
+.admin-login-card {
+  max-width: 440px;
+  width: 100%;
+  background: rgba(20, 18, 38, 0.75);
+  border: 1px solid var(--glass-border);
+  padding: 3rem 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5), var(--neon-purple-dim) 0px 0px 30px;
+  backdrop-filter: blur(16px);
+  animation: pop-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.badge-admin {
+  background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-purple) 100%);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  box-shadow: var(--neon-pink-glow);
+}
+
+.admin-login-card h2 {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 2.5rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.input-group input {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 10px hsla(280, 100%, 65%, 0.15);
+}
+
+.auth-error-box {
+  background: rgba(255, 0, 90, 0.08);
+  border: 1px solid rgba(255, 0, 90, 0.2);
+  color: var(--neon-pink);
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.login-btn {
+  width: 100%;
+  height: 48px;
+  justify-content: center;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+.supabase-help-note {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-align: left;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   ADMIN DASHBOARD LAYOUT
+   ========================================================================== */
+.admin-dashboard-container {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-dashboard-header {
+  height: 75px;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(13, 11, 23, 0.8);
+  backdrop-filter: blur(12px);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-actions-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-btn-admin {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-logout {
+  background: rgba(255, 0, 90, 0.08);
+  border: 1px solid rgba(255, 0, 90, 0.2);
+  color: var(--neon-pink);
+  font-weight: 700;
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.btn-logout:hover {
+  background: var(--neon-pink);
+  color: white;
+  box-shadow: var(--neon-pink-glow);
+}
+
+/* Dashboard Main */
+.admin-dashboard-main {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.crud-error-banner {
+  background: rgba(255, 0, 90, 0.08);
+  border: 1px solid rgba(255, 0, 90, 0.3);
+  color: var(--neon-pink);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+
+.dashboard-grid-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.dashboard-column {
+  background: rgba(20, 18, 38, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(8px);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 1rem;
+}
+
+.panel-header h2 {
+  font-size: 1.25rem;
+}
+
+.btn-refresh {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.btn-refresh:hover {
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  box-shadow: var(--neon-cyan-glow);
+}
+
+.btn-cancel-edit {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid var(--glass-border);
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.btn-cancel-edit:hover {
+  color: var(--text-primary);
+  border-color: var(--glass-border-hover);
+}
+
+.panel-loading {
+  padding: 4rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.small-spinner {
+  width: 40px;
+  height: 40px;
+}
+
+/* ==========================================================================
+   CRUD PRODUCTS TABLE
+   ========================================================================== */
+.admin-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--glass-border);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th, .admin-table td {
+  padding: 1rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--glass-border);
+  vertical-align: middle;
+}
+
+.admin-table th {
+  background: rgba(13, 11, 23, 0.5);
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover {
+  background: rgba(255,255,255,0.01);
+}
+
+.row-editing {
+  background: rgba(138, 43, 226, 0.05) !important;
+  border-left: 3px solid var(--neon-purple);
+}
+
+.table-product-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  background: rgba(0,0,0,0.2);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.table-prod-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.table-prod-brand {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.table-category {
+  text-transform: capitalize;
+}
+
+.table-price {
+  font-weight: 700;
+  color: var(--neon-cyan);
+}
+
+.table-stock-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.table-stock-tag.in-stock {
+  background: rgba(102, 252, 241, 0.05);
+  border: 1px solid var(--neon-cyan-dim);
+  color: var(--neon-cyan);
+}
+
+.table-stock-tag.no-stock {
+  background: rgba(255, 0, 90, 0.05);
+  border: 1px solid rgba(255, 0, 90, 0.15);
+  color: var(--neon-pink);
+}
+
+.table-action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-edit {
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.02);
+}
+
+.btn-edit:hover {
+  color: var(--neon-purple);
+  border-color: var(--neon-purple);
+  box-shadow: var(--neon-purple-glow);
+}
+
+.btn-delete {
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.02);
+}
+
+.btn-delete:hover {
+  color: var(--neon-pink);
+  border-color: var(--neon-pink);
+  box-shadow: var(--neon-pink-glow);
+}
+
+/* ==========================================================================
+   CRUD SAVE / EDIT FORM
+   ========================================================================== */
+.admin-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-input-wrapper label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-input-wrapper input:not([type="checkbox"]), 
+.form-input-wrapper select, 
+.form-input-wrapper textarea {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  width: 100%;
+  transition: var(--transition);
+}
+
+.form-input-wrapper input:focus, 
+.form-input-wrapper select:focus, 
+.form-input-wrapper textarea:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 8px hsla(180, 100%, 50%, 0.15);
+}
+
+.form-input-wrapper select option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.checkbox-wrapper {
+  padding: 0.2rem 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.checkbox-label input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--neon-cyan);
+}
+
+/* Form Specs Sub-panel */
+.form-specs-sub-panel {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.form-specs-sub-panel h3 {
+  font-size: 0.9rem;
+  color: var(--neon-purple);
+  margin-bottom: 1.2rem;
+  text-shadow: var(--neon-purple-glow);
+}
+
+.input-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.form-actions {
+  margin-top: 1rem;
+}
+
+.form-save-btn {
+  width: 100%;
+  height: 46px;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.store-loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: var(--text-muted);
+  gap: 1.5rem;
+}
+
+/* Responsive Dashboard Layout */
+@media (max-width: 1100px) {
+  .dashboard-grid-layout {
+    grid-template-columns: 1fr;
+  }
+  .form-column {
+    order: -1; /* Place form above list on smaller screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .form-group-row {
+    grid-template-columns: 1fr;
+  }
+  .admin-dashboard-header {
+    height: auto;
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .admin-dashboard-main {
+    padding: 1rem;
+  }
+}
+

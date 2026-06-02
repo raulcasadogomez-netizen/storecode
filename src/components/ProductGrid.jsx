@@ -1,9 +1,8 @@
 import { useState, useMemo } from 'react';
 import ProductCard from './ProductCard';
-import { products } from '../data/products';
 import { SlidersHorizontal } from 'lucide-react';
 
-export default function ProductGrid({ searchQuery, onQuickView, onAddToCart }) {
+export default function ProductGrid({ products, searchQuery, onQuickView, onAddToCart }) {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [sortBy, setSortBy] = useState('recommended');
 
@@ -46,7 +45,7 @@ export default function ProductGrid({ searchQuery, onQuickView, onAddToCart }) {
     } // 'recommended' uses natural database order
 
     return result;
-  }, [searchQuery, selectedCategory, sortBy]);
+  }, [products, searchQuery, selectedCategory, sortBy]);
 
   const handleResetFilters = () => {
     setSelectedCategory('todos');
