@@ -6,7 +6,6 @@ import ProductModal from '../components/ProductModal';
 import CartDrawer from '../components/CartDrawer';
 import AgeVerificationModal from '../components/AgeVerificationModal';
 import { supabase } from '../lib/supabaseClient';
-import { products as localBackupProducts } from '../data/products';
 
 export default function Storefront() {
   const [products, setProducts] = useState([]);
@@ -21,7 +20,7 @@ export default function Storefront() {
     async function fetchProducts() {
       try {
         if (!supabase) {
-          setProducts(localBackupProducts);
+          setProducts([]);
           setLoading(false);
           return;
         }
@@ -33,7 +32,7 @@ export default function Storefront() {
 
         if (error) throw error;
 
-        if (data && data.length > 0) {
+        if (data) {
           // Map database snake_case fields to components camelCase fields
           const mappedProducts = data.map((item) => ({
             ...item,
@@ -43,11 +42,11 @@ export default function Storefront() {
           }));
           setProducts(mappedProducts);
         } else {
-          setProducts(localBackupProducts);
+          setProducts([]);
         }
       } catch (err) {
-        console.error("Error fetching from Supabase, loading fallback mock products:", err);
-        setProducts(localBackupProducts);
+        console.error("Error fetching from Supabase:", err);
+        setProducts([]);
       } finally {
         setLoading(false);
       }

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database, UploadCloud, X } from 'lucide-react';
-import { products as localBackupProducts } from '../data/products';
 
 // Utility to compress image files client-side before uploading or saving as Base64
 const compressImage = (file, maxWidth = 800, maxHeight = 800, quality = 0.75) => {
@@ -123,7 +122,7 @@ export default function Admin() {
     setProductsLoading(true);
     try {
       if (!supabase) {
-        setProducts(localBackupProducts);
+        setProducts([]);
         return;
       }
       
@@ -145,8 +144,8 @@ export default function Admin() {
       }
     } catch (err) {
       console.error("Error fetching products in Admin:", err);
-      setCrudError("No se pudieron cargar los productos de Supabase. Mostrando mockups locales.");
-      setProducts(localBackupProducts);
+      setCrudError("No se pudieron cargar los productos de Supabase.");
+      setProducts([]);
     } finally {
       setProductsLoading(false);
     }
