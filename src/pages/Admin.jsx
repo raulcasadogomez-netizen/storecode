@@ -3,6 +3,58 @@ import { supabase } from '../lib/supabaseClient';
 import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database, UploadCloud, X } from 'lucide-react';
 import { products as localBackupProducts } from '../data/products';
 
+// Utility to compress image files client-side before uploading or saving as Base64
+const compressImage = (file, maxWidth = 800, maxHeight = 800, quality = 0.75) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // Keep aspect ratio
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert canvas to Blob (for storage) and DataURL (for base64 fallback)
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            });
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            resolve({ file: compressedFile, dataUrl });
+          } else {
+            reject(new Error("Canvas toBlob failed"));
+          }
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 export default function Admin() {
   const [session, setSession] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -271,40 +323,39 @@ export default function Admin() {
       if (uploadedFile) {
         setIsUploadingImage(true);
         try {
-          if (supabase) {
-            const fileExt = uploadedFile.name.split('.').pop();
-            const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-            const filePath = `uploads/${fileName}`;
+          // 1. Compress image client-side (max 800x800, JPEG 75% quality)
+          const { file: compressedFile, dataUrl: compressedDataUrl } = await compressImage(uploadedFile, 800, 800, 0.75);
 
-            const { data, error } = await supabase.storage
-              .from('products')
-              .upload(filePath, uploadedFile, { upsert: true });
-
-            if (error) throw error;
-
-            const { data: { publicUrl } } = supabase.storage
-              .from('products')
-              .getPublicUrl(filePath);
-
-            finalImageUrl = publicUrl;
-          } else {
-            throw new Error("Supabase storage client not available");
-          }
-        } catch (storageError) {
-          console.warn("Storage upload failed, falling back to Base64:", storageError);
+          // 2. Try uploading to Supabase Storage
           try {
-            finalImageUrl = await new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.readAsDataURL(uploadedFile);
-              reader.onload = () => resolve(reader.result);
-              reader.onerror = (err) => reject(err);
-            });
-          } catch (b64Error) {
-            console.error("Base64 conversion failed:", b64Error);
-            setCrudError("Error al procesar la imagen cargada.");
-            setIsUploadingImage(false);
-            return;
+            if (supabase) {
+              const fileName = `${Math.random().toString(36).substring(2, 15)}.jpg`;
+              const filePath = `uploads/${fileName}`;
+
+              const { data, error } = await supabase.storage
+                .from('products')
+                .upload(filePath, compressedFile, { upsert: true });
+
+              if (error) throw error;
+
+              const { data: { publicUrl } } = supabase.storage
+                .from('products')
+                .getPublicUrl(filePath);
+
+              finalImageUrl = publicUrl;
+            } else {
+              // Offline mode: use compressed base64 directly
+              finalImageUrl = compressedDataUrl;
+            }
+          } catch (uploadError) {
+            console.warn("Supabase Storage upload failed, using compressed Base64 fallback:", uploadError);
+            finalImageUrl = compressedDataUrl;
           }
+        } catch (compressError) {
+          console.error("Compression or processing failed:", compressError);
+          setCrudError("Error al procesar y comprimir la imagen cargada.");
+          setIsUploadingImage(false);
+          return;
         } finally {
           setIsUploadingImage(false);
         }
