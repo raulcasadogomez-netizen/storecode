@@ -31,15 +31,15 @@ export default function AgeVerificationModal() {
         <h2>Verificación de Edad</h2>
         
         <p className="warning-text">
-          ESTA WEB CONTIENE PRODUCTOS DE VAPEO Y ACCESORIOS PARA ADULTOS.
+          ESTA WEB CONTIENE PRODUCTOS DE VAPEO, N2O DE GRADO ALIMENTARIO Y ARTÍCULOS EXCLUSIVOS PARA ADULTOS.
         </p>
         
         <p className="sub-text">
-          Para ingresar a nuestro sitio web, debes tener al menos 18 años de edad (o la edad mínima legal en tu país de residencia).
+          Para ingresar a nuestro portal de importación, debes tener al menos 18 años de edad (o la edad mínima legal en tu país de residencia).
         </p>
 
         <div className="age-disclaimer">
-          ¡Atención! La nicotina es una sustancia altamente adictiva.
+          ¡Atención! Venta restringida a menores de edad. El óxido nitroso se vende estrictamente para repostería culinaria.
         </div>
 
         <div className="action-buttons">

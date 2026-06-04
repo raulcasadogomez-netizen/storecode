@@ -71,7 +71,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                 <div className="empty-cart">
                   <ShoppingBag size={64} className="empty-cart-icon" />
                   <h3>Tu carrito está vacío</h3>
-                  <p>Añade los mejores vapers y accesorios para comenzar.</p>
+                  <p>Añade los mejores productos de importación para comenzar.</p>
                   <button className="btn-primary-neon" onClick={onClose}>
                     Explorar Tienda
                   </button>
@@ -84,7 +84,9 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                       <div className="cart-item-details">
                         <h4>{item.name}</h4>
                         <div className="cart-item-meta">
-                          <span className="meta-badge">Nic: {item.selectedNicotine}mg</span>
+                          {item.hasNicotine && (
+                            <span className="meta-badge">Nic: {item.selectedNicotine}mg</span>
+                          )}
                         </div>
                         <div className="cart-item-footer">
                           {/* Qty edit */}

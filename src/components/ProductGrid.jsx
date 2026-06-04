@@ -8,10 +8,9 @@ export default function ProductGrid({ products, searchQuery, onQuickView, onAddT
 
   const categories = [
     { id: 'todos', label: 'Todos' },
-    { id: 'desechables', label: 'Desechables' },
-    { id: 'pods', label: 'Pods Recargables' },
-    { id: 'eliquids', label: 'E-Liquids' },
-    { id: 'mods', label: 'Box Mods' },
+    { id: 'vapers', label: 'Vapers' },
+    { id: 'oxido-nitroso', label: 'Óxido Nitroso (Alimentación)' },
+    { id: 'coleccionismo', label: 'Coleccionismo' },
   ];
 
   // Filtering & Sorting logic
@@ -56,10 +55,10 @@ export default function ProductGrid({ products, searchQuery, onQuickView, onAddT
     <section id="catalogo" className="catalog-section">
       <div className="catalog-header">
         <h2 className="section-title">
-          Catálogo <span className="text-neon-cyan">Exclusivo</span>
+          Catálogo <span className="text-neon-cyan">Exclusivo de Importación</span>
         </h2>
         <p className="section-subtitle">
-          Explora los dispositivos más avanzados y líquidos con sabores intensos.
+          Explora marcas internacionales líderes en vapeo, gastronomía gourmet y piezas exclusivas.
         </p>
       </div>
 

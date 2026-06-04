@@ -15,15 +15,15 @@ export default function Hero() {
       <div className="hero-glow-purple"></div>
 
       <div className="hero-content">
-        <div className="hero-tag">NUEVA GENERACIÓN DE VAPEO</div>
+        <div className="hero-tag">IMPORTACIÓN GLOBAL EXCLUSIVA</div>
         
         <h1 className="hero-title">
-          Nubes Densas <br />
-          <span className="gradient-text">Sabores Extremos</span>
+          Catálogo Internacional <br />
+          <span className="gradient-text">Directo A Ti</span>
         </h1>
         
         <p className="hero-description">
-          Descubre nuestra selecta gama de dispositivos desechables, sistemas de pods recargables y e-liquids premium. Calidad garantizada para llevar tu experiencia de vapeo al siguiente nivel.
+          Importamos las marcas más destacadas del mercado global. Explora nuestra gama premium de vapeo de última generación, óxido nitroso certificado para repostería y piezas exclusivas de coleccionismo.
         </p>
 
         <div className="hero-actions">
@@ -31,7 +31,7 @@ export default function Hero() {
             Comprar Ahora
           </button>
           <a href="#experiencia" className="btn-secondary-outline">
-            Ver Tecnología
+            Ver Garantías
           </a>
         </div>
 
@@ -40,22 +40,22 @@ export default function Hero() {
           <div className="usp-item">
             <Truck className="usp-icon text-cyan" />
             <div>
-              <h4>Envío Express</h4>
-              <p>Gratis a partir de 49€</p>
+              <h4>Envío Directo</h4>
+              <p>Express 24h a península</p>
             </div>
           </div>
           <div className="usp-item">
             <ShieldCheck className="usp-icon text-purple" />
             <div>
-              <h4>100% Originales</h4>
-              <p>Productos verificados</p>
+              <h4>Calidad Importada</h4>
+              <p>Homologado TPD y E942</p>
             </div>
           </div>
           <div className="usp-item">
             <Flame className="usp-icon text-pink" />
             <div>
-              <h4>Sabor Premium</h4>
-              <p>Fórmulas de alta densidad</p>
+              <h4>Catálogo Exclusivo</h4>
+              <p>Piezas y marcas de tendencia</p>
             </div>
           </div>
         </div>

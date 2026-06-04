@@ -61,7 +61,7 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
             <p className="info-description">{product.description}</p>
 
             {/* Nicotine Selector */}
-            {product.details.nicotine && product.details.nicotine.length > 0 && (
+            {product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0 && (
               <div className="selector-group">
                 <label className="selector-label">Nicotina</label>
                 <div className="nicotine-chips">
@@ -85,7 +85,10 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
                 <tbody>
                   {product.details.flavor && (
                     <tr>
-                      <td className="spec-name">Sabor principal</td>
+                      <td className="spec-name">
+                        {product.category === 'oxido-nitroso' ? 'Pureza / Grado' : 
+                         product.category === 'coleccionismo' ? 'Acabado / Material' : 'Sabor principal'}
+                      </td>
                       <td className="spec-val">{product.details.flavor}</td>
                     </tr>
                   )}
@@ -97,13 +100,17 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
                   )}
                   {product.details.battery && product.details.battery !== "N/A" && (
                     <tr>
-                      <td className="spec-name">Batería</td>
+                      <td className="spec-name">
+                        {product.category === 'coleccionismo' ? 'Mecanismo' : 'Batería'}
+                      </td>
                       <td className="spec-val">{product.details.battery}</td>
                     </tr>
                   )}
                   {product.details.capacity && (
                     <tr>
-                      <td className="spec-name">Capacidad</td>
+                      <td className="spec-name">
+                        {product.category === 'oxido-nitroso' ? 'Contenido' : 'Capacidad'}
+                      </td>
                       <td className="spec-val">{product.details.capacity}</td>
                     </tr>
                   )}

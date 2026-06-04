@@ -778,7 +778,24 @@
   text-transform: uppercase;
   color: var(--text-muted);
   letter-spacing: 0.05em;
+}
+
+.product-card-brand-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 0.4rem;
+}
+
+.product-category-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--neon-cyan);
+  background: var(--neon-cyan-dim);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
 }
 
 .product-name {
@@ -2551,5 +2568,51 @@
   .admin-dashboard-main {
     padding: 1rem;
   }
+}
+
+/* Auth Success Box & Admin Tabs */
+.auth-success-box {
+  background: rgba(102, 252, 241, 0.08);
+  border: 1px solid rgba(102, 252, 241, 0.2);
+  color: var(--neon-cyan);
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.login-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--glass-border);
+}
+
+.login-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.login-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.login-tab-btn.active {
+  background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 100%);
+  color: white;
+  box-shadow: 0 0 10px rgba(102, 252, 241, 0.25);
 }
 

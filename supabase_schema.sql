@@ -26,12 +26,14 @@ ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
 -- 3. Crear Políticas de RLS
 -- Política 1: Permitir lectura pública a cualquiera (incluso no autenticados)
+DROP POLICY IF EXISTS "Permitir lectura publica" ON public.products;
 CREATE POLICY "Permitir lectura publica" 
 ON public.products 
 FOR SELECT 
 USING (true);
 
 -- Política 2: Permitir inserción, actualización y borrado solo a usuarios autenticados
+DROP POLICY IF EXISTS "Permitir escrituras a usuarios autenticados" ON public.products;
 CREATE POLICY "Permitir escrituras a usuarios autenticados" 
 ON public.products 
 FOR ALL 
@@ -39,13 +41,16 @@ TO authenticated
 USING (true)
 WITH CHECK (true);
 
--- 4. Insertar Datos de Ejemplo (Semilla)
+-- 4. Truncar tabla de productos para asegurar semilla limpia
+TRUNCATE TABLE public.products RESTART IDENTITY CASCADE;
+
+-- 5. Insertar Datos de Ejemplo (Semilla)
 INSERT INTO public.products (name, brand, category, price, rating, reviews, image, in_stock, stock_count, description, details)
 VALUES 
 (
   'Mango Peach Fusion Disposable', 
   'VAPEX Neon', 
-  'desechables', 
+  'vapers', 
   12.99, 
   4.8, 
   142, 
@@ -58,7 +63,7 @@ VALUES
 (
   'Pod Kit CyberBlue Pro', 
   'AeroPod', 
-  'pods', 
+  'vapers', 
   29.99, 
   4.9, 
   88, 
@@ -71,7 +76,7 @@ VALUES
 (
   'Premium E-Liquid Fresa Limón', 
   'Juice Labs', 
-  'eliquids', 
+  'vapers', 
   15.99, 
   4.7, 
   210, 
@@ -84,7 +89,7 @@ VALUES
 (
   'Mod Box Cyberpunk Gold 200W', 
   'VoltTech', 
-  'mods', 
+  'vapers', 
   64.99, 
   5.0, 
   45, 
@@ -95,29 +100,54 @@ VALUES
   '{"puffs": "N/A", "nicotine": [0], "flavor": "N/A", "battery": "Doble Batería 18650 (No incluidas)", "capacity": "Rosca 510 universal"}'::jsonb
 ),
 (
-  'Blueberry Sour Raspberry Ice', 
-  'VAPEX Neon', 
-  'desechables', 
-  11.99, 
-  4.6, 
-  95, 
-  '/images/vape_blueberry.png', 
+  'Cargadores de N2O Premium (50 uds)', 
+  'CreamMaster Import', 
+  'oxido-nitroso', 
+  24.99, 
+  4.8, 
+  112, 
+  '/images/n2o_charger.png', 
   TRUE, 
-  12, 
-  'Un balance perfecto entre el dulzor de los arándanos silvestres y la acidez de las frambuesas azules, finalizado con una ráfaga helada de mentol. Práctico, compacto y lleno de sabor.',
-  '{"puffs": "7000 Caladas", "nicotine": [10, 20], "flavor": "Arándanos, Frambuesa Ácida e Ice", "battery": "600mAh (Recargable USB-C)", "capacity": "12ml"}'::jsonb
+  30, 
+  'Cargadores de óxido nitroso (N2O) de calidad culinaria para sifones de nata y espumas gourmet. Fabricados en acero reciclable de alta resistencia, garantizando la pureza del gas para repostería profesional sin residuos de aceite.',
+  '{"puffs": "N/A", "nicotine": [0], "flavor": "Grado Alimentario Certificado E942", "battery": "N/A", "capacity": "50 cápsulas (8g N2O c/u)"}'::jsonb
 ),
 (
-  'Menthol Frost E-Liquid', 
-  'Juice Labs', 
-  'eliquids', 
-  14.99, 
-  4.8, 
-  130, 
-  '/images/vape_mint_bottle.png', 
-  FALSE, 
-  0, 
-  'Una experiencia intensamente fresca. Mentol glacial puro combinado con notas sutiles de menta verde para una sensación refrescante insuperable en la garganta. Perfecto solo o para mezclar con tus sabores favoritos.',
-  '{"puffs": "N/A", "nicotine": [0, 3, 6, 12], "flavor": "Mentol Extra Fuerte y Menta", "battery": "N/A", "capacity": "60ml (50VG / 50PG)"}'::jsonb
-)
-ON CONFLICT DO NOTHING;
+  'Bombona de Óxido Nitroso N2O 640g', 
+  'GourmetWhip', 
+  'oxido-nitroso', 
+  39.99, 
+  4.9, 
+  64, 
+  '/images/n2o_charger.png', 
+  TRUE, 
+  12, 
+  'Cilindro de gas óxido nitroso (N2O) de 640g de importación exclusiva para hostelería y repostería gourmet. Ahorra tiempo en recargas en comparación con los cargadores individuales. Compatible con la mayoría de sifones mediante regulador.',
+  '{"puffs": "N/A", "nicotine": [0], "flavor": "Pureza 99.9% Alimentaria", "battery": "N/A", "capacity": "640g de gas neto"}'::jsonb
+),
+(
+  'Encendedor Zippo Edición Dragón', 
+  'Zippo Collectibles', 
+  'coleccionismo', 
+  89.99, 
+  5.0, 
+  28, 
+  '/images/collectible_dragon.png', 
+  TRUE, 
+  5, 
+  'Encendedor a prueba de viento de edición limitada, importado directamente desde USA. Acabado en latón cepillado de gran grosor con un intrincado grabado en relieve de un dragón oriental tradicional. Viene en estuche de regalo de lujo.',
+  '{"puffs": "N/A", "nicotine": [0], "flavor": "Latón Cepillado Grabado", "battery": "Mecanismo de Piedra y Mecha", "capacity": "Estuche Oficial Incluido"}'::jsonb
+),
+(
+  'Cenicero de Cristal de Murano Vintage', 
+  'Murano Art', 
+  'coleccionismo', 
+  120.00, 
+  4.7, 
+  15, 
+  '/images/vape_mod_cyber.png', 
+  TRUE, 
+  2, 
+  'Pieza de colección vintage de los años 70, importada de Venecia, Italia. Cenicero soplado a mano en cristal de Murano con inclusiones de pan de oro y espirales de colores vibrantes. Un toque único y elegante de exclusividad.',
+  '{"puffs": "N/A", "nicotine": [0], "flavor": "Cristal de Murano Soplado", "battery": "N/A", "capacity": "Diámetro 15cm"}'::jsonb
+);

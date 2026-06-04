@@ -21,7 +21,7 @@ export default function Admin() {
   const [editingId, setEditingId] = useState(null); // If null, we are in CREATE mode. Else EDIT mode.
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
-  const [category, setCategory] = useState('desechables');
+  const [category, setCategory] = useState('vapers');
   const [price, setPrice] = useState('');
   const [stockCount, setStockCount] = useState('');
   const [inStock, setInStock] = useState(true);
@@ -152,7 +152,7 @@ export default function Admin() {
     setEditingId(null);
     setName('');
     setBrand('');
-    setCategory('desechables');
+    setCategory('vapers');
     setPrice('');
     setStockCount('');
     setInStock(true);
@@ -172,10 +172,9 @@ export default function Admin() {
     setCrudError('');
 
     // Parse nicotine strengths
-    const nicotine = nicotineStr
-      .split(',')
-      .map((n) => parseFloat(n.trim()))
-      .filter((n) => !isNaN(n));
+    const nicotine = category === 'vapers'
+      ? nicotineStr.split(',').map((n) => parseFloat(n.trim())).filter((n) => !isNaN(n))
+      : [0];
 
     const productDetails = {
       puffs: puffs || 'N/A',
@@ -295,7 +294,7 @@ export default function Admin() {
           </div>
 
           <h2>Acceso a Consola</h2>
-          <p className="login-subtitle">Introduce tus credenciales para administrar la base de datos de productos.</p>
+          <p className="login-subtitle">Introduce tus credenciales de administrador para gestionar la tienda.</p>
 
           <form onSubmit={handleLogin} className="login-form">
             <div className="input-group">
@@ -335,7 +334,7 @@ export default function Admin() {
           <div className="supabase-help-note">
             <Database size={14} className="text-cyan" />
             <p>
-              <strong>Nota:</strong> Los usuarios se gestionan en tu panel de Supabase Auth. Recuerda registrar tu correo en Supabase antes de acceder.
+              <strong>Nota:</strong> Consola de administración privada. Los usuarios autorizados deben gestionarse internamente en el panel de control de Supabase.
             </p>
           </div>
         </div>
@@ -489,10 +488,9 @@ export default function Admin() {
                 <div className="form-input-wrapper">
                   <label>Categoría *</label>
                   <select value={category} onChange={(e) => setCategory(e.target.value)} required>
-                    <option value="desechables">Desechables</option>
-                    <option value="pods">Pods Recargables</option>
-                    <option value="eliquids">E-Liquids</option>
-                    <option value="mods">Box Mods</option>
+                    <option value="vapers">Vapers / Vapeo</option>
+                    <option value="oxido-nitroso">Óxido Nitroso (Alimentación)</option>
+                    <option value="coleccionismo">Coleccionismo</option>
                   </select>
                 </div>
                 <div className="form-input-wrapper">
@@ -504,6 +502,8 @@ export default function Admin() {
                     <option value="/images/vape_mod_cyber.png">Cyber Mod Box (Oro/Carbono)</option>
                     <option value="/images/vape_blueberry.png">Blueberry Sour (Lila/Azul)</option>
                     <option value="/images/vape_mint_bottle.png">Mint Frost (Verde)</option>
+                    <option value="/images/n2o_charger.png">N2O Charger (Gas Plata/Negro)</option>
+                    <option value="/images/collectible_dragon.png">Zippo Dragon (Latón Cepillado)</option>
                   </select>
                 </div>
               </div>
@@ -560,7 +560,9 @@ export default function Admin() {
                 
                 <div className="form-group-row">
                   <div className="form-input-wrapper">
-                    <label>Autonomía (Puffs/Caladas)</label>
+                    <label>
+                      {category === 'vapers' ? 'Autonomía (Puffs/Caladas)' : 'Autonomía (Opcional)'}
+                    </label>
                     <input
                       type="text"
                       value={puffs}
@@ -569,7 +571,9 @@ export default function Admin() {
                     />
                   </div>
                   <div className="form-input-wrapper">
-                    <label>Batería</label>
+                    <label>
+                      {category === 'coleccionismo' ? 'Mecanismo / Tipo' : 'Batería'}
+                    </label>
                     <input
                       type="text"
                       value={battery}
@@ -581,35 +585,42 @@ export default function Admin() {
 
                 <div className="form-group-row">
                   <div className="form-input-wrapper">
-                    <label>Capacidad del depósito</label>
+                    <label>
+                      {category === 'oxido-nitroso' ? 'Contenido / Peso' : 'Capacidad'}
+                    </label>
                     <input
                       type="text"
                       value={capacity}
                       onChange={(e) => setCapacity(e.target.value)}
-                      placeholder="Ej. 14ml"
+                      placeholder="Ej. 14ml o 640g"
                     />
                   </div>
                   <div className="form-input-wrapper">
-                    <label>Sabores del perfil</label>
+                    <label>
+                      {category === 'oxido-nitroso' ? 'Pureza / Grado' : 
+                       category === 'coleccionismo' ? 'Acabado / Material' : 'Sabor principal'}
+                    </label>
                     <input
                       type="text"
                       value={flavor}
                       onChange={(e) => setFlavor(e.target.value)}
-                      placeholder="Ej. Mango, Melocotón"
+                      placeholder="Ej. Mango, Latón cepillado, Grado E942"
                     />
                   </div>
                 </div>
 
-                <div className="form-input-wrapper">
-                  <label>Opciones de Nicotina (Separar con comas)</label>
-                  <input
-                    type="text"
-                    value={nicotineStr}
-                    onChange={(e) => setNicotineStr(e.target.value)}
-                    placeholder="Ej. 0, 10, 20"
-                  />
-                  <p className="input-hint">Valores en mg/ml. Ej: 0, 10, 20</p>
-                </div>
+                {category === 'vapers' && (
+                  <div className="form-input-wrapper">
+                    <label>Opciones de Nicotina (Separar con comas)</label>
+                    <input
+                      type="text"
+                      value={nicotineStr}
+                      onChange={(e) => setNicotineStr(e.target.value)}
+                      placeholder="Ej. 0, 10, 20"
+                    />
+                    <p className="input-hint">Valores en mg/ml. Ej: 0, 10, 20</p>
+                  </div>
+                )}
               </div>
 
               <div className="form-actions">

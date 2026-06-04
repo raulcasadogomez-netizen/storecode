@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ShoppingCart, Wind, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, Globe, Menu, X } from 'lucide-react';
 
 export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -9,8 +9,8 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
       <div className="navbar-content">
         {/* Logo */}
         <div className="navbar-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <Wind className="logo-icon" />
-          <span className="logo-text">VAPEX</span>
+          <Globe className="logo-icon text-neon-cyan" />
+          <span className="logo-text">VAPEX IMPORT</span>
         </div>
 
         {/* Search Bar */}
@@ -18,7 +18,7 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
           <Search className="search-icon" />
           <input
             type="text"
-            placeholder="Buscar sabor, marca, pod..."
+            placeholder="Buscar vaper, N2O, coleccionismo..."
             value={searchVal}
             onChange={(e) => onSearchChange(e.target.value)}
             className="search-input"
@@ -28,7 +28,7 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
         {/* Desktop Menu */}
         <div className="navbar-links">
           <a href="#catalogo" onClick={() => setMobileMenuOpen(false)}>Catálogo</a>
-          <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>Experiencia</a>
+          <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>Importación</a>
           <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>Nosotros</a>
           <button className="cart-trigger-btn" onClick={onCartClick}>
             <ShoppingCart className="cart-icon" />
@@ -60,14 +60,14 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
               <Search className="search-icon" />
               <input
                 type="text"
-                placeholder="Buscar..."
+                placeholder="Buscar vaper, N2O, coleccionismo..."
                 value={searchVal}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="search-input"
               />
             </div>
             <a href="#catalogo" onClick={() => setMobileMenuOpen(false)}>Catálogo</a>
-            <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>Experiencia</a>
+            <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>Importación</a>
             <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>Nosotros</a>
           </div>
         </div>
