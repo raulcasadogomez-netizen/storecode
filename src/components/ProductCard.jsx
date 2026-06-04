@@ -68,11 +68,19 @@ export default function ProductCard({ product, onQuickView, onAddToCart }) {
 
         {/* Dynamic Tags */}
         <div className="product-specs-preview">
-          {details.puffs && details.puffs !== "N/A" && (
-            <span className="spec-badge">{details.puffs}</span>
-          )}
-          {details.capacity && (
-            <span className="spec-badge">{details.capacity}</span>
+          {details.tags && details.tags.length > 0 ? (
+            details.tags.map((tag, idx) => (
+              <span key={idx} className="spec-badge spec-custom-tag">{tag}</span>
+            ))
+          ) : (
+            <>
+              {details.puffs && details.puffs !== "N/A" && (
+                <span className="spec-badge">{details.puffs}</span>
+              )}
+              {details.capacity && (
+                <span className="spec-badge">{details.capacity}</span>
+              )}
+            </>
           )}
         </div>
 

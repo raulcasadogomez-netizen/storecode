@@ -60,6 +60,15 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
 
             <p className="info-description">{product.description}</p>
 
+            {/* Custom Neon Tags */}
+            {product.details.tags && product.details.tags.length > 0 && (
+              <div className="modal-custom-tags">
+                {product.details.tags.map((tag, idx) => (
+                  <span key={idx} className="modal-tag-badge">{tag}</span>
+                ))}
+              </div>
+            )}
+
             {/* Nicotine Selector */}
             {product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0 && (
               <div className="selector-group">

@@ -2616,3 +2616,245 @@
   box-shadow: 0 0 10px rgba(102, 252, 241, 0.25);
 }
 
+/* ==========================================================================
+   PRODUCT IMAGE SELECTOR & UPLOAD STYLES
+   ========================================================================== */
+.image-selector-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid var(--glass-border);
+  margin-bottom: 0.8rem;
+}
+
+.image-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.image-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.image-tab-btn.active {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--neon-cyan);
+  border: 1px solid rgba(102, 252, 241, 0.2);
+  box-shadow: 0 0 5px rgba(102, 252, 241, 0.1);
+}
+
+.image-upload-zone {
+  border: 2px dashed var(--glass-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.image-upload-zone:hover, .image-upload-zone.drag-active {
+  border-color: var(--neon-cyan);
+  background: rgba(102, 252, 241, 0.02);
+  box-shadow: 0 0 10px rgba(102, 252, 241, 0.05);
+}
+
+.upload-icon-wrapper {
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.image-upload-zone:hover .upload-icon-wrapper {
+  color: var(--neon-cyan);
+  transform: translateY(-2px);
+}
+
+.upload-texts h4 {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.upload-texts p {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 100%;
+  max-height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.image-preview-container img {
+  max-width: 100%;
+  max-height: 130px;
+  object-fit: contain;
+}
+
+.btn-remove-preview {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 0, 90, 0.8);
+  border: none;
+  color: white;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.btn-remove-preview:hover {
+  background: rgba(255, 0, 90, 1);
+  transform: scale(1.1);
+  box-shadow: var(--neon-pink-glow);
+}
+
+.image-upload-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 1.5rem;
+}
+
+/* ==========================================================================
+   TAGS INPUT STYLES
+   ========================================================================== */
+.tags-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tags-input-field-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.tags-input-field-wrapper input {
+  flex: 1;
+}
+
+.btn-add-tag {
+  background: rgba(138, 43, 226, 0.1);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  color: var(--neon-purple);
+  font-weight: 700;
+  padding: 0 1.2rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-add-tag:hover {
+  background: var(--neon-purple);
+  color: white;
+  box-shadow: var(--neon-purple-glow);
+}
+
+.tags-chips-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(102, 252, 241, 0.05);
+  border: 1px solid rgba(102, 252, 241, 0.3);
+  color: var(--neon-cyan);
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.tag-chip:hover {
+  border-color: var(--neon-cyan);
+  background: rgba(102, 252, 241, 0.1);
+}
+
+.btn-remove-tag {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: var(--transition);
+}
+
+.btn-remove-tag:hover {
+  color: var(--neon-pink);
+}
+
+/* ==========================================================================
+   STOREFRONT CUSTOM TAG BADGES
+   ========================================================================== */
+.spec-custom-tag {
+  background: rgba(138, 43, 226, 0.08) !important;
+  border: 1px solid rgba(138, 43, 226, 0.3) !important;
+  color: #bf8eff !important;
+}
+
+.modal-custom-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 1.2rem 0;
+}
+
+.modal-tag-badge {
+  background: rgba(102, 252, 241, 0.06);
+  border: 1px solid rgba(102, 252, 241, 0.25);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 5px rgba(102, 252, 241, 0.2);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: var(--transition);
+}
+
+.modal-tag-badge:hover {
+  background: rgba(102, 252, 241, 0.1);
+  border-color: var(--neon-cyan);
+}
+
+

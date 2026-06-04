@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database } from 'lucide-react';
+import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database, UploadCloud, X } from 'lucide-react';
 import { products as localBackupProducts } from '../data/products';
 
 export default function Admin() {
@@ -28,6 +28,18 @@ export default function Admin() {
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('/images/vape_mango_peach.png');
   
+  // Image Upload/URL/Preset States
+  const [imageType, setImageType] = useState('preset'); // preset, url, upload
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadedFilePreview, setUploadedFilePreview] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+
+  // Custom Tags State
+  const [tagsList, setTagsList] = useState([]);
+  const [tagInput, setTagInput] = useState('');
+
   // Specs Sub-Form (JSON details)
   const [puffs, setPuffs] = useState('');
   const [capacity, setCapacity] = useState('');
@@ -121,6 +133,45 @@ export default function Admin() {
     setSession(null);
   };
 
+  // 4.5. Image drag-and-drop handlers
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file.type.startsWith('image/')) {
+        setUploadedFile(file);
+        setUploadedFilePreview(URL.createObjectURL(file));
+      } else {
+        alert("Por favor, sube solo archivos de imagen.");
+      }
+    }
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.type.startsWith('image/')) {
+        setUploadedFile(file);
+        setUploadedFilePreview(URL.createObjectURL(file));
+      } else {
+        alert("Por favor, sube solo archivos de imagen.");
+      }
+    }
+  };
+
   // 5. Populate form for editing
   const handleEditClick = (product) => {
     setEditingId(product.id);
@@ -133,12 +184,38 @@ export default function Admin() {
     setDescription(product.description);
     setImage(product.image);
 
+    // Determine image type
+    const presetImages = [
+      '/images/vape_mango_peach.png',
+      '/images/vape_pod_kit.png',
+      '/images/vape_eliquid_bottle.png',
+      '/images/vape_mod_cyber.png',
+      '/images/vape_blueberry.png',
+      '/images/vape_mint_bottle.png',
+      '/images/n2o_charger.png',
+      '/images/collectible_dragon.png'
+    ];
+    if (presetImages.includes(product.image)) {
+      setImageType('preset');
+      setImage(product.image);
+      setImageUrl('');
+    } else {
+      setImageType('url');
+      setImageUrl(product.image || '');
+    }
+    setUploadedFile(null);
+    setUploadedFilePreview('');
+
     // Populate specs
     setPuffs(product.details.puffs || 'N/A');
     setCapacity(product.details.capacity || '');
     setFlavor(product.details.flavor || '');
     setBattery(product.details.battery || 'N/A');
     setNicotineStr(product.details.nicotine ? product.details.nicotine.join(', ') : '0');
+    
+    // Populate Custom Tags
+    setTagsList(product.details.tags || []);
+    setTagInput('');
     
     // Scroll to form
     const formElement = document.getElementById('product-form');
@@ -158,6 +235,17 @@ export default function Admin() {
     setInStock(true);
     setDescription('');
     setImage('/images/vape_mango_peach.png');
+    
+    setImageType('preset');
+    setImageUrl('');
+    setUploadedFile(null);
+    setUploadedFilePreview('');
+    setIsUploadingImage(false);
+    setDragActive(false);
+
+    setTagsList([]);
+    setTagInput('');
+
     setPuffs('');
     setCapacity('');
     setFlavor('');
@@ -171,6 +259,63 @@ export default function Admin() {
     e.preventDefault();
     setCrudError('');
 
+    // Determine final image string
+    let finalImageUrl = image;
+    if (imageType === 'url') {
+      if (!imageUrl.trim()) {
+        setCrudError("Por favor ingresa una URL de imagen válida.");
+        return;
+      }
+      finalImageUrl = imageUrl.trim();
+    } else if (imageType === 'upload') {
+      if (uploadedFile) {
+        setIsUploadingImage(true);
+        try {
+          if (supabase) {
+            const fileExt = uploadedFile.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+            const filePath = `uploads/${fileName}`;
+
+            const { data, error } = await supabase.storage
+              .from('products')
+              .upload(filePath, uploadedFile, { upsert: true });
+
+            if (error) throw error;
+
+            const { data: { publicUrl } } = supabase.storage
+              .from('products')
+              .getPublicUrl(filePath);
+
+            finalImageUrl = publicUrl;
+          } else {
+            throw new Error("Supabase storage client not available");
+          }
+        } catch (storageError) {
+          console.warn("Storage upload failed, falling back to Base64:", storageError);
+          try {
+            finalImageUrl = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(uploadedFile);
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = (err) => reject(err);
+            });
+          } catch (b64Error) {
+            console.error("Base64 conversion failed:", b64Error);
+            setCrudError("Error al procesar la imagen cargada.");
+            setIsUploadingImage(false);
+            return;
+          }
+        } finally {
+          setIsUploadingImage(false);
+        }
+      } else if (editingId && image) {
+        finalImageUrl = image;
+      } else {
+        setCrudError("Por favor selecciona o sube una imagen.");
+        return;
+      }
+    }
+
     // Parse nicotine strengths
     const nicotine = category === 'vapers'
       ? nicotineStr.split(',').map((n) => parseFloat(n.trim())).filter((n) => !isNaN(n))
@@ -181,7 +326,8 @@ export default function Admin() {
       nicotine: nicotine.length > 0 ? nicotine : [0],
       flavor: flavor || 'N/A',
       battery: battery || 'N/A',
-      capacity: capacity || 'N/A'
+      capacity: capacity || 'N/A',
+      tags: tagsList
     };
 
     const parsedPrice = parseFloat(price);
@@ -200,9 +346,8 @@ export default function Admin() {
       in_stock: inStock,
       stock_count: parsedStock,
       description,
-      image,
+      image: finalImageUrl,
       details: productDetails,
-      // Default placeholder metrics for new products
       rating: 5.0,
       reviews: 0
     };
@@ -494,17 +639,112 @@ export default function Admin() {
                   </select>
                 </div>
                 <div className="form-input-wrapper">
-                  <label>Ruta Imagen (Assets) *</label>
-                  <select value={image} onChange={(e) => setImage(e.target.value)} required>
-                    <option value="/images/vape_mango_peach.png">Mango Peach (Cian/Morado)</option>
-                    <option value="/images/vape_pod_kit.png">AeroPod Kit (Azul)</option>
-                    <option value="/images/vape_eliquid_bottle.png">E-Liquid Strawberry (Rojo)</option>
-                    <option value="/images/vape_mod_cyber.png">Cyber Mod Box (Oro/Carbono)</option>
-                    <option value="/images/vape_blueberry.png">Blueberry Sour (Lila/Azul)</option>
-                    <option value="/images/vape_mint_bottle.png">Mint Frost (Verde)</option>
-                    <option value="/images/n2o_charger.png">N2O Charger (Gas Plata/Negro)</option>
-                    <option value="/images/collectible_dragon.png">Zippo Dragon (Latón Cepillado)</option>
-                  </select>
+                  <label>Imagen del Producto *</label>
+                  <div className="image-selector-tabs">
+                    <button 
+                      type="button" 
+                      className={`image-tab-btn ${imageType === 'preset' ? 'active' : ''}`}
+                      onClick={() => setImageType('preset')}
+                    >
+                      Predeterminada
+                    </button>
+                    <button 
+                      type="button" 
+                      className={`image-tab-btn ${imageType === 'url' ? 'active' : ''}`}
+                      onClick={() => setImageType('url')}
+                    >
+                      URL Externa
+                    </button>
+                    <button 
+                      type="button" 
+                      className={`image-tab-btn ${imageType === 'upload' ? 'active' : ''}`}
+                      onClick={() => setImageType('upload')}
+                    >
+                      Subir Archivo
+                    </button>
+                  </div>
+
+                  {imageType === 'preset' && (
+                    <select value={image} onChange={(e) => setImage(e.target.value)} required>
+                      <option value="/images/vape_mango_peach.png">Mango Peach (Cian/Morado)</option>
+                      <option value="/images/vape_pod_kit.png">AeroPod Kit (Azul)</option>
+                      <option value="/images/vape_eliquid_bottle.png">E-Liquid Strawberry (Rojo)</option>
+                      <option value="/images/vape_mod_cyber.png">Cyber Mod Box (Oro/Carbono)</option>
+                      <option value="/images/vape_blueberry.png">Blueberry Sour (Lila/Azul)</option>
+                      <option value="/images/vape_mint_bottle.png">Mint Frost (Verde)</option>
+                      <option value="/images/n2o_charger.png">N2O Charger (Gas Plata/Negro)</option>
+                      <option value="/images/collectible_dragon.png">Zippo Dragon (Latón Cepillado)</option>
+                    </select>
+                  )}
+
+                  {imageType === 'url' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <input
+                        type="url"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        placeholder="https://ejemplo.com/imagen.jpg"
+                        required={imageType === 'url'}
+                      />
+                      {imageUrl && (
+                        <div className="image-preview-container">
+                          <img src={imageUrl} alt="Vista previa URL" onError={(e) => { e.target.src = 'https://placehold.co/400?text=Error+Cargando+Imagen'; }} />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {imageType === 'upload' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {isUploadingImage ? (
+                        <div className="image-upload-loading">
+                          <RefreshCw size={24} className="animate-spin text-cyan" />
+                          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Procesando imagen...</p>
+                        </div>
+                      ) : uploadedFilePreview || (editingId && image && !image.startsWith('/images/')) ? (
+                        <div className="image-preview-container">
+                          <img src={uploadedFilePreview || image} alt="Vista previa de subida" />
+                          <button 
+                            type="button" 
+                            className="btn-remove-preview"
+                            onClick={() => {
+                              setUploadedFile(null);
+                              setUploadedFilePreview('');
+                              if (editingId) {
+                                setImage('/images/vape_mango_peach.png');
+                              }
+                            }}
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div 
+                          className={`image-upload-zone ${dragActive ? 'drag-active' : ''}`}
+                          onDragEnter={handleDrag}
+                          onDragOver={handleDrag}
+                          onDragLeave={handleDrag}
+                          onDrop={handleDrop}
+                          onClick={() => document.getElementById('file-upload-input').click()}
+                        >
+                          <input
+                            id="file-upload-input"
+                            type="file"
+                            style={{ display: 'none' }}
+                            accept="image/*"
+                            onChange={handleFileChange}
+                          />
+                          <div className="upload-icon-wrapper">
+                            <UploadCloud size={32} />
+                          </div>
+                          <div className="upload-texts">
+                            <h4>Haz clic o arrastra una imagen</h4>
+                            <p>PNG, JPG o WEBP (máx. 5MB)</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -552,6 +792,59 @@ export default function Admin() {
                   rows={3}
                   required
                 />
+              </div>
+
+              {/* TAGS GESTION */}
+              <div className="form-input-wrapper tags-input-container">
+                <label>Etiquetas Personalizadas</label>
+                <div className="tags-input-field-wrapper">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        const cleanTag = tagInput.trim().replace(/,$/, '');
+                        if (cleanTag && !tagsList.includes(cleanTag)) {
+                          setTagsList([...tagsList, cleanTag]);
+                          setTagInput('');
+                        }
+                      }
+                    }}
+                    placeholder="Escribe una etiqueta y pulsa Enter o coma (Ej: 8000 caladas, 14ml...)"
+                  />
+                  <button
+                    type="button"
+                    className="btn-add-tag"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const cleanTag = tagInput.trim();
+                      if (cleanTag && !tagsList.includes(cleanTag)) {
+                        setTagsList([...tagsList, cleanTag]);
+                        setTagInput('');
+                      }
+                    }}
+                  >
+                    Añadir
+                  </button>
+                </div>
+                {tagsList.length > 0 && (
+                  <div className="tags-chips-wrapper">
+                    {tagsList.map((tag, idx) => (
+                      <span key={idx} className="tag-chip">
+                        {tag}
+                        <button
+                          type="button"
+                          className="btn-remove-tag"
+                          onClick={() => setTagsList(tagsList.filter((_, i) => i !== idx))}
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* TECHNICAL DETAILS SUBFORM */}
