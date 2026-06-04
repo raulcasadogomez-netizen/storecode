@@ -232,15 +232,15 @@ export default function Storefront() {
 
       {/* Legal Warning Footer Banner */}
       <div className="legal-warning-banner">
-        <p><strong>ADVERTENCIA:</strong> Venta exclusiva a mayores de 18 años. Los vapers con nicotina contienen una sustancia altamente adictiva. El óxido nitroso de grado alimentario se vende únicamente para repostería y coctelería; su inhalación para otros fines es peligrosa y está prohibida.</p>
+        <p><strong>ADVERTENCIA B2B:</strong> Portal exclusivo de venta mayorista para profesionales. De acuerdo con el R.D. Ley 17/2017 de España, los vapers con nicotina solo se distribuyen a establecimientos físicos autorizados y no a consumidores finales. El óxido nitroso se comercializa estrictamente para hostelería y repostería culinaria; su inhalación con otros fines es peligrosa y está prohibida.</p>
       </div>
 
       {/* Main Footer */}
       <footer className="main-footer">
-        <div className="footer-grid">
+        <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem' }}>
           <div className="footer-col brand-col">
             <h3>VAPEX IMPORT</h3>
-            <p>La distribuidora e importadora online número uno en diseño, rendimiento y sabor premium de todo el mundo.</p>
+            <p>Distribuidora e importadora mayorista online de vapeo premium, gases alimentarios y coleccionables.</p>
             <p style={{ marginTop: '1.5rem' }}>
               <a href="/admin" className="text-neon-cyan" style={{ fontSize: '0.85rem', textDecoration: 'underline' }}>
                 Panel de Administración
@@ -250,14 +250,23 @@ export default function Storefront() {
           <div className="footer-col">
             <h4>Navegación</h4>
             <ul>
-              <li><a href="#catalogo">Catálogo</a></li>
-              <li><a href="#experiencia">Experiencia</a></li>
+              <li><a href="#catalogo">Catálogo B2B</a></li>
+              <li><a href="#experiencia">Garantías B2B</a></li>
               <li><a href="#nosotros">Nosotros</a></li>
             </ul>
           </div>
           <div className="footer-col">
+            <h4>Leyes y Privacidad</h4>
+            <ul>
+              <li><a href="#aviso-legal" onClick={(e) => { e.preventDefault(); alert("AVISO LEGAL:\nEste sitio web es operado por VAPEX Import S.L., con CIF B-12345678, domicilio social en Madrid, España. Portal de comercio electrónico exclusivo para profesionales (B2B)."); }}>Aviso Legal</a></li>
+              <li><a href="#privacidad" onClick={(e) => { e.preventDefault(); alert("POLÍTICA DE PRIVACIDAD:\nEn cumplimiento del RGPD, tus datos personales de contacto facilitados para la tramitación de pedidos a través de WhatsApp son procesados con la única finalidad de facturación y envío comercial."); }}>Política de Privacidad</a></li>
+              <li><a href="#cookies" onClick={(e) => { e.preventDefault(); alert("POLÍTICA DE COOKIES:\nEste sitio web utiliza almacenamiento técnico obligatorio (local storage) para gestionar tu verificación de edad y tu carrito de compras de forma anónima."); }}>Política de Cookies</a></li>
+              <li><a href="#condiciones-b2b" onClick={(e) => { e.preventDefault(); alert("TÉRMINOS Y CONDICIONES B2B:\nTodas las ventas se gestionan mediante cierre comercial por WhatsApp. Se requiere acreditación fiscal (Modelo 036 o IAE) para validar transacciones mayoristas."); }}>Términos B2B</a></li>
+            </ul>
+          </div>
+          <div className="footer-col">
             <h4>Contacto</h4>
-            <p>Soporte: info@vapex.com</p>
+            <p>Soporte B2B: info@vapex.com</p>
             <p>Teléfono: +34 900 123 456</p>
             <p>Horario: L-V 9:00 a 19:00</p>
           </div>

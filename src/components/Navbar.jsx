@@ -10,7 +10,10 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
         {/* Logo */}
         <div className="navbar-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <Globe className="logo-icon text-neon-cyan" />
-          <span className="logo-text">VAPEX IMPORT</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="logo-text" style={{ lineHeight: '1.1' }}>VAPEX IMPORT</span>
+            <span style={{ fontSize: '0.6rem', color: 'var(--neon-purple)', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase', textShadow: 'var(--neon-purple-glow)' }}>MAYORISTA B2B</span>
+          </div>
         </div>
 
         {/* Search Bar */}

@@ -86,9 +86,12 @@ export default function ProductCard({ product, onQuickView, onAddToCart }) {
 
         {/* Footer: Price & Add to Cart */}
         <div className="product-card-footer">
-          <div className="product-price">
-            <span className="currency">€</span>
-            <span className="amount">{price.toFixed(2)}</span>
+          <div className="product-price" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div>
+              <span className="currency">€</span>
+              <span className="amount">{price.toFixed(2)}</span>
+            </div>
+            <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: '2px', fontWeight: 'bold' }}>+ IVA (Mayorista)</span>
           </div>
           
           <button 

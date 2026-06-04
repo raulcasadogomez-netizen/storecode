@@ -53,9 +53,12 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
               <span className="reviews-num">{product.reviews} opiniones</span>
             </div>
 
-            <div className="info-price">
-              <span className="currency">€</span>
-              <span className="amount">{product.price.toFixed(2)}</span>
+            <div className="info-price" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <div>
+                <span className="currency">€</span>
+                <span className="amount">{product.price.toFixed(2)}</span>
+              </div>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 'bold' }}>+ IVA (Precio Mayorista)</span>
             </div>
 
             <p className="info-description">{product.description}</p>

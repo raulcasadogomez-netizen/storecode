@@ -28,18 +28,18 @@ export default function AgeVerificationModal() {
           <span className="logo-neon-text">VAPEX</span>
         </div>
         
-        <h2>Verificación de Edad</h2>
+        <h2>Verificación de Edad y B2B</h2>
         
         <p className="warning-text">
-          ESTA WEB CONTIENE PRODUCTOS DE VAPEO, N2O DE GRADO ALIMENTARIO Y ARTÍCULOS EXCLUSIVOS PARA ADULTOS.
+          PORTAL DE IMPORTACIÓN MAYORISTA EXCLUSIVO PARA PROFESIONALES Y AUTÓNOMOS.
         </p>
         
         <p className="sub-text">
-          Para ingresar a nuestro portal de importación, debes tener al menos 18 años de edad (o la edad mínima legal en tu país de residencia).
+          Para ingresar a nuestro portal de distribución B2B, debes ser mayor de 18 años y profesional del sector.
         </p>
 
         <div className="age-disclaimer">
-          ¡Atención! Venta restringida a menores de edad. El óxido nitroso se vende estrictamente para repostería culinaria.
+          <strong>INFORMACIÓN LEGAL:</strong> De acuerdo con el R.D. Ley 17/2017 de España, los vapers con nicotina solo se distribuyen a comercios y establecimientos autorizados. Se requerirá acreditación fiscal para cursar los pedidos.
         </div>
 
         <div className="action-buttons">

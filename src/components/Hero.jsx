@@ -15,23 +15,23 @@ export default function Hero() {
       <div className="hero-glow-purple"></div>
 
       <div className="hero-content">
-        <div className="hero-tag">IMPORTACIÓN GLOBAL EXCLUSIVA</div>
+        <div className="hero-tag">DISTRIBUIDORA MAYORISTA B2B</div>
         
         <h1 className="hero-title">
-          Catálogo Internacional <br />
-          <span className="gradient-text">Directo A Ti</span>
+          Importación Mayorista <br />
+          <span className="gradient-text">Directo A Tu Negocio</span>
         </h1>
         
         <p className="hero-description">
-          Importamos las marcas más destacadas del mercado global. Explora nuestra gama premium de vapeo de última generación, óxido nitroso certificado para repostería y piezas exclusivas de coleccionismo.
+          Distribución exclusiva de las marcas internacionales líderes para profesionales, autónomos y comercios. Vapeo homologado, óxido nitroso certificado para hostelería y coleccionables premium con pedidos directos vía WhatsApp.
         </p>
 
         <div className="hero-actions">
           <button className="btn-primary-neon" onClick={scrollToCatalog}>
-            Comprar Ahora
+            Ver Catálogo B2B
           </button>
           <a href="#experiencia" className="btn-secondary-outline">
-            Ver Garantías
+            Garantías y Leyes
           </a>
         </div>
 
