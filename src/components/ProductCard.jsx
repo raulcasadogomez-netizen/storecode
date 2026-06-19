@@ -1,6 +1,6 @@
 import { Star, ShoppingCart, Eye } from 'lucide-react';
 
-export default function ProductCard({ product, onQuickView, onAddToCart }) {
+export default function ProductCard({ product, categoryName, onQuickView, onAddToCart }) {
   const { name, brand, price, rating, reviews, image, inStock, details } = product;
 
   // Helper to render stars
@@ -55,7 +55,7 @@ export default function ProductCard({ product, onQuickView, onAddToCart }) {
         <div className="product-card-brand-row">
           <span className="product-brand">{brand}</span>
           <span className="product-category-tag">
-            {product.category === 'oxido-nitroso' ? 'N2O Culinario' : product.category === 'coleccionismo' ? 'Colección' : 'Vapeo'}
+            {categoryName || (product.category === 'oxido-nitroso' ? 'N2O Culinario' : product.category === 'coleccionismo' ? 'Colección' : 'Vapeo')}
           </span>
         </div>
         <h3 className="product-name" onClick={() => onQuickView(product)}>{name}</h3>

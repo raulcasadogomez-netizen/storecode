@@ -9,22 +9,71 @@ import { supabase } from '../lib/supabaseClient';
 
 export default function Storefront() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch products from Supabase
+  const defaultCategories = [
+    { id: 'vapers', name: 'Vapers' },
+    { id: 'oxido-nitroso', name: 'Óxido Nitroso' },
+    { id: 'coleccionismo', name: 'Coleccionismo' }
+  ];
+
+  // Fetch products and categories from Supabase
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchData() {
       try {
         if (!supabase) {
           setProducts([]);
+          // Load offline fallback categories
+          const savedCats = localStorage.getItem('vapex-categories');
+          if (savedCats) {
+            try {
+              setCategories(JSON.parse(savedCats));
+            } catch (e) {
+              setCategories(defaultCategories);
+            }
+          } else {
+            setCategories(defaultCategories);
+          }
           setLoading(false);
           return;
         }
 
+        // Fetch categories first
+        let catsData = [];
+        try {
+          const { data: cData, error: cErr } = await supabase
+            .from('categories')
+            .select('*')
+            .order('name', { ascending: true });
+          
+          if (cErr) throw cErr;
+          if (cData && cData.length > 0) {
+            catsData = cData;
+          }
+        } catch (catErr) {
+          console.warn("Error fetching categories from Supabase:", catErr);
+        }
+
+        if (catsData.length === 0) {
+          const savedCats = localStorage.getItem('vapex-categories');
+          if (savedCats) {
+            try {
+              catsData = JSON.parse(savedCats);
+            } catch (e) {
+              catsData = defaultCategories;
+            }
+          } else {
+            catsData = defaultCategories;
+          }
+        }
+        setCategories(catsData);
+
+        // Fetch products
         const { data, error } = await supabase
           .from('products')
           .select('*')
@@ -45,13 +94,13 @@ export default function Storefront() {
           setProducts([]);
         }
       } catch (err) {
-        console.error("Error fetching from Supabase:", err);
+        console.error("Error fetching data from Supabase:", err);
         setProducts([]);
       } finally {
         setLoading(false);
       }
     }
-    fetchProducts();
+    fetchData();
   }, []);
 
   // Load cart from localStorage on mount
@@ -168,6 +217,7 @@ export default function Storefront() {
           /* Product Catalog Grid Section */
           <ProductGrid 
             products={products}
+            categories={categories}
             searchQuery={searchQuery} 
             onQuickView={setSelectedProduct} 
             onAddToCart={handleAddToCart} 

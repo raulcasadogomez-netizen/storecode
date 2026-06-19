@@ -151,3 +151,37 @@ VALUES
   'Pieza de colección vintage de los años 70, importada de Venecia, Italia. Cenicero soplado a mano en cristal de Murano con inclusiones de pan de oro y espirales de colores vibrantes. Un toque único y elegante de exclusividad.',
   '{"puffs": "N/A", "nicotine": [0], "flavor": "Cristal de Murano Soplado", "battery": "N/A", "capacity": "Diámetro 15cm"}'::jsonb
 );
+
+-- 6. Crear tabla de categorías
+CREATE TABLE IF NOT EXISTS public.categories (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- 7. Habilitar Seguridad de Nivel de Fila (RLS) en categorías
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+
+-- 8. Crear Políticas de RLS para categorías
+DROP POLICY IF EXISTS "Permitir lectura publica de categorias" ON public.categories;
+CREATE POLICY "Permitir lectura publica de categorias" 
+ON public.categories 
+FOR SELECT 
+USING (true);
+
+DROP POLICY IF EXISTS "Permitir escrituras de categorias a usuarios autenticados" ON public.categories;
+CREATE POLICY "Permitir escrituras de categorias a usuarios autenticados" 
+ON public.categories 
+FOR ALL 
+TO authenticated
+USING (true)
+WITH CHECK (true);
+
+-- 9. Insertar Categorías Iniciales (Semilla)
+INSERT INTO public.categories (id, name)
+VALUES 
+('vapers', 'Vapers'),
+('oxido-nitroso', 'Óxido Nitroso'),
+('coleccionismo', 'Coleccionismo')
+ON CONFLICT (id) DO NOTHING;
+

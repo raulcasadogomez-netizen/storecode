@@ -2,16 +2,25 @@ import { useState, useMemo } from 'react';
 import ProductCard from './ProductCard';
 import { SlidersHorizontal } from 'lucide-react';
 
-export default function ProductGrid({ products, searchQuery, onQuickView, onAddToCart }) {
+export default function ProductGrid({ products, categories = [], searchQuery, onQuickView, onAddToCart }) {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [sortBy, setSortBy] = useState('recommended');
 
-  const categories = [
-    { id: 'todos', label: 'Todos' },
-    { id: 'vapers', label: 'Vapers' },
-    { id: 'oxido-nitroso', label: 'Óxido Nitroso (Alimentación)' },
-    { id: 'coleccionismo', label: 'Coleccionismo' },
-  ];
+  const categoryTabs = useMemo(() => {
+    return [
+      { id: 'todos', name: 'Todos' },
+      ...categories
+    ];
+  }, [categories]);
+
+  const getCategoryName = (catId) => {
+    const cat = categories.find((c) => c.id === catId);
+    if (cat) return cat.name;
+    if (catId === 'vapers') return 'Vapeo';
+    if (catId === 'oxido-nitroso') return 'N2O Culinario';
+    if (catId === 'coleccionismo') return 'Colección';
+    return catId ? catId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+  };
 
   // Filtering & Sorting logic
   const filteredAndSortedProducts = useMemo(() => {
@@ -66,13 +75,13 @@ export default function ProductGrid({ products, searchQuery, onQuickView, onAddT
       <div className="catalog-controls">
         {/* Category Chips */}
         <div className="category-chips">
-          {categories.map((cat) => (
+          {categoryTabs.map((cat) => (
             <button
               key={cat.id}
               className={`chip ${selectedCategory === cat.id ? 'active' : ''}`}
               onClick={() => setSelectedCategory(cat.id)}
             >
-              {cat.label}
+              {cat.name}
             </button>
           ))}
         </div>
@@ -100,6 +109,7 @@ export default function ProductGrid({ products, searchQuery, onQuickView, onAddT
             <ProductCard
               key={product.id}
               product={product}
+              categoryName={getCategoryName(product.category)}
               onQuickView={onQuickView}
               onAddToCart={onAddToCart}
             />
