@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function AgeVerificationModal() {
   const [showModal, setShowModal] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const isVerified = localStorage.getItem('vapex-age-verified');
@@ -28,29 +30,30 @@ export default function AgeVerificationModal() {
           <span className="logo-neon-text">VAPEX</span>
         </div>
         
-        <h2>Verificación de Edad y B2B</h2>
+        <h2>{t('age_title')}</h2>
         
         <p className="warning-text">
-          PORTAL DE IMPORTACIÓN MAYORISTA EXCLUSIVO PARA PROFESIONALES Y AUTÓNOMOS.
+          {t('age_warning')}
         </p>
         
         <p className="sub-text">
-          Para ingresar a nuestro portal de distribución B2B, debes ser mayor de 18 años y profesional del sector.
+          {t('age_sub')}
         </p>
 
         <div className="age-disclaimer">
-          <strong>INFORMACIÓN LEGAL:</strong> De acuerdo con el R.D. Ley 17/2017 de España, los vapers con nicotina solo se distribuyen a comercios y establecimientos autorizados. Se requerirá acreditación fiscal para cursar los pedidos.
+          {t('age_legal')}
         </div>
 
         <div className="action-buttons">
           <button className="btn-decline" onClick={handleDecline}>
-            No, soy menor de 18
+            {t('age_btn_decline')}
           </button>
           <button className="btn-verify" onClick={handleVerify}>
-            Sí, tengo +18 años
+            {t('age_btn_verify')}
           </button>
         </div>
       </div>
     </div>
   );
 }
+

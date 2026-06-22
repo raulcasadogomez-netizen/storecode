@@ -3002,6 +3002,105 @@
   text-transform: uppercase;
 }
 
+/* ==========================================================================
+   LANGUAGE SELECTOR DROPDOWN STYLES
+   ========================================================================== */
+.language-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.lang-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.lang-btn:hover {
+  border-color: var(--neon-cyan);
+  background: var(--neon-cyan-dim);
+  box-shadow: var(--neon-cyan-glow);
+  color: var(--text-primary);
+}
+
+.lang-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(13, 11, 23, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 0.5rem;
+  min-width: 140px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5), var(--neon-cyan-dim) 0px 0px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1100;
+  animation: pop-up 0.2s ease-out;
+}
+
+.lang-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: var(--transition);
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.lang-dropdown-item:hover {
+  background: var(--neon-purple-dim);
+  color: var(--text-primary);
+}
+
+.lang-dropdown-item.active {
+  background: var(--neon-cyan-dim);
+  color: var(--neon-cyan);
+  font-weight: 700;
+}
+
+.lang-dropdown-item-flag {
+  font-size: 1rem;
+}
+
+/* Mobile language switcher enhancements */
+.mobile-menu-links .language-selector {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.mobile-menu-links .lang-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.mobile-menu-links .lang-dropdown-menu {
+  position: static;
+  margin-top: 8px;
+  width: 100%;
+  box-shadow: none;
+}
+
+
 
 
 

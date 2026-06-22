@@ -1,8 +1,64 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Search, ShoppingCart, Globe, Menu, X } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { language, changeLanguage, t } = useTranslation();
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setLangDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const languagesList = [
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'zh', label: '中文 (ZH)', flag: '🇨🇳' },
+    { code: 'en', label: 'English', flag: '🇬🇧' }
+  ];
+
+  const currentLangObj = languagesList.find(l => l.code === language) || languagesList[0];
+
+  const LanguageSelector = () => (
+    <div className="language-selector" ref={dropdownRef}>
+      <button 
+        type="button" 
+        className="lang-btn" 
+        onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+        aria-expanded={langDropdownOpen}
+      >
+        <span className="lang-dropdown-item-flag">{currentLangObj.flag}</span>
+        <span>{currentLangObj.code.toUpperCase()}</span>
+      </button>
+      {langDropdownOpen && (
+        <div className="lang-dropdown-menu">
+          {languagesList.map((lang) => (
+            <button
+              key={lang.code}
+              type="button"
+              className={`lang-dropdown-item ${language === lang.code ? 'active' : ''}`}
+              onClick={() => {
+                changeLanguage(lang.code);
+                setLangDropdownOpen(false);
+              }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="lang-dropdown-item-flag">{lang.flag}</span>
+                <span>{lang.label}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <nav className="navbar-container">
@@ -12,7 +68,7 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
           <Globe className="logo-icon text-neon-cyan" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span className="logo-text" style={{ lineHeight: '1.1' }}>VAPEX IMPORT</span>
-            <span style={{ fontSize: '0.6rem', color: 'var(--neon-purple)', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase', textShadow: 'var(--neon-purple-glow)' }}>MAYORISTA B2B</span>
+            <span style={{ fontSize: '0.6rem', color: 'var(--neon-purple)', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase', textShadow: 'var(--neon-purple-glow)' }}>{t('nav_b2b')}</span>
           </div>
         </div>
 
@@ -21,7 +77,7 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
           <Search className="search-icon" />
           <input
             type="text"
-            placeholder="Buscar vaper, N2O, coleccionismo..."
+            placeholder={t('search_placeholder')}
             value={searchVal}
             onChange={(e) => onSearchChange(e.target.value)}
             className="search-input"
@@ -30,9 +86,10 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
 
         {/* Desktop Menu */}
         <div className="navbar-links">
-          <a href="#catalogo" onClick={() => setMobileMenuOpen(false)}>Catálogo</a>
-          <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>Importación</a>
-          <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>Nosotros</a>
+          <a href="#catalogo" onClick={() => setMobileMenuOpen(false)}>{t('nav_catalog')}</a>
+          <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>{t('nav_import')}</a>
+          <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>{t('nav_about')}</a>
+          <LanguageSelector />
           <button className="cart-trigger-btn" onClick={onCartClick}>
             <ShoppingCart className="cart-icon" />
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
@@ -63,18 +120,22 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
               <Search className="search-icon" />
               <input
                 type="text"
-                placeholder="Buscar vaper, N2O, coleccionismo..."
+                placeholder={t('search_placeholder')}
                 value={searchVal}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="search-input"
               />
             </div>
-            <a href="#catalogo" onClick={() => setMobileMenuOpen(false)}>Catálogo</a>
-            <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>Importación</a>
-            <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>Nosotros</a>
+            <a href="#catalogo" onClick={() => setMobileMenuOpen(false)}>{t('nav_catalog')}</a>
+            <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>{t('nav_import')}</a>
+            <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>{t('nav_about')}</a>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '0.5rem 0' }}>
+              <LanguageSelector />
+            </div>
           </div>
         </div>
       )}
     </nav>
   );
 }
+

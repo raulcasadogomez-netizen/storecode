@@ -1,7 +1,9 @@
 import { Star, ShoppingCart, Eye } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function ProductCard({ product, categoryName, onQuickView, onAddToCart }) {
   const { name, brand, price, rating, reviews, image, inStock, details } = product;
+  const { t } = useTranslation();
 
   // Helper to render stars
   const renderStars = (ratingVal) => {
@@ -23,7 +25,7 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
 
   return (
     <div className={`product-card ${!inStock ? 'out-of-stock' : ''}`}>
-      {/* Star SVG gradient definition wrapper (rendered once in app is fine, but we can put it inline or just let regular styling handle color) */}
+      {/* Star SVG gradient definition wrapper */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
           <linearGradient id="star-grad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -34,12 +36,12 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
       </svg>
 
       {/* Stock Label */}
-      {!inStock && <div className="stock-badge-out">Agotado</div>}
-      {inStock && product.stockCount <= 5 && <div className="stock-badge-low">Últimas unidades</div>}
+      {!inStock && <div className="stock-badge-out">{t('stock_out')}</div>}
+      {inStock && product.stockCount <= 5 && <div className="stock-badge-low">{t('stock_low')}</div>}
 
       {/* Image Section */}
       <div className="product-card-image" onClick={() => onQuickView(product)}>
-        <img src={image} alt={name} loading="lazy" />
+        <img src={image} alt={t(`p_${product.id}_name`, {}, name)} loading="lazy" />
         <div className="image-overlay-actions">
           <button className="icon-action-btn" title="Vista Rápida" onClick={(e) => {
             e.stopPropagation();
@@ -55,10 +57,10 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
         <div className="product-card-brand-row">
           <span className="product-brand">{brand}</span>
           <span className="product-category-tag">
-            {categoryName || (product.category === 'oxido-nitroso' ? 'N2O Culinario' : product.category === 'coleccionismo' ? 'Colección' : 'Vapeo')}
+            {t('cat_' + product.category, {}, categoryName || (product.category === 'oxido-nitroso' ? 'Óxido Nitroso' : product.category === 'coleccionismo' ? 'Coleccionismo' : 'Vapers'))}
           </span>
         </div>
-        <h3 className="product-name" onClick={() => onQuickView(product)}>{name}</h3>
+        <h3 className="product-name" onClick={() => onQuickView(product)}>{t(`p_${product.id}_name`, {}, name)}</h3>
         
         {/* Rating */}
         <div className="product-rating">
@@ -70,15 +72,15 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
         <div className="product-specs-preview">
           {details.tags && details.tags.length > 0 ? (
             details.tags.map((tag, idx) => (
-              <span key={idx} className="spec-badge spec-custom-tag">{tag}</span>
+              <span key={idx} className="spec-badge spec-custom-tag">{t(tag, {}, tag)}</span>
             ))
           ) : (
             <>
               {details.puffs && details.puffs !== "N/A" && (
-                <span className="spec-badge">{details.puffs}</span>
+                <span className="spec-badge">{t(`p_${product.id}_puffs`, {}, details.puffs)}</span>
               )}
               {details.capacity && (
-                <span className="spec-badge">{details.capacity}</span>
+                <span className="spec-badge">{t(`p_${product.id}_capacity`, {}, details.capacity)}</span>
               )}
             </>
           )}
@@ -91,7 +93,7 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
               <span className="currency">€</span>
               <span className="amount">{price.toFixed(2)}</span>
             </div>
-            <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: '2px', fontWeight: 'bold' }}>+ IVA (Mayorista)</span>
+            <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: '2px', fontWeight: 'bold' }}>{t('b2b_iva_tag')}</span>
           </div>
           
           <button 
@@ -100,10 +102,11 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
             disabled={!inStock}
           >
             <ShoppingCart size={16} />
-            <span>Añadir</span>
+            <span>{t('btn_add')}</span>
           </button>
         </div>
       </div>
     </div>
   );
 }
+

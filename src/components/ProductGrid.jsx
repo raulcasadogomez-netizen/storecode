@@ -1,25 +1,30 @@
 import { useState, useMemo } from 'react';
 import ProductCard from './ProductCard';
 import { SlidersHorizontal } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function ProductGrid({ products, categories = [], searchQuery, onQuickView, onAddToCart }) {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [sortBy, setSortBy] = useState('recommended');
+  const { t } = useTranslation();
 
   const categoryTabs = useMemo(() => {
     return [
-      { id: 'todos', name: 'Todos' },
+      { id: 'todos', name: t('cat_all') },
       ...categories
     ];
-  }, [categories]);
+  }, [categories, t]);
 
   const getCategoryName = (catId) => {
     const cat = categories.find((c) => c.id === catId);
-    if (cat) return cat.name;
-    if (catId === 'vapers') return 'Vapeo';
-    if (catId === 'oxido-nitroso') return 'N2O Culinario';
-    if (catId === 'coleccionismo') return 'Colección';
-    return catId ? catId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+    const dbName = cat ? cat.name : '';
+    const fallbackName = 
+      catId === 'vapers' ? 'Vapers' : 
+      catId === 'oxido-nitroso' ? 'Óxido Nitroso' : 
+      catId === 'coleccionismo' ? 'Coleccionismo' : 
+      (catId ? catId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '');
+      
+    return t('cat_' + catId, {}, dbName || fallbackName);
   };
 
   // Filtering & Sorting logic
@@ -64,10 +69,10 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
     <section id="catalogo" className="catalog-section">
       <div className="catalog-header">
         <h2 className="section-title">
-          Catálogo <span className="text-neon-cyan">Exclusivo de Importación</span>
+          {t('catalog_title')} <span className="text-neon-cyan">{t('catalog_subtitle_cyan')}</span>
         </h2>
         <p className="section-subtitle">
-          Explora marcas internacionales líderes en vapeo, gastronomía gourmet y piezas exclusivas.
+          {t('catalog_desc')}
         </p>
       </div>
 
@@ -81,7 +86,7 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
               className={`chip ${selectedCategory === cat.id ? 'active' : ''}`}
               onClick={() => setSelectedCategory(cat.id)}
             >
-              {cat.name}
+              {cat.id === 'todos' ? t('cat_all') : t('cat_' + cat.id, {}, cat.name)}
             </button>
           ))}
         </div>
@@ -94,10 +99,10 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
             onChange={(e) => setSortBy(e.target.value)}
             className="sort-select"
           >
-            <option value="recommended">Recomendados</option>
-            <option value="price-asc">Precio: Menor a Mayor</option>
-            <option value="price-desc">Precio: Mayor a Menor</option>
-            <option value="rating">Más Valorados</option>
+            <option value="recommended">{t('sort_recommended')}</option>
+            <option value="price-asc">{t('sort_price_asc')}</option>
+            <option value="price-desc">{t('sort_price_desc')}</option>
+            <option value="rating">{t('sort_rating')}</option>
           </select>
         </div>
       </div>
@@ -117,13 +122,14 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
         </div>
       ) : (
         <div className="no-results">
-          <h3>No se encontraron resultados</h3>
-          <p>Prueba ajustando los filtros o buscando otro término.</p>
+          <h3>{t('no_results_title')}</h3>
+          <p>{t('no_results_desc')}</p>
           <button className="btn-primary-neon reset-btn" onClick={handleResetFilters}>
-            Restablecer Filtros
+            {t('btn_reset')}
           </button>
         </div>
       )}
     </section>
   );
 }
+

@@ -1,6 +1,9 @@
 import { Flame, ShieldCheck, Truck } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function Hero() {
+  const { t } = useTranslation();
+
   const scrollToCatalog = () => {
     const catalogElement = document.getElementById('catalogo');
     if (catalogElement) {
@@ -15,23 +18,23 @@ export default function Hero() {
       <div className="hero-glow-purple"></div>
 
       <div className="hero-content">
-        <div className="hero-tag">DISTRIBUIDORA MAYORISTA B2B</div>
+        <div className="hero-tag">{t('hero_b2b_tag')}</div>
         
         <h1 className="hero-title">
-          Importación Mayorista <br />
-          <span className="gradient-text">Directo A Tu Negocio</span>
+          {t('hero_title_part1')} <br />
+          <span className="gradient-text">{t('hero_title_part2')}</span>
         </h1>
         
         <p className="hero-description">
-          Distribución exclusiva de las marcas internacionales líderes para profesionales, autónomos y comercios. Vapeo homologado, óxido nitroso certificado para hostelería y coleccionables premium con pedidos directos vía WhatsApp.
+          {t('hero_desc')}
         </p>
 
         <div className="hero-actions">
           <button className="btn-primary-neon" onClick={scrollToCatalog}>
-            Ver Catálogo B2B
+            {t('hero_btn_catalog')}
           </button>
           <a href="#experiencia" className="btn-secondary-outline">
-            Garantías y Leyes
+            {t('hero_btn_guarantees')}
           </a>
         </div>
 
@@ -40,22 +43,22 @@ export default function Hero() {
           <div className="usp-item">
             <Truck className="usp-icon text-cyan" />
             <div>
-              <h4>Envío Directo</h4>
-              <p>Express 24h a península</p>
+              <h4>{t('hero_usp1_title')}</h4>
+              <p>{t('hero_usp1_desc')}</p>
             </div>
           </div>
           <div className="usp-item">
             <ShieldCheck className="usp-icon text-purple" />
             <div>
-              <h4>Calidad Importada</h4>
-              <p>Homologado TPD y E942</p>
+              <h4>{t('hero_usp2_title')}</h4>
+              <p>{t('hero_usp2_desc')}</p>
             </div>
           </div>
           <div className="usp-item">
             <Flame className="usp-icon text-pink" />
             <div>
-              <h4>Catálogo Exclusivo</h4>
-              <p>Piezas y marcas de tendencia</p>
+              <h4>{t('hero_usp3_title')}</h4>
+              <p>{t('hero_usp3_desc')}</p>
             </div>
           </div>
         </div>
@@ -78,3 +81,4 @@ export default function Hero() {
     </header>
   );
 }
+

@@ -6,8 +6,10 @@ import ProductModal from '../components/ProductModal';
 import CartDrawer from '../components/CartDrawer';
 import AgeVerificationModal from '../components/AgeVerificationModal';
 import { supabase } from '../lib/supabaseClient';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function Storefront() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -211,7 +213,7 @@ export default function Storefront() {
         {loading ? (
           <div className="store-loading-wrapper">
             <div className="spinner-glow"></div>
-            <h3>Cargando catálogo de importación...</h3>
+            <h3>{t('store_loading', {}, 'Cargando catálogo de importación...')}</h3>
           </div>
         ) : (
           /* Product Catalog Grid Section */
@@ -229,23 +231,23 @@ export default function Storefront() {
           <div className="section-glow-purple"></div>
           <div className="experience-grid">
             <div className="experience-text">
-              <span className="section-tag">PROCESO DE IMPORTACIÓN</span>
-              <h2>Garantías de <span className="text-neon-purple">VAPEX Import</span></h2>
+              <span className="section-tag">{t('exp_tag')}</span>
+              <h2>{t('exp_title_part1')}<span className="text-neon-purple">{t('exp_title_purple')}</span></h2>
               <p>
-                Nos encargamos de todo el proceso de importación y aduanas para traer a España los artículos más exclusivos y de alta demanda del mercado internacional. Garantizamos la trazabilidad total y el cumplimiento legal de cada producto.
+                {t('exp_desc')}
               </p>
               <div className="feature-bullets">
                 <div className="bullet">
                   <div className="bullet-indicator"></div>
-                  <span><strong>Regulación Europea TPD:</strong> Todos los vapers cumplen estrictamente con la directiva europea de tabaco y pureza.</span>
+                  <span><strong>{t('exp_bullet1_title')}</strong>{t('exp_bullet1_desc')}</span>
                 </div>
                 <div className="bullet">
                   <div className="bullet-indicator"></div>
-                  <span><strong>Pureza Certificada E942:</strong> Nuestro óxido nitroso culinario posee certificación de calidad alimentaria para cocina gourmet.</span>
+                  <span><strong>{t('exp_bullet2_title')}</strong>{t('exp_bullet2_desc')}</span>
                 </div>
                 <div className="bullet">
                   <div className="bullet-indicator"></div>
-                  <span><strong>Coleccionables Verificados:</strong> Cada artículo de colección es de importación genuina y seleccionado por su estado premium.</span>
+                  <span><strong>{t('exp_bullet3_title')}</strong>{t('exp_bullet3_desc')}</span>
                 </div>
               </div>
             </div>
@@ -258,22 +260,22 @@ export default function Storefront() {
         {/* Section: About Us */}
         <section id="nosotros" className="about-section">
           <div className="about-content">
-            <h2 className="about-title">Sobre VAPEX Import</h2>
+            <h2 className="about-title">{t('about_title')}</h2>
             <p>
-              Somos una importadora especializada fundada en 2026 con la misión de facilitar el acceso a productos internacionales exclusivos de alta demanda. Gestionamos directamente el transporte y los despachos aduaneros para ofrecer a nuestros clientes en España vapers de gama alta, óxido nitroso certificado para repostería profesional y piezas limitadas de coleccionismo con entrega express desde nuestro almacén local.
+              {t('about_desc')}
             </p>
             <div className="stats-row">
               <div className="stat-card">
-                <h3>+10K</h3>
-                <p>Clientes Satisfechos</p>
+                <h3>{t('about_stat1_num')}</h3>
+                <p>{t('about_stat1_desc')}</p>
               </div>
               <div className="stat-card">
-                <h3>24H</h3>
-                <p>Envío Express</p>
+                <h3>{t('about_stat2_num')}</h3>
+                <p>{t('about_stat2_desc')}</p>
               </div>
               <div className="stat-card">
-                <h3>100%</h3>
-                <p>Original y Seguro</p>
+                <h3>{t('about_stat3_num')}</h3>
+                <p>{t('about_stat3_desc')}</p>
               </div>
             </div>
           </div>
@@ -282,7 +284,7 @@ export default function Storefront() {
 
       {/* Legal Warning Footer Banner */}
       <div className="legal-warning-banner">
-        <p><strong>ADVERTENCIA B2B:</strong> Portal exclusivo de venta mayorista para profesionales. De acuerdo con el R.D. Ley 17/2017 de España, los vapers con nicotina solo se distribuyen a establecimientos físicos autorizados y no a consumidores finales. El óxido nitroso se comercializa estrictamente para hostelería y repostería culinaria; su inhalación con otros fines es peligrosa y está prohibida.</p>
+        <p>{t('footer_warning_b2b')}</p>
       </div>
 
       {/* Main Footer */}
@@ -290,39 +292,39 @@ export default function Storefront() {
         <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem' }}>
           <div className="footer-col brand-col">
             <h3>VAPEX IMPORT</h3>
-            <p>Distribuidora e importadora mayorista online de vapeo premium, gases alimentarios y coleccionables.</p>
+            <p>{t('footer_brand_desc')}</p>
             <p style={{ marginTop: '1.5rem' }}>
               <a href="/admin" className="text-neon-cyan" style={{ fontSize: '0.85rem', textDecoration: 'underline' }}>
-                Panel de Administración
+                {t('footer_admin_panel')}
               </a>
             </p>
           </div>
           <div className="footer-col">
-            <h4>Navegación</h4>
+            <h4>{t('footer_nav_title')}</h4>
             <ul>
-              <li><a href="#catalogo">Catálogo B2B</a></li>
-              <li><a href="#experiencia">Garantías B2B</a></li>
-              <li><a href="#nosotros">Nosotros</a></li>
+              <li><a href="#catalogo">{t('footer_nav_catalog')}</a></li>
+              <li><a href="#experiencia">{t('footer_nav_guarantees')}</a></li>
+              <li><a href="#nosotros">{t('footer_nav_about')}</a></li>
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Leyes y Privacidad</h4>
+            <h4>{t('footer_legal_title')}</h4>
             <ul>
-              <li><a href="#aviso-legal" onClick={(e) => { e.preventDefault(); alert("AVISO LEGAL:\nEste sitio web es operado por VAPEX Import S.L., con CIF B-12345678, domicilio social en Madrid, España. Portal de comercio electrónico exclusivo para profesionales (B2B)."); }}>Aviso Legal</a></li>
-              <li><a href="#privacidad" onClick={(e) => { e.preventDefault(); alert("POLÍTICA DE PRIVACIDAD:\nEn cumplimiento del RGPD, tus datos personales de contacto facilitados para la tramitación de pedidos a través de WhatsApp son procesados con la única finalidad de facturación y envío comercial."); }}>Política de Privacidad</a></li>
-              <li><a href="#cookies" onClick={(e) => { e.preventDefault(); alert("POLÍTICA DE COOKIES:\nEste sitio web utiliza almacenamiento técnico obligatorio (local storage) para gestionar tu verificación de edad y tu carrito de compras de forma anónima."); }}>Política de Cookies</a></li>
-              <li><a href="#condiciones-b2b" onClick={(e) => { e.preventDefault(); alert("TÉRMINOS Y CONDICIONES B2B:\nTodas las ventas se gestionan mediante cierre comercial por WhatsApp. Se requiere acreditación fiscal (Modelo 036 o IAE) para validar transacciones mayoristas."); }}>Términos B2B</a></li>
+              <li><a href="#aviso-legal" onClick={(e) => { e.preventDefault(); alert(t('alert_legal_notice')); }}>{t('footer_legal_notice')}</a></li>
+              <li><a href="#privacidad" onClick={(e) => { e.preventDefault(); alert(t('alert_privacy_policy')); }}>{t('footer_legal_privacy')}</a></li>
+              <li><a href="#cookies" onClick={(e) => { e.preventDefault(); alert(t('alert_cookies_policy')); }}>{t('footer_legal_cookies')}</a></li>
+              <li><a href="#condiciones-b2b" onClick={(e) => { e.preventDefault(); alert(t('alert_b2b_terms')); }}>{t('footer_legal_terms')}</a></li>
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Contacto</h4>
-            <p>Soporte B2B: info@vapex.com</p>
-            <p>Teléfono: +34 900 123 456</p>
-            <p>Horario: L-V 9:00 a 19:00</p>
+            <h4>{t('footer_contact_title')}</h4>
+            <p>{t('footer_contact_email')}</p>
+            <p>{t('footer_contact_phone')}</p>
+            <p>{t('footer_contact_hours')}</p>
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} VAPEX. Todos los derechos reservados. Diseñado por Antigravity.</p>
+          <p>&copy; {new Date().getFullYear()} VAPEX. {t('footer_rights')}</p>
         </div>
       </footer>
 

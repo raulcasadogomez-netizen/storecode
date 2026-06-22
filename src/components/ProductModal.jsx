@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { X, Star, Plus, Minus, ShieldCheck, Heart } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
 
 export default function ProductModal({ product, onClose, onAddToCart }) {
+  const { t } = useTranslation();
   const [selectedNicotine, setSelectedNicotine] = useState(
     product.details.nicotine ? product.details.nicotine[0] : 0
   );
@@ -32,25 +34,25 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
           {/* Left: Product Image */}
           <div className="modal-image-panel">
             <div className="image-wrapper">
-              <img src={product.image} alt={product.name} />
+              <img src={product.image} alt={t(`p_${product.id}_name`, {}, product.name)} />
             </div>
-            {!product.inStock && <span className="modal-stock-badge-out">Sin Stock</span>}
+            {!product.inStock && <span className="modal-stock-badge-out">{t('modal_out_stock')}</span>}
             {product.inStock && product.stockCount <= 5 && (
-              <span className="modal-stock-badge-low">¡Pocas unidades!</span>
+              <span className="modal-stock-badge-low">{t('modal_low_stock')}</span>
             )}
           </div>
 
           {/* Right: Product Details */}
           <div className="modal-info-panel">
             <span className="info-brand">{product.brand}</span>
-            <h2 className="info-name">{product.name}</h2>
+            <h2 className="info-name">{t(`p_${product.id}_name`, {}, product.name)}</h2>
 
             <div className="info-meta">
               <div className="stars-wrapper">
                 <Star size={16} className="star-filled" fill="currentColor" />
                 <span className="rating-num">{product.rating}</span>
               </div>
-              <span className="reviews-num">{product.reviews} opiniones</span>
+              <span className="reviews-num">{product.reviews} {t('modal_reviews')}</span>
             </div>
 
             <div className="info-price" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
@@ -58,16 +60,16 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
                 <span className="currency">€</span>
                 <span className="amount">{product.price.toFixed(2)}</span>
               </div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 'bold' }}>+ IVA (Precio Mayorista)</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 'bold' }}>{t('modal_price_tag')}</span>
             </div>
 
-            <p className="info-description">{product.description}</p>
+            <p className="info-description">{t(`p_${product.id}_desc`, {}, product.description)}</p>
 
             {/* Custom Neon Tags */}
             {product.details.tags && product.details.tags.length > 0 && (
               <div className="modal-custom-tags">
                 {product.details.tags.map((tag, idx) => (
-                  <span key={idx} className="modal-tag-badge">{tag}</span>
+                  <span key={idx} className="modal-tag-badge">{t(tag, {}, tag)}</span>
                 ))}
               </div>
             )}
@@ -75,7 +77,7 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
             {/* Nicotine Selector */}
             {product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0 && (
               <div className="selector-group">
-                <label className="selector-label">Nicotina</label>
+                <label className="selector-label">{t('modal_nicotine')}</label>
                 <div className="nicotine-chips">
                   {product.details.nicotine.map((nic) => (
                     <button
@@ -92,41 +94,41 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
 
             {/* Specifications Table */}
             <div className="specs-table-wrapper">
-              <h3>Especificaciones Técnicas</h3>
+              <h3>{t('modal_specs_title')}</h3>
               <table className="specs-table">
                 <tbody>
                   {product.details.flavor && (
                     <tr>
                       <td className="spec-name">
-                        {product.category === 'oxido-nitroso' ? 'Pureza / Grado' : 
-                         product.category === 'coleccionismo' ? 'Acabado / Material' : 
-                         product.category === 'vapers' ? 'Sabor principal' : 'Especificación'}
+                        {product.category === 'oxido-nitroso' ? t('spec_label_flavor_n2o') : 
+                         product.category === 'coleccionismo' ? t('spec_label_flavor_collecting') : 
+                         product.category === 'vapers' ? t('spec_label_flavor_vapers') : t('spec_label_flavor_default')}
                       </td>
-                      <td className="spec-val">{product.details.flavor}</td>
+                      <td className="spec-val">{t(`p_${product.id}_flavor`, {}, product.details.flavor)}</td>
                     </tr>
                   )}
                   {product.details.puffs && product.details.puffs !== "N/A" && (
                     <tr>
-                      <td className="spec-name">Autonomía</td>
-                      <td className="spec-val">{product.details.puffs}</td>
+                      <td className="spec-name">{t('spec_label_puffs')}</td>
+                      <td className="spec-val">{t(`p_${product.id}_puffs`, {}, product.details.puffs)}</td>
                     </tr>
                   )}
                   {product.details.battery && product.details.battery !== "N/A" && (
                     <tr>
                       <td className="spec-name">
-                        {product.category === 'coleccionismo' ? 'Mecanismo' : 
-                         product.category === 'vapers' ? 'Batería' : 'Batería / Mecanismo'}
+                        {product.category === 'coleccionismo' ? t('spec_label_battery_collecting') : 
+                         product.category === 'vapers' ? t('spec_label_battery_vapers') : t('spec_label_battery_default')}
                       </td>
-                      <td className="spec-val">{product.details.battery}</td>
+                      <td className="spec-val">{t(`p_${product.id}_battery`, {}, product.details.battery)}</td>
                     </tr>
                   )}
                   {product.details.capacity && (
                     <tr>
                       <td className="spec-name">
-                        {product.category === 'oxido-nitroso' ? 'Contenido' : 
-                         product.category === 'vapers' ? 'Capacidad' : 'Capacidad / Contenido'}
+                        {product.category === 'oxido-nitroso' ? t('spec_label_capacity_n2o') : 
+                         product.category === 'vapers' ? t('spec_label_capacity_vapers') : t('spec_label_capacity_default')}
                       </td>
-                      <td className="spec-val">{product.details.capacity}</td>
+                      <td className="spec-val">{t(`p_${product.id}_capacity`, {}, product.details.capacity)}</td>
                     </tr>
                   )}
                 </tbody>
@@ -147,26 +149,26 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
                 </div>
 
                 <button className="modal-add-btn" onClick={handleAdd}>
-                  Añadir al carrito ({ (product.price * quantity).toFixed(2) } €)
+                  {t('modal_btn_add_to_cart')} ({ (product.price * quantity).toFixed(2) } €)
                 </button>
 
                 <button 
                   className={`wishlist-btn ${isLiked ? 'liked' : ''}`}
                   onClick={() => setIsLiked(!isLiked)}
-                  title="Añadir a deseos"
+                  title={t('modal_wishlist_title')}
                 >
                   <Heart size={20} fill={isLiked ? "currentColor" : "none"} />
                 </button>
               </div>
             ) : (
               <button className="modal-add-btn disabled-btn" disabled>
-                Agotado Temporalmente
+                {t('modal_btn_out_of_stock')}
               </button>
             )}
 
             <div className="trust-badges">
               <span className="trust-item">
-                <ShieldCheck size={14} className="text-cyan" /> Original Garantizado
+                <ShieldCheck size={14} className="text-cyan" /> {t('modal_original_guaranteed')}
               </span>
             </div>
           </div>
@@ -175,3 +177,4 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
     </div>
   );
 }
+
