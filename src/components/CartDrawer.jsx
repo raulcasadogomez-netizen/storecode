@@ -63,7 +63,12 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
     cartItems.forEach((item) => {
       const translatedName = t(`p_${item.id}_name`, {}, item.name);
       const nicText = item.hasNicotine ? t('whatsapp_item_nic', { nic: item.selectedNicotine }) : '';
-      const packText = item.unitsPerPackage > 1 ? ` (${item.unitsPerPackage} U/${item.packageName || 'unidad'})` : '';
+      
+      const units = item.unitsPerPackage;
+      const num = units ? parseInt(units) : 1;
+      const showUnits = units && (isNaN(num) || num > 1);
+      const packText = showUnits ? ` (Ux/ ${units})` : '';
+      
       text += `• ${item.quantity}x ${translatedName}${nicText}${packText} - ${(item.price * item.quantity).toFixed(2)} €\n`;
     });
     
@@ -135,11 +140,19 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                           {item.hasNicotine && (
                             <span className="meta-badge">{t('modal_nicotine')}: {item.selectedNicotine}mg</span>
                           )}
-                          {item.unitsPerPackage > 1 && (
-                            <span className="meta-badge" style={{ borderColor: 'var(--neon-cyan)', color: 'var(--neon-cyan)' }}>
-                              {item.unitsPerPackage} U/{item.packageName || 'unidad'} ({((item.price) / item.unitsPerPackage).toFixed(2)} €/U)
-                            </span>
-                          )}
+                          {(() => {
+                            const units = item.unitsPerPackage;
+                            if (!units) return null;
+                            const num = parseInt(units);
+                            const showUnits = isNaN(num) || num > 1;
+                            if (!showUnits) return null;
+                            const unitPrice = (!isNaN(num) && num > 1) ? (item.price / num).toFixed(2) : null;
+                            return (
+                              <span className="meta-badge" style={{ borderColor: 'var(--neon-cyan)', color: 'var(--neon-cyan)' }}>
+                                Ux/ {units} {unitPrice && `(${unitPrice} €/U)`}
+                              </span>
+                            );
+                          })()}
                         </div>
                         <div className="cart-item-footer">
                           {/* Qty edit */}

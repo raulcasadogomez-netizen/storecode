@@ -103,11 +103,18 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
               <span className="amount">{price.toFixed(2)}</span>
             </div>
             <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: '2px', fontWeight: 'bold' }}>{t('b2b_iva_tag')}</span>
-            {details.units_per_package && details.units_per_package !== '1 unidad' && (
-              <span style={{ fontSize: '0.68rem', color: 'var(--neon-cyan)', marginTop: '4px', fontWeight: '700', letterSpacing: '0.02em' }}>
-                Ux/ {details.units_per_package} {unitPrice && `(${unitPrice} €/U)`}
-              </span>
-            )}
+            {(() => {
+              const units = details.units_per_package;
+              if (!units) return null;
+              const num = parseInt(units);
+              const showUnits = isNaN(num) || num > 1;
+              if (!showUnits) return null;
+              return (
+                <span style={{ fontSize: '0.68rem', color: 'var(--neon-cyan)', marginTop: '4px', fontWeight: '700', letterSpacing: '0.02em' }}>
+                  Ux/ {units} {unitPrice && `(${unitPrice} €/U)`}
+                </span>
+              );
+            })()}
           </div>
           
           <button 

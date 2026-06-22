@@ -12,7 +12,7 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
 
   const handleQtyChange = (val) => {
     const newQty = quantity + val;
-    if (newQty >= 1 && newQty <= (product.stockCount || 10)) {
+    if (newQty >= 1) {
       setQuantity(newQty);
     }
   };
@@ -37,9 +37,6 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
               <img src={product.image} alt={t(`p_${product.id}_name`, {}, product.name)} />
             </div>
             {!product.inStock && <span className="modal-stock-badge-out">{t('modal_out_stock')}</span>}
-            {product.inStock && product.stockCount <= 5 && (
-              <span className="modal-stock-badge-low">{t('modal_low_stock')}</span>
-            )}
           </div>
 
           {/* Right: Product Details */}
@@ -63,13 +60,25 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 'bold' }}>{t('modal_price_tag')}</span>
             </div>
 
-            {product.details.units_per_package > 1 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px', fontSize: '0.9rem', color: 'var(--neon-cyan)', fontWeight: '600' }}>
-                <span>{product.details.units_per_package} U/{product.details.package_name || 'unidad'}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>•</span>
-                <span>({((product.price) / product.details.units_per_package).toFixed(2)} € / U)</span>
-              </div>
-            )}
+            {(() => {
+              const units = product.details.units_per_package;
+              if (!units) return null;
+              const num = parseInt(units);
+              const showUnits = isNaN(num) || num > 1;
+              if (!showUnits) return null;
+              const unitPrice = (!isNaN(num) && num > 1) ? (product.price / num).toFixed(2) : null;
+              return (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px', fontSize: '0.9rem', color: 'var(--neon-cyan)', fontWeight: '600' }}>
+                  <span>Ux/ {units}</span>
+                  {unitPrice && (
+                    <>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>•</span>
+                      <span>({unitPrice} € / U)</span>
+                    </>
+                  )}
+                </div>
+              );
+            })()}
 
             <p className="info-description">{t(`p_${product.id}_desc`, {}, product.description)}</p>
 
@@ -150,7 +159,7 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
                     <Minus size={16} />
                   </button>
                   <span className="qty-number">{quantity}</span>
-                  <button onClick={() => handleQtyChange(1)} disabled={quantity >= product.stockCount}>
+                  <button onClick={() => handleQtyChange(1)}>
                     <Plus size={16} />
                   </button>
                 </div>

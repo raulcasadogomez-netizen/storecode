@@ -96,7 +96,6 @@ export default function Admin() {
   const [brand, setBrand] = useState('');
   const [category, setCategory] = useState('vapers');
   const [price, setPrice] = useState('');
-  const [stockCount, setStockCount] = useState('9999');
   const [inStock, setInStock] = useState(true);
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('/images/vape_mango_peach.png');
@@ -395,7 +394,6 @@ export default function Admin() {
     setBrand(product.brand);
     setCategory(product.category);
     setPrice(product.price.toString());
-    setStockCount(product.stockCount.toString());
     setInStock(product.inStock);
     setDescription(product.description);
     setImage(product.image);
@@ -422,7 +420,6 @@ export default function Admin() {
     setUploadedFile(null);
     setUploadedFilePreview('');
 
-    setStockCount(product.stockCount ? product.stockCount.toString() : '9999');
     // Populate specs
     setPuffs(product.details.puffs || 'N/A');
     setCapacity(product.details.capacity || '');
@@ -449,7 +446,6 @@ export default function Admin() {
     setBrand('');
     setCategory(categories.length > 0 ? categories[0].id : 'vapers');
     setPrice('');
-    setStockCount('');
     setInStock(true);
     setDescription('');
     setImage('/images/vape_mango_peach.png');
@@ -464,7 +460,6 @@ export default function Admin() {
     setTagsList([]);
     setTagInput('');
 
-    setStockCount('9999');
     setPuffs('');
     setCapacity('');
     setFlavor('');
@@ -551,10 +546,9 @@ export default function Admin() {
     };
 
     const parsedPrice = parseFloat(price);
-    const parsedStock = parseInt(stockCount);
 
-    if (isNaN(parsedPrice) || isNaN(parsedStock)) {
-      setCrudError("Por favor ingresa un precio y stock válidos.");
+    if (isNaN(parsedPrice)) {
+      setCrudError("Por favor ingresa un precio válido.");
       return;
     }
 
@@ -564,7 +558,7 @@ export default function Admin() {
       category,
       price: parsedPrice,
       in_stock: inStock,
-      stock_count: parsedStock,
+      stock_count: 9999, // default to 9999 to satisfy db schema
       description,
       image: finalImageUrl,
       details: productDetails,
@@ -782,7 +776,7 @@ export default function Admin() {
                           <th>Nombre</th>
                           <th>Categoría</th>
                           <th>Precio</th>
-                          <th>Stock</th>
+                          <th>Formato / Unidades</th>
                           <th>Estado</th>
                           <th>Acciones</th>
                         </tr>
@@ -802,7 +796,7 @@ export default function Admin() {
                               </td>
                               <td className="table-category">{catName}</td>
                               <td className="table-price">{prod.price.toFixed(2)} €</td>
-                              <td>{prod.stockCount} uds</td>
+                              <td>{prod.details?.units_per_package || '1'}</td>
                               <td>
                                 <span className={`table-stock-tag ${prod.inStock ? 'in-stock' : 'no-stock'}`}>
                                   {prod.inStock ? 'En Stock' : 'Sin Stock'}
@@ -1023,7 +1017,7 @@ export default function Admin() {
                         checked={inStock}
                         onChange={(e) => setInStock(e.target.checked)}
                       />
-                      <span>Producto Activo / En Stock</span>
+                      <span>Producto Disponible / En Venta</span>
                     </label>
                   </div>
 
