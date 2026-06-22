@@ -63,7 +63,8 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
     cartItems.forEach((item) => {
       const translatedName = t(`p_${item.id}_name`, {}, item.name);
       const nicText = item.hasNicotine ? t('whatsapp_item_nic', { nic: item.selectedNicotine }) : '';
-      text += `• ${item.quantity}x ${translatedName}${nicText} - ${(item.price * item.quantity).toFixed(2)} €\n`;
+      const packText = item.unitsPerPackage > 1 ? ` (${item.unitsPerPackage} U/${item.packageName || 'unidad'})` : '';
+      text += `• ${item.quantity}x ${translatedName}${nicText}${packText} - ${(item.price * item.quantity).toFixed(2)} €\n`;
     });
     
     text += `----------------------------------------------\n`;
@@ -133,6 +134,11 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                         <div className="cart-item-meta">
                           {item.hasNicotine && (
                             <span className="meta-badge">{t('modal_nicotine')}: {item.selectedNicotine}mg</span>
+                          )}
+                          {item.unitsPerPackage > 1 && (
+                            <span className="meta-badge" style={{ borderColor: 'var(--neon-cyan)', color: 'var(--neon-cyan)' }}>
+                              {item.unitsPerPackage} U/{item.packageName || 'unidad'} ({((item.price) / item.unitsPerPackage).toFixed(2)} €/U)
+                            </span>
                           )}
                         </div>
                         <div className="cart-item-footer">

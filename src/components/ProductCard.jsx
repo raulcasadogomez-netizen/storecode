@@ -94,6 +94,11 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
               <span className="amount">{price.toFixed(2)}</span>
             </div>
             <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: '2px', fontWeight: 'bold' }}>{t('b2b_iva_tag')}</span>
+            {details.units_per_package > 1 && (
+              <span style={{ fontSize: '0.68rem', color: 'var(--neon-cyan)', marginTop: '4px', fontWeight: '700', letterSpacing: '0.02em' }}>
+                {details.units_per_package} U/{details.package_name || 'unidad'} ({((price) / details.units_per_package).toFixed(2)} €/U)
+              </span>
+            )}
           </div>
           
           <button 
@@ -105,8 +110,10 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
             <span>{t('btn_add')}</span>
           </button>
         </div>
+
       </div>
     </div>
   );
 }
+
 

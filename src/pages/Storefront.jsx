@@ -149,7 +149,9 @@ export default function Storefront() {
         selectedNicotine: selectedNic,
         hasNicotine: product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0,
         quantity: quantity,
-        stockCount: product.stockCount
+        stockCount: product.stockCount,
+        unitsPerPackage: product.details.units_per_package || 1,
+        packageName: product.details.package_name || 'unidad'
       });
     }
 

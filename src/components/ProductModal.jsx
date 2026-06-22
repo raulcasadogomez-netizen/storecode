@@ -63,9 +63,16 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 'bold' }}>{t('modal_price_tag')}</span>
             </div>
 
+            {product.details.units_per_package > 1 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px', fontSize: '0.9rem', color: 'var(--neon-cyan)', fontWeight: '600' }}>
+                <span>{product.details.units_per_package} U/{product.details.package_name || 'unidad'}</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>•</span>
+                <span>({((product.price) / product.details.units_per_package).toFixed(2)} € / U)</span>
+              </div>
+            )}
+
             <p className="info-description">{t(`p_${product.id}_desc`, {}, product.description)}</p>
 
-            {/* Custom Neon Tags */}
             {product.details.tags && product.details.tags.length > 0 && (
               <div className="modal-custom-tags">
                 {product.details.tags.map((tag, idx) => (

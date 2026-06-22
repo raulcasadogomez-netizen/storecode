@@ -16,7 +16,9 @@ export const products = [
       nicotine: [0, 10, 20],
       flavor: "Mango, Melocotón y Toque Ice",
       battery: "650mAh (Recargable USB-C)",
-      capacity: "14ml"
+      capacity: "14ml",
+      units_per_package: 10,
+      package_name: "caja"
     }
   },
   {
@@ -96,7 +98,9 @@ export const products = [
       nicotine: [0],
       flavor: "Grado Alimentario Certificado E942",
       battery: "N/A",
-      capacity: "50 cápsulas (8g N2O c/u)"
+      capacity: "50 cápsulas (8g N2O c/u)",
+      units_per_package: 50,
+      package_name: "caja"
     }
   },
   {
