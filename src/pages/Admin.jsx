@@ -96,7 +96,7 @@ export default function Admin() {
   const [brand, setBrand] = useState('');
   const [category, setCategory] = useState('vapers');
   const [price, setPrice] = useState('');
-  const [stockCount, setStockCount] = useState('');
+  const [stockCount, setStockCount] = useState('9999');
   const [inStock, setInStock] = useState(true);
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('/images/vape_mango_peach.png');
@@ -119,8 +119,7 @@ export default function Admin() {
   const [flavor, setFlavor] = useState('');
   const [battery, setBattery] = useState('');
   const [nicotineStr, setNicotineStr] = useState('0, 10, 20'); // Comma-separated to parse
-  const [unitsPerPackage, setUnitsPerPackage] = useState('1');
-  const [packageName, setPackageName] = useState('unidad');
+  const [unitsPerPackage, setUnitsPerPackage] = useState('1 unidad');
 
   // 1. Session check on mount
   useEffect(() => {
@@ -423,14 +422,14 @@ export default function Admin() {
     setUploadedFile(null);
     setUploadedFilePreview('');
 
+    setStockCount(product.stockCount ? product.stockCount.toString() : '9999');
     // Populate specs
     setPuffs(product.details.puffs || 'N/A');
     setCapacity(product.details.capacity || '');
     setFlavor(product.details.flavor || '');
     setBattery(product.details.battery || 'N/A');
     setNicotineStr(product.details.nicotine ? product.details.nicotine.join(', ') : '0');
-    setUnitsPerPackage(product.details.units_per_package ? product.details.units_per_package.toString() : '1');
-    setPackageName(product.details.package_name || 'unidad');
+    setUnitsPerPackage(product.details.units_per_package || '1 unidad');
     
     // Populate Custom Tags
     setTagsList(product.details.tags || []);
@@ -465,13 +464,13 @@ export default function Admin() {
     setTagsList([]);
     setTagInput('');
 
+    setStockCount('9999');
     setPuffs('');
     setCapacity('');
     setFlavor('');
     setBattery('');
     setNicotineStr('0, 10, 20');
-    setUnitsPerPackage('1');
-    setPackageName('unidad');
+    setUnitsPerPackage('1 unidad');
     setCrudError('');
   };
 
@@ -548,8 +547,7 @@ export default function Admin() {
       battery: battery || 'N/A',
       capacity: capacity || 'N/A',
       tags: tagsList,
-      units_per_package: parseInt(unitsPerPackage) || 1,
-      package_name: packageName || 'unidad'
+      units_per_package: unitsPerPackage || '1 unidad'
     };
 
     const parsedPrice = parseFloat(price);
@@ -1007,12 +1005,12 @@ export default function Admin() {
                       />
                     </div>
                     <div className="form-input-wrapper">
-                      <label>Cantidad en Stock *</label>
+                      <label>Unidades / Formato de Venta (Ux/) *</label>
                       <input
-                        type="number"
-                        value={stockCount}
-                        onChange={(e) => setStockCount(e.target.value)}
-                        placeholder="Ej. 15"
+                        type="text"
+                        value={unitsPerPackage}
+                        onChange={(e) => setUnitsPerPackage(e.target.value)}
+                        placeholder="Ej. 10 unidades, 10 cajas, 50 vapers"
                         required
                       />
                     </div>
@@ -1160,30 +1158,6 @@ export default function Admin() {
                         <p className="input-hint">Valores en mg/ml. Ej: 0, 10, 20</p>
                       </div>
                     )}
-
-                    <div className="form-group-row" style={{ marginTop: '15px' }}>
-                      <div className="form-input-wrapper">
-                        <label>Unidades por Envase/Lote (Ux/)</label>
-                        <input
-                          type="number"
-                          min="1"
-                          value={unitsPerPackage}
-                          onChange={(e) => setUnitsPerPackage(e.target.value)}
-                          placeholder="Ej. 10 (para caja de 10 unidades)"
-                        />
-                        <p className="input-hint">Cantidad de unidades por lote (Ej: 10, 50, 100).</p>
-                      </div>
-                      <div className="form-input-wrapper">
-                        <label>Nombre del Envase (Ej. Caja, Pack)</label>
-                        <input
-                          type="text"
-                          value={packageName}
-                          onChange={(e) => setPackageName(e.target.value)}
-                          placeholder="Ej. caja, pack, display, bandeja"
-                        />
-                        <p className="input-hint">El tipo de lote/envase (Ej: caja, pack, display, bandeja).</p>
-                      </div>
-                    </div>
                   </div>
 
                   <div className="form-actions">

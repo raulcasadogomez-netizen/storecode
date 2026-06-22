@@ -133,13 +133,7 @@ export default function Storefront() {
     let updatedCart = [...cartItems];
 
     if (existingIndex > -1) {
-      const newQty = updatedCart[existingIndex].quantity + quantity;
-      if (newQty <= product.stockCount) {
-        updatedCart[existingIndex].quantity = newQty;
-      } else {
-        updatedCart[existingIndex].quantity = product.stockCount;
-        alert(`Lo sentimos, solo hay ${product.stockCount} unidades disponibles en stock de este producto.`);
-      }
+      updatedCart[existingIndex].quantity += quantity;
     } else {
       updatedCart.push({
         id: product.id,
@@ -149,9 +143,7 @@ export default function Storefront() {
         selectedNicotine: selectedNic,
         hasNicotine: product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0,
         quantity: quantity,
-        stockCount: product.stockCount,
-        unitsPerPackage: product.details.units_per_package || 1,
-        packageName: product.details.package_name || 'unidad'
+        unitsPerPackage: product.details.units_per_package || '1 unidad'
       });
     }
 
@@ -170,10 +162,8 @@ export default function Storefront() {
 
       if (newQty <= 0) {
         updatedCart.splice(existingIndex, 1);
-      } else if (newQty <= updatedCart[existingIndex].stockCount) {
-        updatedCart[existingIndex].quantity = newQty;
       } else {
-        alert(`Llegaste al límite del stock disponible.`);
+        updatedCart[existingIndex].quantity = newQty;
       }
 
       saveCart(updatedCart);

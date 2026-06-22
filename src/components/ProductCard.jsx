@@ -5,6 +5,16 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
   const { name, brand, price, rating, reviews, image, inStock, details } = product;
   const { t } = useTranslation();
 
+  const getUnitPrice = () => {
+    if (!details.units_per_package) return null;
+    const num = parseInt(details.units_per_package);
+    if (!isNaN(num) && num > 1) {
+      return (price / num).toFixed(2);
+    }
+    return null;
+  };
+  const unitPrice = getUnitPrice();
+
   // Helper to render stars
   const renderStars = (ratingVal) => {
     const stars = [];
@@ -37,7 +47,6 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
 
       {/* Stock Label */}
       {!inStock && <div className="stock-badge-out">{t('stock_out')}</div>}
-      {inStock && product.stockCount <= 5 && <div className="stock-badge-low">{t('stock_low')}</div>}
 
       {/* Image Section */}
       <div className="product-card-image" onClick={() => onQuickView(product)}>
@@ -94,9 +103,9 @@ export default function ProductCard({ product, categoryName, onQuickView, onAddT
               <span className="amount">{price.toFixed(2)}</span>
             </div>
             <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', marginTop: '2px', fontWeight: 'bold' }}>{t('b2b_iva_tag')}</span>
-            {details.units_per_package > 1 && (
+            {details.units_per_package && details.units_per_package !== '1 unidad' && (
               <span style={{ fontSize: '0.68rem', color: 'var(--neon-cyan)', marginTop: '4px', fontWeight: '700', letterSpacing: '0.02em' }}>
-                {details.units_per_package} U/{details.package_name || 'unidad'} ({((price) / details.units_per_package).toFixed(2)} €/U)
+                Ux/ {details.units_per_package} {unitPrice && `(${unitPrice} €/U)`}
               </span>
             )}
           </div>
