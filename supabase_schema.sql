@@ -185,3 +185,50 @@ VALUES
 ('coleccionismo', 'Coleccionismo')
 ON CONFLICT (id) DO NOTHING;
 
+-- 10. Crear tabla de textos del sitio
+CREATE TABLE IF NOT EXISTS public.site_texts (
+    id TEXT PRIMARY KEY,
+    es TEXT NOT NULL,
+    en TEXT,
+    zh TEXT,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Habilitar RLS en site_texts
+ALTER TABLE public.site_texts ENABLE ROW LEVEL SECURITY;
+
+-- Políticas de RLS para site_texts
+DROP POLICY IF EXISTS "Permitir lectura publica de textos" ON public.site_texts;
+CREATE POLICY "Permitir lectura publica de textos" 
+ON public.site_texts 
+FOR SELECT 
+USING (true);
+
+DROP POLICY IF EXISTS "Permitir escrituras de textos a usuarios autenticados" ON public.site_texts;
+CREATE POLICY "Permitir escrituras de textos a usuarios autenticados" 
+ON public.site_texts 
+FOR ALL 
+TO authenticated
+USING (true)
+WITH CHECK (true);
+
+-- Semilla de textos del Hero
+INSERT INTO public.site_texts (id, es, en, zh) VALUES
+('hero_b2b_tag', 'DISTRIBUIDORA MAYORISTA B2B', 'B2B WHOLESALE DISTRIBUTOR', 'B2B 批发分销商'),
+('hero_title_part1', 'Importación Mayorista', 'Wholesale Import', '批发进口渠道'),
+('hero_title_part2', 'Directo A Tu Negocio', 'Direct To Your Business', '直达您的店铺'),
+('hero_desc', 'Distribución exclusiva de las marcas internacionales líderes para profesionales, autónomos y comercios. Vapeo homologado, óxido nitroso certificado para hostelería y coleccionables premium con pedidos directos vía WhatsApp.', 'Exclusive distribution of leading international brands for professionals, independent workers, and retailers. Certified vaping devices, hospitality-certified culinary nitrous oxide, and premium collectibles with direct WhatsApp ordering.', '为零售商、自由职业者及商店提供国际知名品牌的独家代理与分销。符合法规的电子烟、餐饮认证的一氧化二氮，以及限量级艺术收藏品，支持通过 WhatsApp 直接下单。'),
+('hero_btn_catalog', 'Ver Catálogo B2B', 'View B2B Catalog', '浏览 B2B 目录'),
+('hero_btn_guarantees', 'Garantías y Leyes', 'Guarantees & Laws', '合规与保证'),
+('hero_usp1_title', 'Envío Directo', 'Direct Shipping', '本地直邮'),
+('hero_usp1_desc', 'Express 24h a península', 'Express 24h to peninsula', '半岛地区 24 小时闪送'),
+('hero_usp2_title', 'Calidad Importada', 'Imported Quality', '进口品质'),
+('hero_usp2_desc', 'Homologado TPD y E942', 'TPD and E942 Approved', '符合 TPD 及 E942 认证'),
+('hero_usp3_title', 'Catálogo Exclusivo', 'Exclusive Catalog', '独家选品'),
+('hero_usp3_desc', 'Piezas y marcas de tendencia', 'Trend-setting parts and brands', '潮流新品与限量版珍品')
+ON CONFLICT (id) DO UPDATE SET
+  es = EXCLUDED.es,
+  en = EXCLUDED.en,
+  zh = EXCLUDED.zh;
+
+

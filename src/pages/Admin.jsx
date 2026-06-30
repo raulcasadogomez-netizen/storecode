@@ -1,6 +1,96 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database, UploadCloud, X } from 'lucide-react';
+import { useTranslation } from '../i18n/LanguageContext';
+import { translations } from '../i18n/translations';
+
+// List of editable texts keys for Admin panel
+const EDITABLE_TEXT_KEYS = [
+  {
+    key: 'hero_b2b_tag',
+    label: 'Etiqueta superior del Hero',
+    section: 'Hero',
+    type: 'input',
+    description: 'Etiqueta de color verde/azul que aparece arriba del título principal.'
+  },
+  {
+    key: 'hero_title_part1',
+    label: 'Título - Parte 1',
+    section: 'Hero',
+    type: 'input',
+    description: 'Primera línea del título principal (blanco).'
+  },
+  {
+    key: 'hero_title_part2',
+    label: 'Título - Parte 2 (Neón)',
+    section: 'Hero',
+    type: 'input',
+    description: 'Segunda línea del título principal (con degradado neón).'
+  },
+  {
+    key: 'hero_desc',
+    label: 'Descripción del Hero',
+    section: 'Hero',
+    type: 'textarea',
+    description: 'Párrafo descriptivo debajo del título principal.'
+  },
+  {
+    key: 'hero_btn_catalog',
+    label: 'Botón de Catálogo',
+    section: 'Hero',
+    type: 'input',
+    description: 'Texto del botón principal que lleva al catálogo.'
+  },
+  {
+    key: 'hero_btn_guarantees',
+    label: 'Botón de Garantías',
+    section: 'Hero',
+    type: 'input',
+    description: 'Texto del enlace secundario al proceso de importación.'
+  },
+  {
+    key: 'hero_usp1_title',
+    label: 'USP 1 - Título',
+    section: 'Hero (Garantías)',
+    type: 'input',
+    description: 'Título del primer beneficio (ej. Envío Directo).'
+  },
+  {
+    key: 'hero_usp1_desc',
+    label: 'USP 1 - Descripción',
+    section: 'Hero (Garantías)',
+    type: 'input',
+    description: 'Texto secundario del primer beneficio.'
+  },
+  {
+    key: 'hero_usp2_title',
+    label: 'USP 2 - Título',
+    section: 'Hero (Garantías)',
+    type: 'input',
+    description: 'Título del segundo beneficio (ej. Calidad Importada).'
+  },
+  {
+    key: 'hero_usp2_desc',
+    label: 'USP 2 - Descripción',
+    section: 'Hero (Garantías)',
+    type: 'input',
+    description: 'Texto secundario del segundo beneficio.'
+  },
+  {
+    key: 'hero_usp3_title',
+    label: 'USP 3 - Título',
+    section: 'Hero (Garantías)',
+    type: 'input',
+    description: 'Título del tercer beneficio (ej. Catálogo Exclusivo).'
+  },
+  {
+    key: 'hero_usp3_desc',
+    label: 'USP 3 - Descripción',
+    section: 'Hero (Garantías)',
+    type: 'input',
+    description: 'Texto secundario del tercer beneficio.'
+  }
+];
 
 // Utility to compress image files client-side before uploading or saving as Base64
 const compressImage = (file, maxWidth = 800, maxHeight = 800, quality = 0.75) => {
@@ -75,8 +165,10 @@ export default function Admin() {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
 
+  const { refreshDbTranslations } = useTranslation();
+
   // Navigation State
-  const [activeTab, setActiveTab] = useState('products'); // 'products' or 'categories'
+  const [activeTab, setActiveTab] = useState('products'); // 'products', 'categories', or 'texts'
 
   // CRUD Product State
   const [products, setProducts] = useState([]);
@@ -89,6 +181,19 @@ export default function Admin() {
   const [categoryError, setCategoryError] = useState('');
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isSavingCategory, setIsSavingCategory] = useState(false);
+
+  // Site Texts State
+  const [siteTexts, setSiteTexts] = useState([]);
+  const [selectedTextKey, setSelectedTextKey] = useState('hero_title_part1');
+  const [textsLoading, setTextsLoading] = useState(true);
+  const [isSavingText, setIsSavingText] = useState(false);
+  const [textError, setTextError] = useState('');
+  const [textSuccess, setTextSuccess] = useState('');
+
+  // Form fields for editing translations
+  const [textEs, setTextEs] = useState('');
+  const [textEn, setTextEn] = useState('');
+  const [textZh, setTextZh] = useState('');
   
   // Form Product State
   const [editingId, setEditingId] = useState(null); // If null, we are in CREATE mode. Else EDIT mode.
@@ -219,12 +324,95 @@ export default function Admin() {
     }
   };
 
+  const fetchSiteTexts = async () => {
+    setTextsLoading(true);
+    setTextError('');
+    try {
+      if (!supabase) {
+        setSiteTexts([]);
+        setTextsLoading(false);
+        return;
+      }
+      const { data, error } = await supabase
+        .from('site_texts')
+        .select('*');
+      if (error) throw error;
+      setSiteTexts(data || []);
+    } catch (err) {
+      console.error("Error fetching site texts:", err);
+      setTextError("Error al cargar los textos desde la base de datos.");
+    } finally {
+      setTextsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (session) {
       fetchProducts();
       fetchCategories();
+      fetchSiteTexts();
     }
   }, [session]);
+
+  useEffect(() => {
+    if (activeTab === 'texts' && session) {
+      fetchSiteTexts();
+    }
+  }, [activeTab, session]);
+
+  useEffect(() => {
+    const currentText = siteTexts.find(t => t.id === selectedTextKey);
+    if (currentText) {
+      setTextEs(currentText.es || '');
+      setTextEn(currentText.en || '');
+      setTextZh(currentText.zh || '');
+    } else {
+      // fallback to static translations
+      setTextEs(translations['es']?.[selectedTextKey] || '');
+      setTextEn(translations['en']?.[selectedTextKey] || '');
+      setTextZh(translations['zh']?.[selectedTextKey] || '');
+    }
+    setTextError('');
+    setTextSuccess('');
+  }, [selectedTextKey, siteTexts]);
+
+  const handleSaveText = async (e) => {
+    e.preventDefault();
+    setIsSavingText(true);
+    setTextError('');
+    setTextSuccess('');
+
+    try {
+      if (!supabase) {
+        setTextError("El cliente Supabase no está conectado.");
+        setIsSavingText(false);
+        return;
+      }
+
+      const { error } = await supabase
+        .from('site_texts')
+        .upsert({
+          id: selectedTextKey,
+          es: textEs,
+          en: textEn || null,
+          zh: textZh || null,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      setTextSuccess("Texto guardado correctamente en la base de datos.");
+      await fetchSiteTexts();
+      if (refreshDbTranslations) {
+        await refreshDbTranslations();
+      }
+    } catch (err) {
+      console.error("Error saving site text:", err);
+      setTextError(err.message || "Error al guardar el texto.");
+    } finally {
+      setIsSavingText(false);
+    }
+  };
 
   // 2.5. Category Save / Delete handlers
   const handleSaveCategory = async (e) => {
@@ -746,11 +934,18 @@ export default function Admin() {
           >
             Categorías
           </button>
+          <button 
+            type="button"
+            className={`admin-nav-tab-btn ${activeTab === 'texts' ? 'active' : ''}`}
+            onClick={() => setActiveTab('texts')}
+          >
+            Textos de la Web
+          </button>
         </div>
 
         {/* Dashboard Grid */}
         <div className="dashboard-grid-layout">
-          {activeTab === 'products' ? (
+          {activeTab === 'products' && (
             <>
               {/* LEFT: PRODUCTS LIST */}
               <div className="dashboard-column list-column">
@@ -1163,7 +1358,9 @@ export default function Admin() {
                 </form>
               </div>
             </>
-          ) : (
+          )}
+
+          {activeTab === 'categories' && (
             <>
               {/* LEFT: CATEGORIES LIST */}
               <div className="dashboard-column list-column">
@@ -1276,6 +1473,167 @@ export default function Admin() {
                     </button>
                   </div>
                 </form>
+              </div>
+            </>
+          )}
+
+          {activeTab === 'texts' && (
+            <>
+              {/* LEFT: TEXTS LIST */}
+              <div className="dashboard-column list-column">
+                <div className="panel-header">
+                  <h2>Textos del Sitio ({EDITABLE_TEXT_KEYS.length})</h2>
+                  <button className="btn-refresh" onClick={fetchSiteTexts} title="Recargar">
+                    <RefreshCw size={16} />
+                  </button>
+                </div>
+
+                {textsLoading ? (
+                  <div className="panel-loading">
+                    <div className="spinner-glow small-spinner"></div>
+                    <p>Cargando textos...</p>
+                  </div>
+                ) : (
+                  <div className="admin-table-wrapper" style={{ padding: '0' }}>
+                    <div className="texts-list-sidebar">
+                      {EDITABLE_TEXT_KEYS.map((item) => {
+                        const dbVal = siteTexts.find(t => t.id === item.key);
+                        const isEdited = !!dbVal;
+                        const isSelected = selectedTextKey === item.key;
+                        return (
+                          <div 
+                            key={item.key}
+                            className={`text-sidebar-item ${isSelected ? 'active' : ''}`}
+                            onClick={() => setSelectedTextKey(item.key)}
+                          >
+                            <div className="item-label-row">
+                              <strong>{item.label}</strong>
+                              {isEdited ? (
+                                <span className="status-dot edited" title="Modificado en base de datos">DB</span>
+                              ) : (
+                                <span className="status-dot default" title="Usando valor estático local">Local</span>
+                              )}
+                            </div>
+                            <code className="item-key">{item.key}</code>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* RIGHT: EDIT TEXT FORM */}
+              <div className="dashboard-column form-column">
+                {(() => {
+                  const currentMeta = EDITABLE_TEXT_KEYS.find(t => t.key === selectedTextKey);
+                  if (!currentMeta) return null;
+                  return (
+                    <>
+                      <div className="panel-header">
+                        <h2>Editar Texto: {currentMeta.label}</h2>
+                      </div>
+
+                      {textError && (
+                        <div className="crud-error-banner" style={{ marginBottom: '1.5rem' }}>
+                          <AlertCircle size={20} />
+                          <span>{textError}</span>
+                        </div>
+                      )}
+
+                      {textSuccess && (
+                        <div className="crud-success-banner" style={{ marginBottom: '1.5rem', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.3)', color: '#25d366', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Check size={20} />
+                          <span>{textSuccess}</span>
+                        </div>
+                      )}
+
+                      <div className="text-key-description-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)', marginBottom: '1.5rem' }}>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                          <strong>Sección:</strong> {currentMeta.section}
+                        </p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                          {currentMeta.description}
+                        </p>
+                      </div>
+
+                      <form onSubmit={handleSaveText} className="admin-product-form">
+                        <div className="form-input-wrapper">
+                          <label>Español (ES) *</label>
+                          {currentMeta.type === 'textarea' ? (
+                            <textarea
+                              rows={4}
+                              value={textEs}
+                              onChange={(e) => setTextEs(e.target.value)}
+                              required
+                              placeholder="Texto en español"
+                              style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', borderRadius: '6px', color: 'white', padding: '0.75rem', fontFamily: 'inherit', resize: 'vertical' }}
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              value={textEs}
+                              onChange={(e) => setTextEs(e.target.value)}
+                              required
+                              placeholder="Texto en español"
+                            />
+                          )}
+                        </div>
+
+                        <div className="form-input-wrapper">
+                          <label>Inglés (EN)</label>
+                          {currentMeta.type === 'textarea' ? (
+                            <textarea
+                              rows={4}
+                              value={textEn}
+                              onChange={(e) => setTextEn(e.target.value)}
+                              placeholder="Texto en inglés (si queda vacío se usará la versión en español)"
+                              style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', borderRadius: '6px', color: 'white', padding: '0.75rem', fontFamily: 'inherit', resize: 'vertical' }}
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              value={textEn}
+                              onChange={(e) => setTextEn(e.target.value)}
+                              placeholder="Texto en inglés (si queda vacío se usará la versión en español)"
+                            />
+                          )}
+                        </div>
+
+                        <div className="form-input-wrapper">
+                          <label>Chino (ZH)</label>
+                          {currentMeta.type === 'textarea' ? (
+                            <textarea
+                              rows={4}
+                              value={textZh}
+                              onChange={(e) => setTextZh(e.target.value)}
+                              placeholder="Texto en chino (si queda vacío se usará la versión en español)"
+                              style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', borderRadius: '6px', color: 'white', padding: '0.75rem', fontFamily: 'inherit', resize: 'vertical' }}
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              value={textZh}
+                              onChange={(e) => setTextZh(e.target.value)}
+                              placeholder="Texto en chino (si queda vacío se usará la versión en español)"
+                            />
+                          )}
+                        </div>
+
+                        <div className="form-actions">
+                          <button type="submit" className="btn-primary-neon form-save-btn" disabled={isSavingText}>
+                            {isSavingText ? (
+                              <RefreshCw size={18} className="animate-spin" style={{ marginRight: '8px' }} />
+                            ) : (
+                              <Check size={18} style={{ marginRight: '8px' }} />
+                            )}
+                            <span>Guardar Cambios</span>
+                          </button>
+                        </div>
+                      </form>
+                    </>
+                  );
+                })()}
               </div>
             </>
           )}

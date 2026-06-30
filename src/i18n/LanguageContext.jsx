@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { translations } from './translations';
+import { supabase } from '../lib/supabaseClient';
 
 const LanguageContext = createContext(null);
 
@@ -24,6 +25,37 @@ export const LanguageProvider = ({ children }) => {
     return 'es';
   });
 
+  const [dbTranslations, setDbTranslations] = useState({});
+
+  const fetchDbTranslations = async () => {
+    if (!supabase) return;
+    try {
+      const { data, error } = await supabase
+        .from('site_texts')
+        .select('*');
+      
+      if (error) throw error;
+      
+      if (data) {
+        const dict = {};
+        data.forEach((row) => {
+          dict[row.id] = {
+            es: row.es,
+            en: row.en || row.es,
+            zh: row.zh || row.es
+          };
+        });
+        setDbTranslations(dict);
+      }
+    } catch (err) {
+      console.warn("Failed to fetch site_texts from Supabase, using local translations:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchDbTranslations();
+  }, []);
+
   const changeLanguage = (lang) => {
     if (['es', 'zh', 'en'].includes(lang)) {
       setLanguage(lang);
@@ -32,10 +64,20 @@ export const LanguageProvider = ({ children }) => {
   };
 
   const t = (key, data = {}, fallback = undefined) => {
-    let translation = translations[language]?.[key];
+    // 1. Check database translations first
+    let translation = dbTranslations[key]?.[language];
+
+    // 2. Fallback to static local translations in chosen language
+    if (translation === undefined) {
+      translation = translations[language]?.[key];
+    }
+
+    // 3. Fallback to Spanish static local translations
     if (translation === undefined) {
       translation = translations['es']?.[key];
     }
+
+    // 4. Final fallback
     if (translation === undefined) {
       translation = fallback !== undefined ? fallback : key;
     }
@@ -50,9 +92,8 @@ export const LanguageProvider = ({ children }) => {
     return translation;
   };
 
-
   return (
-    <LanguageContext.Provider value={{ language, changeLanguage, t }}>
+    <LanguageContext.Provider value={{ language, changeLanguage, t, refreshDbTranslations: fetchDbTranslations }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -65,3 +106,4 @@ export const useTranslation = () => {
   }
   return context;
 };
+
