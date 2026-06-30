@@ -3,7 +3,7 @@ import ProductCard from './ProductCard';
 import { SlidersHorizontal } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 
-export default function ProductGrid({ products, categories = [], searchQuery, onQuickView, onAddToCart }) {
+export default function ProductGrid({ products, categories = [], searchQuery, onQuickView }) {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [sortBy, setSortBy] = useState('recommended');
   const { t } = useTranslation();
@@ -116,7 +116,6 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
               product={product}
               categoryName={getCategoryName(product.category)}
               onQuickView={onQuickView}
-              onAddToCart={onAddToCart}
             />
           ))}
         </div>

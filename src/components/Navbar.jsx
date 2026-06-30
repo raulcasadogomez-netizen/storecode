@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, ShoppingCart, Globe, Menu, X } from 'lucide-react';
+import { Search, Globe, Menu, X } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 
-export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChange }) {
+export default function Navbar({ searchVal, onSearchChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { language, changeLanguage, t } = useTranslation();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -90,19 +90,10 @@ export default function Navbar({ cartCount, onCartClick, searchVal, onSearchChan
           <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>{t('nav_import')}</a>
           <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>{t('nav_about')}</a>
           <LanguageSelector />
-          <button className="cart-trigger-btn" onClick={onCartClick}>
-            <ShoppingCart className="cart-icon" />
-            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-          </button>
         </div>
 
         {/* Mobile Buttons */}
         <div className="navbar-mobile-controls">
-          <button className="cart-trigger-btn mobile-only" onClick={onCartClick}>
-            <ShoppingCart className="cart-icon" />
-            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-          </button>
-          
           <button 
             className="mobile-menu-toggle" 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

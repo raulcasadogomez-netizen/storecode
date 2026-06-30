@@ -3,7 +3,6 @@ import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import ProductGrid from '../components/ProductGrid';
 import ProductModal from '../components/ProductModal';
-import CartDrawer from '../components/CartDrawer';
 import AgeVerificationModal from '../components/AgeVerificationModal';
 import { supabase } from '../lib/supabaseClient';
 import { useTranslation } from '../i18n/LanguageContext';
@@ -13,8 +12,6 @@ export default function Storefront() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cartItems, setCartItems] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -105,83 +102,7 @@ export default function Storefront() {
     fetchData();
   }, []);
 
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem('vapex-cart');
-    if (savedCart) {
-      try {
-        setCartItems(JSON.parse(savedCart));
-      } catch (e) {
-        console.error("Error loading cart from localStorage", e);
-      }
-    }
-  }, []);
-
-  // Save cart to localStorage when it changes
-  const saveCart = (items) => {
-    setCartItems(items);
-    localStorage.setItem('vapex-cart', JSON.stringify(items));
-  };
-
-  const handleAddToCart = (product, quantity = 1, nicotine = null) => {
-    const selectedNic = nicotine !== null ? nicotine : (product.details.nicotine ? product.details.nicotine[0] : 0);
-
-    const existingIndex = cartItems.findIndex(
-      (item) => item.id === product.id && item.selectedNicotine === selectedNic
-    );
-
-    let updatedCart = [...cartItems];
-
-    if (existingIndex > -1) {
-      updatedCart[existingIndex].quantity += quantity;
-    } else {
-      updatedCart.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        selectedNicotine: selectedNic,
-        hasNicotine: product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0,
-        quantity: quantity,
-        unitsPerPackage: product.details.units_per_package || '1 unidad'
-      });
-    }
-
-    saveCart(updatedCart);
-    setIsCartOpen(true);
-  };
-
-  const handleUpdateQty = (productId, nicotine, delta) => {
-    const existingIndex = cartItems.findIndex(
-      (item) => item.id === productId && item.selectedNicotine === nicotine
-    );
-
-    if (existingIndex > -1) {
-      let updatedCart = [...cartItems];
-      const newQty = updatedCart[existingIndex].quantity + delta;
-
-      if (newQty <= 0) {
-        updatedCart.splice(existingIndex, 1);
-      } else {
-        updatedCart[existingIndex].quantity = newQty;
-      }
-
-      saveCart(updatedCart);
-    }
-  };
-
-  const handleRemoveItem = (productId, nicotine) => {
-    const updatedCart = cartItems.filter(
-      (item) => !(item.id === productId && item.selectedNicotine === nicotine)
-    );
-    saveCart(updatedCart);
-  };
-
-  const handleClearCart = () => {
-    saveCart([]);
-  };
-
-  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  // No cart management needed. Purchases are processed via WhatsApp direct checkout.
 
   return (
     <>
@@ -190,8 +111,6 @@ export default function Storefront() {
 
       {/* Main Navigation */}
       <Navbar 
-        cartCount={cartCount} 
-        onCartClick={() => setIsCartOpen(true)} 
         searchVal={searchQuery} 
         onSearchChange={setSearchQuery} 
       />
@@ -214,7 +133,6 @@ export default function Storefront() {
             categories={categories}
             searchQuery={searchQuery} 
             onQuickView={setSelectedProduct} 
-            onAddToCart={handleAddToCart} 
           />
         )}
 
@@ -325,18 +243,8 @@ export default function Storefront() {
         <ProductModal 
           product={selectedProduct} 
           onClose={() => setSelectedProduct(null)} 
-          onAddToCart={handleAddToCart} 
         />
       )}
-
-      <CartDrawer 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cartItems={cartItems} 
-        onUpdateQty={handleUpdateQty} 
-        onRemoveItem={handleRemoveItem} 
-        onClearCart={handleClearCart} 
-      />
     </>
   );
 }

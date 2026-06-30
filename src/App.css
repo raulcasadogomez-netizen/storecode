@@ -3099,8 +3099,70 @@
   width: 100%;
   box-shadow: none;
 }
+/* WhatsApp Buy Buttons styling */
+.whatsapp-buy-btn {
+  background: rgba(37, 211, 102, 0.1);
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  color: #25d366;
+  padding: 0.6rem 1.1rem;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: var(--transition);
+}
 
+.whatsapp-buy-btn svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
 
+.whatsapp-buy-btn:hover:not(:disabled) {
+  background: #25d366;
+  border-color: #25d366;
+  color: #0b0917;
+  box-shadow: 0 0 15px rgba(37, 211, 102, 0.45);
+}
 
+.whatsapp-buy-btn:disabled {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--glass-border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
 
+/* Modal WhatsApp Button styling */
+.modal-whatsapp-btn {
+  flex: 1;
+  height: 48px;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-whatsapp-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.modal-whatsapp-btn:hover:not(.disabled-btn) {
+  box-shadow: 0 0 20px rgba(37, 211, 102, 0.5);
+  transform: translateY(-2px);
+}
+
+.modal-whatsapp-btn:active {
+  transform: translateY(0);
+}
 
