@@ -247,3 +247,19 @@ ON CONFLICT (id) DO UPDATE SET
   es = EXCLUDED.es,
   en = EXCLUDED.en,
   zh = EXCLUDED.zh;
+
+-- Semilla de textos de la sección Sobre Nosotros
+INSERT INTO public.site_texts (id, es, en, zh) VALUES
+('about_title', 'Sobre VAPEX Import', 'About VAPEX Import', '关于 VAPEX Import'),
+('about_desc', 'Somos una importadora especializada fundada en 2026 con la misión de facilitar el acceso a productos internacionales exclusivos de alta demanda. Gestionamos directamente el transporte y los despachos aduaneros para ofrecer a nuestros clientes en España vapers de gama alta, óxido nitroso certificado para repostería profesional y piezas limitadas de coleccionismo con entrega express desde nuestro almacén local.', 'We are a specialized importer founded in 2026 with the mission of facilitating access to exclusive, high-demand international products. We directly handle shipping and customs clearance to offer our clients in Spain high-end vapes, certified nitrous oxide for professional pastry, and limited pieces of collectibles with express delivery from our local warehouse.', '我们是一家成立于 2026 年的专业进口分销企业，致力于消除贸易壁垒，使高端国际独家商品变得触手可及。我们绕过层层中间商直接与原厂对接物流与清关，为西班牙本土商户提供高端电子烟、烘焙专用高纯气罐和限量版潮流艺术收藏品，并从本地仓库进行闪电式发货。'),
+('about_stat1_num', '+10K', '+10K', '10K+'),
+('about_stat1_desc', 'Clientes Satisfechos', 'Satisfied Clients', '商户满意信任'),
+('about_stat2_num', '24H', '24H', '24小时'),
+('about_stat2_desc', 'Envío Express', 'Express Shipping', '本土特快发货'),
+('about_stat3_num', '100%', '100%', '100%'),
+('about_stat3_desc', 'Original y Seguro', 'Original & Safe', '原装正品保障')
+ON CONFLICT (id) DO UPDATE SET
+  es = EXCLUDED.es,
+  en = EXCLUDED.en,
+  zh = EXCLUDED.zh;
+

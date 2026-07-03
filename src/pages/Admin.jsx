@@ -159,6 +159,62 @@ const EDITABLE_TEXT_KEYS = [
     section: 'Proceso de Importación',
     type: 'textarea',
     description: 'Descripción del tercer punto de la lista.'
+  },
+  {
+    key: 'about_title',
+    label: 'Título de la Sección',
+    section: 'Sobre Nosotros',
+    type: 'input',
+    description: 'Título principal de la sección Sobre Nosotros.'
+  },
+  {
+    key: 'about_desc',
+    label: 'Descripción de la Sección',
+    section: 'Sobre Nosotros',
+    type: 'textarea',
+    description: 'Párrafo explicativo sobre la historia y misión del negocio.'
+  },
+  {
+    key: 'about_stat1_num',
+    label: 'Estadística 1 - Valor',
+    section: 'Sobre Nosotros (Métricas)',
+    type: 'input',
+    description: 'Valor numérico o destacado para la primera métrica (ej. +10K).'
+  },
+  {
+    key: 'about_stat1_desc',
+    label: 'Estadística 1 - Descripción',
+    section: 'Sobre Nosotros (Métricas)',
+    type: 'input',
+    description: 'Etiqueta o descripción de la primera métrica (ej. Clientes Satisfechos).'
+  },
+  {
+    key: 'about_stat2_num',
+    label: 'Estadística 2 - Valor',
+    section: 'Sobre Nosotros (Métricas)',
+    type: 'input',
+    description: 'Valor numérico o destacado para la segunda métrica (ej. 24H).'
+  },
+  {
+    key: 'about_stat2_desc',
+    label: 'Estadística 2 - Descripción',
+    section: 'Sobre Nosotros (Métricas)',
+    type: 'input',
+    description: 'Etiqueta o descripción de la segunda métrica (ej. Envío Express).'
+  },
+  {
+    key: 'about_stat3_num',
+    label: 'Estadística 3 - Valor',
+    section: 'Sobre Nosotros (Métricas)',
+    type: 'input',
+    description: 'Valor numérico o destacado para la tercera métrica (ej. 100%).'
+  },
+  {
+    key: 'about_stat3_desc',
+    label: 'Estadística 3 - Descripción',
+    section: 'Sobre Nosotros (Métricas)',
+    type: 'input',
+    description: 'Etiqueta o descripción de la tercera métrica (ej. Original y Seguro).'
   }
 ];
 
