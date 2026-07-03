@@ -231,4 +231,19 @@ ON CONFLICT (id) DO UPDATE SET
   en = EXCLUDED.en,
   zh = EXCLUDED.zh;
 
-
+-- Semilla de textos de la sección Proceso de Importación
+INSERT INTO public.site_texts (id, es, en, zh) VALUES
+('exp_tag', 'PROCESO DE IMPORTACIÓN', 'IMPORTATION PROCESS', '进口与通关流程'),
+('exp_title_part1', 'Garantías de ', 'Guarantees of ', '我们的 '),
+('exp_title_purple', 'VAPEX Import', 'VAPEX Import', 'VAPEX 进口保障'),
+('exp_desc', 'Nos encargamos de todo el proceso de importación y aduanas para traer a España los artículos más exclusivos y de alta demanda del mercado internacional. Garantizamos la trazabilidad total y el cumplimiento legal de cada producto.', 'We manage the entire import and customs clearance process to bring Spain the most exclusive and highly demanded items from the international market. We guarantee full traceability and legal compliance for each product.', '我们全权负责所有进口、清关及商检手续，为西班牙市场引入最独特、高品质、高需求的国际热销商品。保障每一件商品的百分百可追溯性 y 合法合规。'),
+('exp_bullet1_title', 'Regulación Europea TPD:', 'European TPD Regulation:', '欧盟 TPD 烟草指令合规：'),
+('exp_bullet1_desc', ' Todos los vapers cumplen estrictamente con la directiva europea de tabaco y pureza.', ' All vapes comply strictly with the European tobacco directive and purity standards.', ' 所有电子烟产品均严格执行欧盟烟草指令与纯度标准。'),
+('exp_bullet2_title', 'Pureza Certificada E942:', 'Certified Purity E942:', 'E942 食品级纯度认证：'),
+('exp_bullet2_desc', ' Nuestro óxido nitroso culinario posee certificación de calidad alimentaria para cocina gourmet.', ' Our culinary nitrous oxide carries food-grade quality certification for gourmet kitchens.', ' 我们的美食一氧化二氮具备完整的食品级检测证书，可安全用于高端西点及创意分子料理。'),
+('exp_bullet3_title', 'Coleccionables Verificados:', 'Verified Collectibles:', '官方原装收藏品认证：'),
+('exp_bullet3_desc', ' Cada artículo de colección es de importación genuina y seleccionado por su estado premium.', ' Each collectible item is of genuine import origin and selected for its premium condition.', ' 每一件潮流收藏品均源自正规原产地进口，经过专家品质核验，保证完美成色。')
+ON CONFLICT (id) DO UPDATE SET
+  es = EXCLUDED.es,
+  en = EXCLUDED.en,
+  zh = EXCLUDED.zh;

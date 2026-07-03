@@ -89,6 +89,76 @@ const EDITABLE_TEXT_KEYS = [
     section: 'Hero (Garantías)',
     type: 'input',
     description: 'Texto secundario del tercer beneficio.'
+  },
+  {
+    key: 'exp_tag',
+    label: 'Etiqueta superior',
+    section: 'Proceso de Importación',
+    type: 'input',
+    description: 'Etiqueta morada pequeña en la parte superior (ej. PROCESO DE IMPORTACIÓN).'
+  },
+  {
+    key: 'exp_title_part1',
+    label: 'Título - Parte 1',
+    section: 'Proceso de Importación',
+    type: 'input',
+    description: 'Primera parte del título de la sección.'
+  },
+  {
+    key: 'exp_title_purple',
+    label: 'Título - Parte 2 (Morada)',
+    section: 'Proceso de Importación',
+    type: 'input',
+    description: 'Segunda parte del título de la sección (con estilo morado neón).'
+  },
+  {
+    key: 'exp_desc',
+    label: 'Descripción de la Sección',
+    section: 'Proceso de Importación',
+    type: 'textarea',
+    description: 'Párrafo principal de descripción del proceso de importación y aduanas.'
+  },
+  {
+    key: 'exp_bullet1_title',
+    label: 'Punto 1 - Título',
+    section: 'Proceso de Importación',
+    type: 'input',
+    description: 'Título del primer punto (ej. Regulación Europea TPD:).'
+  },
+  {
+    key: 'exp_bullet1_desc',
+    label: 'Punto 1 - Descripción',
+    section: 'Proceso de Importación',
+    type: 'textarea',
+    description: 'Descripción del primer punto de la lista.'
+  },
+  {
+    key: 'exp_bullet2_title',
+    label: 'Punto 2 - Título',
+    section: 'Proceso de Importación',
+    type: 'input',
+    description: 'Título del segundo punto (ej. Pureza Certificada E942:).'
+  },
+  {
+    key: 'exp_bullet2_desc',
+    label: 'Punto 2 - Descripción',
+    section: 'Proceso de Importación',
+    type: 'textarea',
+    description: 'Descripción del segundo punto de la lista.'
+  },
+  {
+    key: 'exp_bullet3_title',
+    label: 'Punto 3 - Título',
+    section: 'Proceso de Importación',
+    type: 'input',
+    description: 'Título del tercer punto (ej. Coleccionables Verificados:).'
+  },
+  {
+    key: 'exp_bullet3_desc',
+    label: 'Punto 3 - Descripción',
+    section: 'Proceso de Importación',
+    type: 'textarea',
+    description: 'Descripción del tercer punto de la lista.'
   }
 ];
 
