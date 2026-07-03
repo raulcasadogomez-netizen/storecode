@@ -215,6 +215,48 @@ const EDITABLE_TEXT_KEYS = [
     section: 'Sobre Nosotros (Métricas)',
     type: 'input',
     description: 'Etiqueta o descripción de la tercera métrica (ej. Original y Seguro).'
+  },
+  {
+    key: 'footer_warning_b2b',
+    label: 'Advertencia Legal (Banner inferior)',
+    section: 'Legales y Advertencias',
+    type: 'textarea',
+    description: 'Texto de advertencia sobre nicotina, óxido nitroso y normativas en el banner del pie de página.'
+  },
+  {
+    key: 'footer_brand_desc',
+    label: 'Descripción de marca (Pie de página)',
+    section: 'Legales y Advertencias',
+    type: 'textarea',
+    description: 'Resumen descriptivo de la empresa que se muestra debajo del logo en el footer.'
+  },
+  {
+    key: 'alert_legal_notice',
+    label: 'Aviso Legal (Mensaje emergente)',
+    section: 'Legales y Advertencias',
+    type: 'textarea',
+    description: 'Mensaje emergente que aparece al pulsar en "Aviso Legal" en el footer.'
+  },
+  {
+    key: 'alert_privacy_policy',
+    label: 'Política de Privacidad (Mensaje emergente)',
+    section: 'Legales y Advertencias',
+    type: 'textarea',
+    description: 'Mensaje emergente que aparece al pulsar en "Política de Privacidad" en el footer.'
+  },
+  {
+    key: 'alert_cookies_policy',
+    label: 'Política de Cookies (Mensaje emergente)',
+    section: 'Legales y Advertencias',
+    type: 'textarea',
+    description: 'Mensaje emergente que aparece al pulsar en "Política de Cookies" en el footer.'
+  },
+  {
+    key: 'alert_b2b_terms',
+    label: 'Términos y Condiciones B2B (Mensaje emergente)',
+    section: 'Legales y Advertencias',
+    type: 'textarea',
+    description: 'Mensaje emergente que aparece al pulsar en "Términos B2B" en el footer.'
   }
 ];
 

@@ -263,3 +263,17 @@ ON CONFLICT (id) DO UPDATE SET
   en = EXCLUDED.en,
   zh = EXCLUDED.zh;
 
+-- Semilla de textos Legales y Advertencias
+INSERT INTO public.site_texts (id, es, en, zh) VALUES
+('footer_warning_b2b', 'ADVERTENCIA B2B: Portal exclusivo de venta mayorista para profesionales. De acuerdo con el R.D. Ley 17/2017 de España, los vapers con nicotina solo se distribuyen a establecimientos físicos autorizados y no a consumidores finales. El óxido nitroso se comercializa estrictamente para hostelería y repostería culinaria; su inhalación con otros fines es peligrosa y está prohibida.', 'B2B WARNING: Exclusive wholesale portal for professionals. Under Spanish R.D. Ley 17/2017, nicotine vapes are only distributed to authorized physical establishments and not to end consumers. Nitrous oxide is marketed strictly for hospitality and culinary pastry; inhalation for other purposes is dangerous and prohibited.', 'B2B 批发警示：本网站为仅限商户使用的批发门户。根据西班牙 R.D. Ley 17/2017，含尼古丁电子烟只能分销给授权实体零售点，禁止向最终消费者直销。一氧化二氮仅限餐饮烘焙专业用途使用，吸食吸入该气体具有极高危险性且属于违法行为。'),
+('footer_brand_desc', 'Distribuidora e importadora mayorista online de vapeo premium, gases alimentarios y coleccionables.', 'Online wholesale distributor and importer of premium vaping, culinary gas, and limited collectibles.', '一站式高端电子烟、食品级特种气体及潮流限量艺术品大宗进口批发分销平台。'),
+('alert_legal_notice', 'AVISO LEGAL:\nEste sitio web es operado por VAPEX Import S.L., con CIF B-12345678, domicilio social en Madrid, España. Portal de comercio electrónico exclusivo para profesionales (B2B).', 'LEGAL NOTICE:\nThis website is operated by VAPEX Import S.L., CIF B-12345678, registered address in Madrid, Spain. Exclusive e-commerce portal for professionals (B2B).', '法律声明：\n本网站由 VAPEX Import S.L. 运营。注册地址位于西班牙马德里，税号 CIF B-12345678。本网站属于专属 B2B 商户电子商务平台。'),
+('alert_privacy_policy', 'POLÍTICA DE PRIVACIDAD:\nEn cumplimiento del RGPD, tus datos personales de contacto facilitados para la tramitación de pedidos a través de WhatsApp son procesados con la única finalidad de facturación y envío comercial.', 'PRIVACY POLICY:\nIn compliance with GDPR, your personal contact details provided for order processing through WhatsApp are processed solely for billing and commercial shipping purposes.', '隐私政策：\n根据 GDPR 规范，您为了通过 WhatsApp 进行订单结算而提交 de 商业联系数据，将仅用于发票开具及商业物流派送 de 目的进行处理。'),
+('alert_cookies_policy', 'POLÍTICA DE COOKIES:\nEste sitio web utiliza almacenamiento técnico obligatorio (local storage) para gestionar tu verificación de edad y tu carrito de compras de forma anónima.', 'COOKIES POLICY:\nThis website uses required technical local storage to manage your age verification and your shopping cart anonymously.', 'Cookie 政策：\n本网站仅使用必要 de 技术型本地存储 (local storage) 以匿名方式管理您的年龄验证状态以及购物车内 de 商品。'),
+('alert_b2b_terms', 'TÉRMINOS Y CONDICIONES B2B:\nTodas las ventas se gestionan mediante cierre comercial por WhatsApp. Se requiere acreditación fiscal (Modelo 036 o IAE) para validar transacciones mayoristas.', 'B2B TERMS AND CONDITIONS:\nAll sales are completed commercial closing via WhatsApp. Fiscal credentials (Model 036 or IAE) are required to validate wholesale transactions.', 'B2B 条款与条件：\n所有订单最终都通过 WhatsApp 确认闭环交易。商户须提供税务证明 (Modelo 036 或 IAE) 以验证大宗批发资质。')
+ON CONFLICT (id) DO UPDATE SET
+  es = EXCLUDED.es,
+  en = EXCLUDED.en,
+  zh = EXCLUDED.zh;
+
+
