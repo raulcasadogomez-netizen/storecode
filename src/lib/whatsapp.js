@@ -26,3 +26,16 @@ export function handleBuyViaWhatsApp(product, quantity = 1, nicotineVal = null, 
   const link = getWhatsAppLink(product, quantity, nicotineVal, t);
   window.open(link, '_blank', 'noopener,noreferrer');
 }
+
+export function getGeneralWhatsAppLink(t) {
+  const rawPhone = import.meta.env.VITE_WHATSAPP_PHONE || "+34 900 123 456";
+  const phone = rawPhone.replace(/[^0-9]/g, '');
+  const message = t('whatsapp_general_msg', {}, 'Hola VAPEX, me gustaría obtener más información sobre sus productos de importación mayorista B2B.');
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+}
+
+export function handleGeneralWhatsAppContact(t) {
+  const link = getGeneralWhatsAppLink(t);
+  window.open(link, '_blank', 'noopener,noreferrer');
+}
+
