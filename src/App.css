@@ -3297,3 +3297,22 @@
   }
 }
 
+/* Custom Logo Image Styles */
+.logo-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(102, 252, 241, 0.35));
+  animation: float 4s ease-in-out infinite;
+}
+
+.modal-logo-img {
+  height: 90px;
+  width: auto;
+  object-fit: contain;
+  margin: 0 auto;
+  filter: drop-shadow(0 0 15px rgba(102, 252, 241, 0.45));
+  display: block;
+}
+
+

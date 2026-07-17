@@ -1003,9 +1003,12 @@ export default function Admin() {
         </a>
 
         <div className="admin-login-card">
-          <div className="login-logo">
-            <span className="logo-neon-text">VAPEX</span>
-            <span className="badge-admin">ADMIN</span>
+          <div className="login-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+            <img src="/images/logovapers.webp" alt="VAPEX Logo" className="modal-logo-img" style={{ height: '80px' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span className="logo-neon-text" style={{ fontSize: '2rem' }}>VAPEX</span>
+              <span className="badge-admin">ADMIN</span>
+            </div>
           </div>
 
           <h2>Acceso a Consola</h2>
@@ -1062,8 +1065,9 @@ export default function Admin() {
     <div className="admin-dashboard-container">
       {/* Top Header */}
       <header className="admin-dashboard-header">
-        <div className="header-logo-wrapper">
-          <span className="logo-neon-text">VAPEX</span>
+        <div className="header-logo-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <img src="/images/logovapers.webp" alt="VAPEX Logo" style={{ height: '36px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 5px rgba(102, 252, 241, 0.35))' }} />
+          <span className="logo-neon-text" style={{ fontSize: '1.5rem' }}>VAPEX</span>
           <span className="badge-admin">CONSOLE</span>
         </div>
         

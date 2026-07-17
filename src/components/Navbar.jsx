@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Globe, Menu, X } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 
 export default function Navbar({ searchVal, onSearchChange }) {
@@ -65,7 +65,7 @@ export default function Navbar({ searchVal, onSearchChange }) {
       <div className="navbar-content">
         {/* Logo */}
         <div className="navbar-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <Globe className="logo-icon text-neon-cyan" />
+          <img src="/images/logovapers.webp" alt="VAPEX Logo" className="logo-img" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span className="logo-text" style={{ lineHeight: '1.1' }}>VAPEX IMPORT</span>
             <span style={{ fontSize: '0.6rem', color: 'var(--neon-purple)', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase', textShadow: 'var(--neon-purple-glow)' }}>{t('nav_b2b')}</span>

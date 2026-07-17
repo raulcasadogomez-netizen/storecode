@@ -27,7 +27,7 @@ export default function AgeVerificationModal() {
     <div className="age-verification-overlay">
       <div className="age-verification-card">
         <div className="logo-container">
-          <span className="logo-neon-text">VAPEX</span>
+          <img src="/images/logovapers.webp" alt="VAPEX Logo" className="modal-logo-img" />
         </div>
         
         <h2>{t('age_title')}</h2>
