@@ -349,6 +349,7 @@ export default function Admin() {
   const [categoryError, setCategoryError] = useState('');
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isSavingCategory, setIsSavingCategory] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
 
   // Site Texts State
   const [siteTexts, setSiteTexts] = useState([]);
@@ -638,12 +639,52 @@ export default function Admin() {
     }
   };
 
-  const handleDeleteCategory = async (catId) => {
-    if (['vapers', 'oxido-nitroso', 'coleccionismo'].includes(catId)) {
-      alert("Las categorías del sistema no se pueden eliminar.");
+  const handleUpdateCategory = async (e) => {
+    e.preventDefault();
+    if (!editingCategory) return;
+    setCategoryError('');
+    setIsSavingCategory(true);
+
+    const trimmedName = newCategoryName.trim();
+    if (!trimmedName) {
+      setCategoryError("El nombre de la categoría no puede estar vacío.");
+      setIsSavingCategory(false);
       return;
     }
 
+    const payload = {
+      id: editingCategory.id,
+      name: trimmedName
+    };
+
+    try {
+      if (!supabase) {
+        const updatedCats = categories.map((c) => c.id === editingCategory.id ? payload : c);
+        localStorage.setItem('vapex-categories', JSON.stringify(updatedCats));
+        setCategories(updatedCats);
+        setNewCategoryName('');
+        setEditingCategory(null);
+      } else {
+        const { error } = await supabase
+          .from('categories')
+          .update({ name: trimmedName })
+          .eq('id', editingCategory.id);
+
+        if (error) throw error;
+        
+        await fetchCategories();
+        setNewCategoryName('');
+        setEditingCategory(null);
+      }
+    } catch (err) {
+      console.error("Error updating category:", err);
+      setCategoryError(err.message || "Error al actualizar la categoría.");
+    } finally {
+      setIsSavingCategory(false);
+    }
+  };
+
+  const handleDeleteCategory = async (catId) => {
     const associatedProducts = products.filter((p) => p.category === catId);
     if (associatedProducts.length > 0) {
       alert(`No se puede eliminar la categoría porque tiene ${associatedProducts.length} producto(s) asociado(s). Cambia la categoría de estos productos o elimínalos antes de continuar.`);
@@ -661,6 +702,10 @@ export default function Admin() {
         const updatedCats = categories.filter((c) => c.id !== catId);
         localStorage.setItem('vapex-categories', JSON.stringify(updatedCats));
         setCategories(updatedCats);
+        if (editingCategory && editingCategory.id === catId) {
+          setEditingCategory(null);
+          setNewCategoryName('');
+        }
       } else {
         const { error } = await supabase
           .from('categories')
@@ -670,6 +715,10 @@ export default function Admin() {
         if (error) throw error;
 
         fetchCategories();
+        if (editingCategory && editingCategory.id === catId) {
+          setEditingCategory(null);
+          setNewCategoryName('');
+        }
       }
     } catch (err) {
       console.error("Error deleting category:", err);
@@ -1577,7 +1626,18 @@ export default function Admin() {
                                 )}
                               </td>
                               <td>
-                                {!isSystem && (
+                                <div className="table-action-btns">
+                                  <button 
+                                    className="action-btn btn-edit" 
+                                    onClick={() => {
+                                      setEditingCategory(cat);
+                                      setNewCategoryName(cat.name);
+                                      setCategoryError('');
+                                    }}
+                                    title="Editar Categoría"
+                                  >
+                                    <Edit2 size={14} />
+                                  </button>
                                   <button 
                                     className="action-btn btn-delete" 
                                     onClick={() => handleDeleteCategory(cat.id)}
@@ -1585,7 +1645,7 @@ export default function Admin() {
                                   >
                                     <Trash2 size={14} />
                                   </button>
-                                )}
+                                </div>
                               </td>
                             </tr>
                           );
@@ -1596,10 +1656,10 @@ export default function Admin() {
                 )}
               </div>
 
-              {/* RIGHT: CREATE CATEGORY FORM */}
+              {/* RIGHT: CREATE / EDIT CATEGORY FORM */}
               <div className="dashboard-column form-column">
                 <div className="panel-header">
-                  <h2>Añadir Nueva Categoría</h2>
+                  <h2>{editingCategory ? 'Editar Categoría' : 'Añadir Nueva Categoría'}</h2>
                 </div>
 
                 {categoryError && (
@@ -1609,7 +1669,7 @@ export default function Admin() {
                   </div>
                 )}
 
-                <form onSubmit={handleSaveCategory} className="admin-product-form">
+                <form onSubmit={editingCategory ? handleUpdateCategory : handleSaveCategory} className="admin-product-form">
                   <div className="form-input-wrapper">
                     <label>Nombre de la Categoría *</label>
                     <input
@@ -1621,28 +1681,57 @@ export default function Admin() {
                     />
                   </div>
 
-                  <div className="form-input-wrapper">
-                    <label>Identificador sugerido (ID generado)</label>
-                    <input
-                      type="text"
-                      value={slugify(newCategoryName)}
-                      readOnly
-                      disabled
-                      placeholder="ej-cachimbas"
-                      style={{ opacity: 0.7, background: 'rgba(255,255,255,0.02)', fontFamily: 'monospace' }}
-                    />
-                    <p className="input-hint">El identificador se genera automáticamente en minúsculas y sin acentos.</p>
-                  </div>
+                  {editingCategory ? (
+                    <div className="form-input-wrapper">
+                      <label>Identificador (ID)</label>
+                      <input
+                        type="text"
+                        value={editingCategory.id}
+                        readOnly
+                        disabled
+                        style={{ opacity: 0.7, background: 'rgba(255,255,255,0.02)', fontFamily: 'monospace' }}
+                      />
+                      <p className="input-hint">El identificador no se puede modificar para no romper los productos asociados.</p>
+                    </div>
+                  ) : (
+                    <div className="form-input-wrapper">
+                      <label>Identificador sugerido (ID generado)</label>
+                      <input
+                        type="text"
+                        value={slugify(newCategoryName)}
+                        readOnly
+                        disabled
+                        placeholder="ej-cachimbas"
+                        style={{ opacity: 0.7, background: 'rgba(255,255,255,0.02)', fontFamily: 'monospace' }}
+                      />
+                      <p className="input-hint">El identificador se genera automáticamente en minúsculas y sin acentos.</p>
+                    </div>
+                  )}
 
-                  <div className="form-actions">
+                  <div className="form-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                     <button type="submit" className="btn-primary-neon form-save-btn" disabled={isSavingCategory}>
                       {isSavingCategory ? (
                         <RefreshCw size={18} className="animate-spin" style={{ marginRight: '8px' }} />
                       ) : (
                         <Check size={18} style={{ marginRight: '8px' }} />
                       )}
-                      <span>Crear Categoría</span>
+                      <span>{editingCategory ? 'Guardar Cambios' : 'Crear Categoría'}</span>
                     </button>
+
+                    {editingCategory && (
+                      <button 
+                        type="button" 
+                        className="btn-secondary-outline" 
+                        onClick={() => {
+                          setEditingCategory(null);
+                          setNewCategoryName('');
+                          setCategoryError('');
+                        }}
+                        style={{ padding: '0.8rem 1.8rem', borderRadius: '50px' }}
+                      >
+                        Cancelar
+                      </button>
+                    )}
                   </div>
                 </form>
               </div>
