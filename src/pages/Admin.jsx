@@ -415,7 +415,7 @@ export default function Admin() {
 
   const defaultCategories = [
     { id: 'vapers', name: 'Vapers' },
-    { id: 'oxido-nitroso', name: 'Óxido Nitroso' },
+    { id: 'reposteria', name: 'Óxido Nitroso' },
     { id: 'coleccionismo', name: 'Coleccionismo' }
   ];
 
@@ -1287,7 +1287,7 @@ export default function Admin() {
                       <select value={category} onChange={(e) => setCategory(e.target.value)} required>
                         {categories.map((cat) => (
                           <option key={cat.id} value={cat.id}>
-                            {cat.name} {['vapers', 'oxido-nitroso', 'coleccionismo'].includes(cat.id) ? '(Sistema)' : ''}
+                            {cat.name} {['vapers', 'reposteria', 'coleccionismo'].includes(cat.id) ? '(Sistema)' : ''}
                           </option>
                         ))}
                       </select>
@@ -1533,7 +1533,7 @@ export default function Admin() {
                     <div className="form-group-row">
                       <div className="form-input-wrapper">
                         <label>
-                          {category === 'oxido-nitroso' ? 'Contenido / Peso' : 'Capacidad'}
+                          {category === 'reposteria' ? 'Contenido / Peso' : 'Capacidad'}
                         </label>
                         <input
                           type="text"
@@ -1544,7 +1544,7 @@ export default function Admin() {
                       </div>
                       <div className="form-input-wrapper">
                         <label>
-                          {category === 'oxido-nitroso' ? 'Pureza / Grado' : 
+                          {category === 'reposteria' ? 'Pureza / Grado' : 
                            category === 'coleccionismo' ? 'Acabado / Material' : 'Sabor principal'}
                         </label>
                         <input
@@ -1611,7 +1611,7 @@ export default function Admin() {
                       </thead>
                       <tbody>
                         {categories.map((cat) => {
-                          const isSystem = ['vapers', 'oxido-nitroso', 'coleccionismo'].includes(cat.id);
+                          const isSystem = ['vapers', 'reposteria', 'coleccionismo'].includes(cat.id);
                           const prodCount = products.filter(p => p.category === cat.id).length;
                           return (
                             <tr key={cat.id}>

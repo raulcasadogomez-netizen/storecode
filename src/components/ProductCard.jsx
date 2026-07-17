@@ -67,7 +67,7 @@ export default function ProductCard({ product, categoryName, onQuickView }) {
         <div className="product-card-brand-row">
           <span className="product-brand">{brand}</span>
           <span className="product-category-tag">
-            {t('cat_' + product.category, {}, categoryName || (product.category === 'oxido-nitroso' ? 'Óxido Nitroso' : product.category === 'coleccionismo' ? 'Coleccionismo' : 'Vapers'))}
+            {t('cat_' + product.category, {}, categoryName || (product.category === 'reposteria' ? 'Óxido Nitroso' : product.category === 'coleccionismo' ? 'Coleccionismo' : 'Vapers'))}
           </span>
         </div>
         <h3 className="product-name" onClick={() => onQuickView(product)}>{t(`p_${product.id}_name`, {}, name)}</h3>

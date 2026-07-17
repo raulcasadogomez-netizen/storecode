@@ -102,7 +102,7 @@ VALUES
 (
   'Cargadores de N2O Premium (50 uds)', 
   'CreamMaster Import', 
-  'oxido-nitroso', 
+  'reposteria', 
   24.99, 
   4.8, 
   112, 
@@ -115,7 +115,7 @@ VALUES
 (
   'Bombona de Óxido Nitroso N2O 640g', 
   'GourmetWhip', 
-  'oxido-nitroso', 
+  'reposteria', 
   39.99, 
   4.9, 
   64, 
@@ -181,7 +181,7 @@ WITH CHECK (true);
 INSERT INTO public.categories (id, name)
 VALUES 
 ('vapers', 'Vapers'),
-('oxido-nitroso', 'Óxido Nitroso'),
+('reposteria', 'Óxido Nitroso'),
 ('coleccionismo', 'Coleccionismo')
 ON CONFLICT (id) DO NOTHING;
 

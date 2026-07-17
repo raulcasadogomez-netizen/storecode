@@ -20,7 +20,7 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
     const dbName = cat ? cat.name : '';
     const fallbackName = 
       catId === 'vapers' ? 'Vapers' : 
-      catId === 'oxido-nitroso' ? 'Óxido Nitroso' : 
+      catId === 'reposteria' ? 'Óxido Nitroso' : 
       catId === 'coleccionismo' ? 'Coleccionismo' : 
       (catId ? catId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '');
       

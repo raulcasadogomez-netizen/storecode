@@ -18,7 +18,7 @@ export default function Storefront() {
 
   const defaultCategories = [
     { id: 'vapers', name: 'Vapers' },
-    { id: 'oxido-nitroso', name: 'Óxido Nitroso' },
+    { id: 'reposteria', name: 'Óxido Nitroso' },
     { id: 'coleccionismo', name: 'Coleccionismo' }
   ];
 

@@ -117,7 +117,7 @@ export default function ProductModal({ product, onClose }) {
                   {product.details.flavor && (
                     <tr>
                       <td className="spec-name">
-                        {product.category === 'oxido-nitroso' ? t('spec_label_flavor_n2o') : 
+                        {product.category === 'reposteria' ? t('spec_label_flavor_n2o') : 
                          product.category === 'coleccionismo' ? t('spec_label_flavor_collecting') : 
                          product.category === 'vapers' ? t('spec_label_flavor_vapers') : t('spec_label_flavor_default')}
                       </td>
@@ -142,7 +142,7 @@ export default function ProductModal({ product, onClose }) {
                   {product.details.capacity && (
                     <tr>
                       <td className="spec-name">
-                        {product.category === 'oxido-nitroso' ? t('spec_label_capacity_n2o') : 
+                        {product.category === 'reposteria' ? t('spec_label_capacity_n2o') : 
                          product.category === 'vapers' ? t('spec_label_capacity_vapers') : t('spec_label_capacity_default')}
                       </td>
                       <td className="spec-val">{t(`p_${product.id}_capacity`, {}, product.details.capacity)}</td>
