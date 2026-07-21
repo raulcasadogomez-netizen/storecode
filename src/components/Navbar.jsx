@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Menu, X } from 'lucide-react';
+import { Search, Menu, X, Sun, Moon } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar({ searchVal, onSearchChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { language, changeLanguage, t } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -90,6 +92,15 @@ export default function Navbar({ searchVal, onSearchChange }) {
           <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>{t('nav_import')}</a>
           <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>{t('nav_about')}</a>
           <LanguageSelector />
+          <button 
+            type="button" 
+            className="theme-toggle-btn" 
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
+            title={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
+          >
+            {theme === 'dark' ? <Sun size={18} className="theme-icon sun" /> : <Moon size={18} className="theme-icon moon" />}
+          </button>
         </div>
 
         {/* Mobile Buttons */}
@@ -120,8 +131,17 @@ export default function Navbar({ searchVal, onSearchChange }) {
             <a href="#catalogo" onClick={() => setMobileMenuOpen(false)}>{t('nav_catalog')}</a>
             <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>{t('nav_import')}</a>
             <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>{t('nav_about')}</a>
-            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '0.5rem 0' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', width: '100%', padding: '0.5rem 0' }}>
               <LanguageSelector />
+              <button 
+                type="button" 
+                className="theme-toggle-btn mobile-theme-toggle" 
+                onClick={toggleTheme}
+                aria-label={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
+                title={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
+              >
+                {theme === 'dark' ? <Sun size={18} className="theme-icon sun" /> : <Moon size={18} className="theme-icon moon" />}
+              </button>
             </div>
           </div>
         </div>

@@ -35,6 +35,31 @@
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+:root[data-theme='light'] {
+  --bg-primary: hsl(250, 24%, 95%);
+  --bg-secondary: hsl(250, 24%, 90%);
+  --bg-tertiary: hsl(250, 20%, 85%);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-hover: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-border-hover: rgba(0, 0, 0, 0.16);
+
+  --neon-cyan: hsl(185, 100%, 35%);
+  --neon-cyan-glow: 0 0 10px hsla(185, 100%, 35%, 0.25);
+  --neon-cyan-dim: hsla(185, 100%, 35%, 0.08);
+
+  --neon-purple: hsl(280, 85%, 45%);
+  --neon-purple-glow: 0 0 10px hsla(280, 85%, 45%, 0.25);
+  --neon-purple-dim: hsla(280, 85%, 45%, 0.1);
+
+  --neon-pink: hsl(325, 85%, 45%);
+  --neon-pink-glow: 0 0 10px hsla(325, 85%, 45%, 0.25);
+
+  --text-primary: hsl(250, 24%, 12%);
+  --text-secondary: hsl(250, 15%, 35%);
+  --text-muted: hsl(250, 10%, 55%);
+}
+
 /* Base Styles */
 * {
   box-sizing: border-box;

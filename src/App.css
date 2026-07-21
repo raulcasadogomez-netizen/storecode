@@ -3315,4 +3315,234 @@
   display: block;
 }
 
+/* ==========================================================================
+   THEME TOGGLE BUTTON
+   ========================================================================== */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--neon-purple);
+  background: var(--neon-purple-dim);
+  box-shadow: var(--neon-purple-glow);
+  color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.theme-icon {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s;
+}
+
+.theme-toggle-btn:hover .theme-icon {
+  transform: rotate(360deg);
+}
+
+.theme-icon.sun {
+  color: hsl(45, 100%, 55%);
+  filter: drop-shadow(0 0 5px hsla(45, 100%, 55%, 0.5));
+}
+
+.theme-icon.moon {
+  color: var(--neon-purple);
+  filter: drop-shadow(0 0 5px hsla(280, 100%, 65%, 0.4));
+}
+
+/* ==========================================================================
+   LIGHT THEME OVERRIDES
+   ========================================================================== */
+[data-theme='light'] .navbar-container {
+  background: rgba(250, 248, 255, 0.75);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .mobile-menu-overlay {
+  background: rgba(250, 248, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .search-input {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .search-input:focus {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 10px hsla(185, 100%, 35%, 0.15);
+}
+
+[data-theme='light'] .lang-btn {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .lang-btn:hover {
+  background: var(--neon-cyan-dim);
+  border-color: var(--neon-cyan);
+}
+
+[data-theme='light'] .lang-dropdown-menu {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1), var(--neon-cyan-dim) 0px 0px 15px;
+}
+
+[data-theme='light'] .lang-dropdown-item {
+  color: var(--text-secondary);
+}
+
+[data-theme='light'] .lang-dropdown-item:hover,
+[data-theme='light'] .lang-dropdown-item.active {
+  background: var(--neon-cyan-dim);
+  color: var(--neon-cyan);
+}
+
+[data-theme='light'] .age-verification-overlay {
+  background: rgba(240, 238, 250, 0.92);
+}
+
+[data-theme='light'] .age-verification-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1), var(--neon-purple-dim) 0px 0px 30px;
+}
+
+[data-theme='light'] .age-disclaimer {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  color: var(--text-secondary);
+}
+
+[data-theme='light'] .modal-overlay {
+  background: rgba(240, 238, 250, 0.8);
+}
+
+[data-theme='light'] .modal-card {
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1), var(--neon-cyan-dim) 0px 0px 30px;
+}
+
+[data-theme='light'] .modal-close-btn {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .modal-close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--neon-pink);
+}
+
+[data-theme='light'] .cart-overlay {
+  background: rgba(240, 238, 250, 0.6);
+}
+
+[data-theme='light'] .cart-panel {
+  background: rgba(255, 255, 255, 0.98);
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+}
+
+[data-theme='light'] .btn-secondary-outline {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .btn-secondary-outline:hover {
+  border-color: var(--neon-purple);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Scrollbar adjustment for light theme */
+[data-theme='light'] ::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: var(--bg-secondary);
+  border: 2px solid var(--bg-primary);
+}
+
+/* Hero image backdrop in light mode should be softer */
+[data-theme='light'] .hero-image-backdrop {
+  background: radial-gradient(circle, var(--neon-cyan-dim) 0%, transparent 60%);
+  opacity: 0.6;
+}
+
+[data-theme='light'] .bullet-indicator {
+  background: var(--neon-purple);
+}
+
+/* Category buttons and other controls in light mode */
+[data-theme='light'] .chip {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text-secondary);
+}
+
+[data-theme='light'] .chip:hover,
+[data-theme='light'] .chip.active {
+  background: var(--neon-purple-dim);
+  border-color: var(--neon-purple);
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .sort-select {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+}
+
+[data-theme='light'] .sort-select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Product Card adjustments */
+[data-theme='light'] .product-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+[data-theme='light'] .product-card:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), var(--neon-cyan-dim) 0px 0px 20px;
+}
+
+[data-theme='light'] .spec-badge {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-secondary);
+}
+
+/* Neon tag/glow lines */
+[data-theme='light'] .section-glow-purple {
+  opacity: 0.35;
+}
+
+/* Experience image shadow override */
+[data-theme='light'] .tech-image {
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.15));
+}
+
 
