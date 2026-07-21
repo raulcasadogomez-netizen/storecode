@@ -3372,6 +3372,15 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+[data-theme='light'] .main-footer {
+  background: var(--bg-secondary);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .footer-bottom {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
 [data-theme='light'] .mobile-menu-overlay {
   background: rgba(250, 248, 255, 0.95);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
