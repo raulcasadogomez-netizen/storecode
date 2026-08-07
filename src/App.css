@@ -625,8 +625,22 @@
 /* Products Grid Layout */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
+}
+
+@media (max-width: 992px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
 }
 
 .no-results {
@@ -3101,9 +3115,9 @@
 }
 /* WhatsApp Buy Buttons styling */
 .whatsapp-buy-btn {
-  background: rgba(37, 211, 102, 0.1);
-  border: 1px solid rgba(37, 211, 102, 0.3);
-  color: #25d366;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  border: 1px solid #1ebe5d;
+  color: #ffffff;
   padding: 0.6rem 1.1rem;
   border-radius: 30px;
   display: flex;
@@ -3112,23 +3126,25 @@
   font-size: 0.8rem;
   font-weight: 700;
   transition: var(--transition);
+  box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
 }
 
 .whatsapp-buy-btn svg {
   width: 15px;
   height: 15px;
-  fill: currentColor;
+  fill: #ffffff;
 }
 
 .whatsapp-buy-btn:hover:not(:disabled) {
-  background: #25d366;
-  border-color: #25d366;
-  color: #0b0917;
-  box-shadow: 0 0 15px rgba(37, 211, 102, 0.45);
+  background: linear-gradient(135deg, #20ba5a 0%, #0d7367 100%);
+  border-color: #128c7e;
+  color: #ffffff;
+  box-shadow: 0 5px 16px rgba(37, 211, 102, 0.45);
+  transform: translateY(-2px);
 }
 
 .whatsapp-buy-btn:disabled {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--glass-border);
   color: var(--text-muted);
   cursor: not-allowed;
@@ -3251,7 +3267,7 @@
   align-items: center;
   gap: 14px;
   background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-  color: #0c0a17;
+  color: #ffffff;
   font-weight: 800;
   font-size: 1.25rem;
   font-family: var(--font-display);
@@ -3259,7 +3275,7 @@
   border-radius: 50px;
   box-shadow: 0 4px 25px rgba(37, 211, 102, 0.45), 0 0 15px rgba(37, 211, 102, 0.2);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
@@ -3267,7 +3283,7 @@
 .btn-whatsapp-large-direct:hover {
   transform: scale(1.05) translateY(-4px);
   box-shadow: 0 12px 35px rgba(37, 211, 102, 0.65), 0 0 25px rgba(37, 211, 102, 0.4);
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 .btn-whatsapp-large-direct:active {
@@ -3275,7 +3291,7 @@
 }
 
 .whatsapp-icon {
-  fill: #0c0a17;
+  fill: #ffffff;
   transition: transform 0.3s ease;
 }
 
@@ -3506,8 +3522,25 @@
 }
 
 [data-theme='light'] .hero-tag {
+  background: linear-gradient(135deg, rgba(0, 168, 181, 0.14) 0%, rgba(138, 43, 226, 0.1) 100%);
+  border: 1px solid rgba(0, 140, 155, 0.35);
+  color: #004d58;
+  font-weight: 800;
   text-shadow: none;
-  box-shadow: 0 2px 8px hsla(185, 100%, 35%, 0.15);
+  box-shadow: 0 2px 10px rgba(0, 150, 165, 0.15);
+}
+
+[data-theme='light'] .btn-secondary-outline {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #110e20;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .btn-secondary-outline:hover {
+  border-color: var(--neon-purple);
+  box-shadow: 0 4px 14px rgba(138, 43, 226, 0.2);
+  background: #ffffff;
 }
 
 [data-theme='light'] .bullet-indicator {
@@ -3576,44 +3609,260 @@
   font-weight: 600;
 }
 
-/* Category buttons and other controls in light mode */
-[data-theme='light'] .chip {
-  background: rgba(0, 0, 0, 0.04);
+/* Category buttons and catalog controls in light mode */
+[data-theme='light'] .catalog-controls {
+  background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  color: var(--text-secondary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
-[data-theme='light'] .chip:hover,
-[data-theme='light'] .chip.active {
-  background: var(--neon-purple-dim);
+[data-theme='light'] .chip {
+  background: #f3f1f8;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #4a4563;
+  font-weight: 600;
+}
+
+[data-theme='light'] .chip:hover {
+  background: rgba(138, 43, 226, 0.08);
   border-color: var(--neon-purple);
-  color: var(--text-primary);
+  color: var(--neon-purple);
+}
+
+[data-theme='light'] .chip.active {
+  background: linear-gradient(135deg, #8a2be2 0%, #6a0ded 100%);
+  border-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.35);
+}
+
+[data-theme='light'] .sort-wrapper {
+  background: #f3f1f8;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #110e20;
 }
 
 [data-theme='light'] .sort-select {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  color: #110e20;
+  font-weight: 600;
 }
 
 [data-theme='light'] .sort-select option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #ffffff;
+  color: #110e20;
 }
 
-/* Product Card adjustments */
+/* Product Card Light Mode */
 [data-theme='light'] .product-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
 }
 
 [data-theme='light'] .product-card:hover {
-  background: var(--glass-bg-hover);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), var(--neon-cyan-dim) 0px 0px 20px;
+  background: #ffffff;
+  border-color: var(--neon-purple);
+  box-shadow: 0 12px 32px rgba(138, 43, 226, 0.15), 0 4px 10px rgba(0, 0, 0, 0.04);
+  transform: translateY(-5px);
+}
+
+[data-theme='light'] .product-card-image {
+  background: #f6f5fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .product-brand {
+  color: #757090;
+}
+
+[data-theme='light'] .product-category-tag {
+  background: rgba(0, 168, 181, 0.12);
+  color: #007a87;
+  font-weight: 800;
+}
+
+[data-theme='light'] .product-name {
+  color: #110e20;
+  font-weight: 700;
+}
+
+[data-theme='light'] .product-name:hover {
+  color: #8a2be2;
+}
+
+[data-theme='light'] .rating-count {
+  color: #757090;
 }
 
 [data-theme='light'] .spec-badge {
-  background: rgba(0, 0, 0, 0.04);
-  color: var(--text-secondary);
+  background: #f0edf8;
+  border: 1px solid rgba(138, 43, 226, 0.15);
+  color: #3a3258;
+  font-weight: 600;
+}
+
+[data-theme='light'] .product-price .amount {
+  color: #110e20;
+}
+
+[data-theme='light'] .no-results {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+/* WhatsApp Buy Button Light Mode High Contrast */
+[data-theme='light'] .whatsapp-buy-btn {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  border: 1px solid #1ebe5d;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+}
+
+[data-theme='light'] .whatsapp-buy-btn svg {
+  fill: #ffffff !important;
+}
+
+[data-theme='light'] .whatsapp-buy-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #20ba5a 0%, #0d7367 100%);
+  border-color: #128c7e;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Quick View Modal Light Mode */
+[data-theme='light'] .modal-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='light'] .modal-image-panel {
+  background: #f6f5fa;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .modal-close-btn {
+  background: rgba(0, 0, 0, 0.06);
+  color: #110e20;
+}
+
+[data-theme='light'] .modal-close-btn:hover {
+  background: rgba(255, 0, 90, 0.12);
+  color: #ff005a;
+}
+
+[data-theme='light'] .info-name {
+  color: #110e20;
+}
+
+[data-theme='light'] .info-description {
+  color: #4a4563;
+}
+
+[data-theme='light'] .rating-num {
+  color: #110e20;
+}
+
+[data-theme='light'] .reviews-num {
+  color: #757090;
+}
+
+[data-theme='light'] .info-price {
+  color: #110e20;
+}
+
+[data-theme='light'] .selector-label {
+  color: #757090;
+}
+
+[data-theme='light'] .nic-chip {
+  background: #f3f1f8;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #4a4563;
+}
+
+[data-theme='light'] .nic-chip:hover {
+  border-color: #007a87;
+  color: #007a87;
+}
+
+[data-theme='light'] .nic-chip.active {
+  background: rgba(0, 168, 181, 0.12);
+  border-color: #007a87;
+  color: #007a87;
+  font-weight: 700;
+}
+
+[data-theme='light'] .specs-table-wrapper {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .specs-table-wrapper h3 {
+  color: #4a4563;
+}
+
+[data-theme='light'] .spec-name {
+  color: #757090;
+}
+
+[data-theme='light'] .spec-val {
+  color: #110e20;
+}
+
+[data-theme='light'] .qty-selector {
+  background: #f3f1f8;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #110e20;
+}
+
+[data-theme='light'] .qty-selector button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06);
+  color: #8a2be2;
+}
+
+[data-theme='light'] .wishlist-btn {
+  background: #f3f1f8;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #4a4563;
+}
+
+/* ==========================================================================
+   ULTRA-WIDE SCREEN ONLY OPTIMIZATIONS (4 COLUMNS ONLY FOR VERY WIDE MONITORS >= 1900px)
+   ========================================================================== */
+@media (min-width: 1900px) {
+  .navbar-content,
+  .hero-container,
+  .catalog-section,
+  .experience-section,
+  .about-section,
+  .footer-grid,
+  .footer-bottom,
+  .whatsapp-direct-container,
+  .legal-warning-banner p {
+    max-width: 1680px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.2rem;
+  }
+
+  .hero-title {
+    font-size: 4.6rem;
+  }
+
+  .hero-image-backdrop {
+    width: 450px;
+    height: 450px;
+  }
+
+  .hero-floating-device {
+    width: 350px;
+  }
 }
