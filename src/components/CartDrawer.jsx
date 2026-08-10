@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Trash2, Plus, Minus, ShoppingBag, Sparkles, CheckCircle2, MessageSquare } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
+import { saveCustomerEmail } from '../lib/emailService';
 
 export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, onRemoveItem, onClearCart }) {
   const [couponCode, setCouponCode] = useState('');
@@ -12,8 +13,10 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
   // B2B Customer States
   const [companyName, setCompanyName] = useState('');
   const [cifNif, setCifNif] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
   const [acceptB2B, setAcceptB2B] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+  const [acceptMarketing, setAcceptMarketing] = useState(false);
 
   const { t, language } = useTranslation();
 
@@ -42,11 +45,19 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
     setCouponCode('');
   };
 
-  const handleCheckoutSubmit = () => {
-    if (!companyName.trim() || !cifNif.trim() || !acceptB2B || !acceptPrivacy) {
-      alert(t('cart_validation_error', {}, "Por favor rellena todos los campos obligatorios y acepta los términos comerciales."));
+  const handleCheckoutSubmit = async () => {
+    if (!companyName.trim() || !cifNif.trim() || !customerEmail.trim() || !acceptB2B || !acceptPrivacy) {
+      alert(t('cart_validation_error', {}, "Por favor rellena todos los campos obligatorios (incluyendo tu correo electrónico) y acepta los términos de almacenamiento de datos."));
       return;
     }
+
+    // Save customer email to Supabase & localStorage
+    await saveCustomerEmail({
+      email: customerEmail.trim(),
+      acceptTerms: true,
+      acceptMarketing: acceptMarketing,
+      source: 'whatsapp_cart'
+    });
 
     setCheckoutStep('paying');
 
@@ -57,6 +68,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
     let text = t('whatsapp_order_title');
     text += `${t('whatsapp_company')}${companyName.trim()}\n`;
     text += `${t('whatsapp_cif')}${cifNif.trim().toUpperCase()}\n`;
+    text += `📧 *Correo:* ${customerEmail.trim().toLowerCase()}\n`;
     text += `${t('whatsapp_datetime')}${new Date().toLocaleString(localeString)}\n`;
     text += `----------------------------------------------\n`;
     
@@ -88,6 +100,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
       setCheckoutStep('success');
     }, 1500);
   };
+
 
   const handleFinishAll = () => {
     onClearCart();
@@ -265,6 +278,17 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                     />
                   </div>
 
+                  <div className="b2b-input-group">
+                    <label>{t('email_label', {}, 'Correo Electrónico')} *</label>
+                    <input 
+                      type="email" 
+                      placeholder="ejemplo@empresa.com" 
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
                   <div className="b2b-checkbox-wrapper">
                     <label className="b2b-checkbox-label">
                       <input 
@@ -281,7 +305,16 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                         checked={acceptPrivacy}
                         onChange={(e) => setAcceptPrivacy(e.target.checked)}
                       />
-                      <span>{t('cart_chk_privacy')}</span>
+                      <span>{t('cart_chk_privacy')} *</span>
+                    </label>
+
+                    <label className="b2b-checkbox-label" style={{ opacity: 0.9 }}>
+                      <input 
+                        type="checkbox" 
+                        checked={acceptMarketing}
+                        onChange={(e) => setAcceptMarketing(e.target.checked)}
+                      />
+                      <span>{t('email_marketing_optional_label', {}, 'Acepto recibir novedades y promociones (Opcional)')}</span>
                     </label>
                   </div>
                 </div>
@@ -289,7 +322,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                 <button 
                   className="btn-primary-neon checkout-btn" 
                   onClick={handleCheckoutSubmit}
-                  disabled={!companyName.trim() || !cifNif.trim() || !acceptB2B || !acceptPrivacy}
+                  disabled={!companyName.trim() || !cifNif.trim() || !customerEmail.trim() || !acceptB2B || !acceptPrivacy}
                 >
                   <MessageSquare size={18} />
                   <span>{t('cart_btn_whatsapp')}</span>

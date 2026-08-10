@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Star, Plus, Minus, ShieldCheck, Heart } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleBuyViaWhatsApp } from '../lib/whatsapp';
+import WhatsAppEmailModal from './WhatsAppEmailModal';
 
 export default function ProductModal({ product, onClose }) {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ export default function ProductModal({ product, onClose }) {
   );
   const [quantity, setQuantity] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const handleQtyChange = (val) => {
     const newQty = quantity + val;
@@ -19,9 +21,14 @@ export default function ProductModal({ product, onClose }) {
   };
 
   const handleBuy = () => {
-    handleBuyViaWhatsApp(product, quantity, selectedNicotine, t);
+    setIsEmailModalOpen(true);
+  };
+
+  const handleConfirmEmail = ({ email }) => {
+    handleBuyViaWhatsApp(product, quantity, selectedNicotine, t, email);
     onClose();
   };
+
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -194,7 +201,15 @@ export default function ProductModal({ product, onClose }) {
           </div>
         </div>
       </div>
+
+      <WhatsAppEmailModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        onConfirm={handleConfirmEmail}
+        actionType="product"
+      />
     </div>
   );
 }
+
 

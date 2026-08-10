@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database, UploadCloud, X } from 'lucide-react';
+import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database, UploadCloud, X, Mail, Copy, Download, Search, CheckCircle2, ShieldAlert, MailCheck, MailX } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { translations } from '../i18n/translations';
+import { getCustomerEmails, deleteCustomerEmail } from '../lib/emailService';
+
 
 // List of editable texts keys for Admin panel
 const EDITABLE_TEXT_KEYS = [
@@ -319,8 +321,8 @@ const slugify = (text) => {
     .normalize('NFD') // separate accents from letters
     .replace(/[\u0300-\u036f]/g, '') // remove accents
     .replace(/\s+/g, '-') // replace spaces with -
-    .replace(/[^\w\-]+/g, '') // remove all non-word chars
-    .replace(/\-\-+/g, '-') // replace multiple - with single -
+    .replace(/[^\w-]+/g, '') // remove all non-word chars
+    .replace(/-+/g, '-') // replace multiple - with single -
     .trim();
 };
 
@@ -364,8 +366,63 @@ export default function Admin() {
   const [textEn, setTextEn] = useState('');
   const [textZh, setTextZh] = useState('');
   
+  // Customer Emails State
+  const [customerEmails, setCustomerEmails] = useState([]);
+  const [emailsLoading, setEmailsLoading] = useState(false);
+  const [emailSearch, setEmailSearch] = useState('');
+  const [copySuccessMsg, setCopySuccessMsg] = useState('');
+
+  const fetchCustomerEmailsList = async () => {
+    setEmailsLoading(true);
+    try {
+      const list = await getCustomerEmails();
+      setCustomerEmails(list);
+    } catch (err) {
+      console.error("Error fetching customer emails:", err);
+    } finally {
+      setEmailsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'emails') {
+      fetchCustomerEmailsList();
+    }
+  }, [activeTab]);
+
+  const handleDeleteCustomerEmailItem = async (id, emailStr) => {
+    if (!window.confirm(`¿Estás seguro de eliminar el correo ${emailStr}?`)) return;
+    await deleteCustomerEmail(id, emailStr);
+    fetchCustomerEmailsList();
+  };
+
+  const handleCopyEmailsToClipboard = (emailsList, title) => {
+    if (!emailsList || emailsList.length === 0) return;
+    const str = emailsList.map(item => item.email).join(', ');
+    navigator.clipboard.writeText(str);
+    setCopySuccessMsg(`¡${emailsList.length} correos de "${title}" copiados al portapapeles!`);
+    setTimeout(() => setCopySuccessMsg(''), 3000);
+  };
+
+  const handleExportEmailsToCSV = (emailsList, filename) => {
+    if (!emailsList || emailsList.length === 0) return;
+    let csvContent = "data:text/csv;charset=utf-8,ID,Email,Acepta_Promociones,Acepta_Terminos,Origen,Fecha_Registro\n";
+    emailsList.forEach(row => {
+      const created = row.created_at ? new Date(row.created_at).toLocaleString('es-ES') : 'N/A';
+      csvContent += `"${row.id}","${row.email}","${row.accept_marketing ? 'SI' : 'NO'}","${row.accept_terms ? 'SI' : 'NO'}","${row.source || 'whatsapp'}","${created}"\n`;
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${filename}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Form Product State
   const [editingId, setEditingId] = useState(null); // If null, we are in CREATE mode. Else EDIT mode.
+
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
   const [category, setCategory] = useState('vapers');
@@ -900,7 +957,7 @@ export default function Admin() {
               const fileName = `${Math.random().toString(36).substring(2, 15)}.jpg`;
               const filePath = `uploads/${fileName}`;
 
-              const { data, error } = await supabase.storage
+              const { error } = await supabase.storage
                 .from('products')
                 .upload(filePath, compressedFile, { upsert: true });
 
@@ -1161,6 +1218,14 @@ export default function Admin() {
             onClick={() => setActiveTab('texts')}
           >
             Textos de la Web
+          </button>
+          <button 
+            type="button"
+            className={`admin-nav-tab-btn ${activeTab === 'emails' ? 'active' : ''}`}
+            onClick={() => setActiveTab('emails')}
+          >
+            <Mail size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+            Correos de Clientes
           </button>
         </div>
 
@@ -1898,8 +1963,304 @@ export default function Admin() {
               </div>
             </>
           )}
+
+          {activeTab === 'emails' && (
+            <div className="emails-dashboard-wrapper" style={{ width: '100%' }}>
+              {/* Header & Controls */}
+              <div className="panel-header" style={{ marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.4rem', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Mail className="text-neon-cyan" size={24} />
+                    Gestión de Correos de Clientes
+                  </h2>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    Correos recolectados antes del envío de pedidos y consultas por WhatsApp.
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div className="search-input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <Search size={16} style={{ position: 'absolute', left: '10px', color: 'var(--text-muted)' }} />
+                    <input
+                      type="text"
+                      placeholder="Buscar por correo..."
+                      value={emailSearch}
+                      onChange={(e) => setEmailSearch(e.target.value)}
+                      style={{
+                        paddingLeft: '32px',
+                        paddingRight: '12px',
+                        paddingTop: '6px',
+                        paddingBottom: '6px',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '6px',
+                        color: 'white',
+                        fontSize: '0.85rem',
+                        width: '220px'
+                      }}
+                    />
+                  </div>
+                  <button className="btn-refresh" onClick={fetchCustomerEmailsList} title="Recargar lista" disabled={emailsLoading}>
+                    <RefreshCw size={16} className={emailsLoading ? "animate-spin" : ""} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Toast Message when copying */}
+              {copySuccessMsg && (
+                <div className="crud-success-banner" style={{ marginBottom: '1.5rem', background: 'rgba(37, 211, 102, 0.15)', border: '1px solid rgba(37, 211, 102, 0.4)', color: '#25d366', padding: '0.85rem 1.2rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '600' }}>
+                  <CheckCircle2 size={20} />
+                  <span>{copySuccessMsg}</span>
+                </div>
+              )}
+
+              {(() => {
+                // Filter emails by search term
+                const searchLower = emailSearch.trim().toLowerCase();
+                const filtered = customerEmails.filter(item => item.email.toLowerCase().includes(searchLower));
+                
+                // Split into two distinct arrays
+                const marketingEmails = filtered.filter(item => item.accept_marketing);
+                const nonMarketingEmails = filtered.filter(item => !item.accept_marketing);
+
+                return (
+                  <>
+                    {/* Summary Metrics Row */}
+                    <div className="email-metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+                      <div className="metric-card" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--glass-border)', padding: '1.2rem', borderRadius: '12px' }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '600' }}>Total Registrados</div>
+                        <div style={{ fontSize: '2.2rem', fontWeight: '800', color: 'white', marginTop: '4px' }}>{filtered.length}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Correos en la base de datos</div>
+                      </div>
+
+                      <div className="metric-card" style={{ background: 'rgba(37, 211, 102, 0.08)', border: '1px solid rgba(37, 211, 102, 0.3)', padding: '1.2rem', borderRadius: '12px' }}>
+                        <div style={{ fontSize: '0.8rem', color: '#25d366', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '700' }}>Aceptan Novedades (Marketing)</div>
+                        <div style={{ fontSize: '2.2rem', fontWeight: '800', color: '#25d366', marginTop: '4px' }}>{marketingEmails.length}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(37, 211, 102, 0.8)', marginTop: '2px' }}>Autorizan envío de spam/ofertas</div>
+                      </div>
+
+                      <div className="metric-card" style={{ background: 'rgba(102, 252, 241, 0.05)', border: '1px solid rgba(102, 252, 241, 0.2)', padding: '1.2rem', borderRadius: '12px' }}>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--neon-cyan)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '700' }}>Solo Gestión (Sin Spam)</div>
+                        <div style={{ fontSize: '2.2rem', fontWeight: '800', color: 'var(--neon-cyan)', marginTop: '4px' }}>{nonMarketingEmails.length}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Solo para consultas y pedidos</div>
+                      </div>
+                    </div>
+
+                    {/* TWO VISUALLY DISTINCT SECTIONS */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                      
+                      {/* SECTION 1: MARKETING ALLOWED (GREEN NEON HIGHLIGHT) */}
+                      <div className="admin-email-section-card marketing-highlight-card" style={{ background: 'rgba(20, 40, 25, 0.6)', border: '2px solid #25d366', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 0 20px rgba(37, 211, 102, 0.15)' }}>
+                        <div className="section-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid rgba(37, 211, 102, 0.25)', paddingBottom: '1rem', marginBottom: '1.2rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ background: '#25d366', color: '#0b132b', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+                              <MailCheck size={22} />
+                            </div>
+                            <div>
+                              <h3 style={{ fontSize: '1.25rem', color: '#25d366', fontWeight: '700', margin: 0 }}>
+                                1. Correos que ACEPTAN Novedades, Ofertas y Descuentos ({marketingEmails.length})
+                              </h3>
+                              <p style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.7)', margin: 0, marginTop: '2px' }}>
+                                Clientes que marcaron la casilla opcional para recibir correos promocionales y boletines comerciales.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyEmailsToClipboard(marketingEmails, "Novedades y Ofertas")}
+                              disabled={marketingEmails.length === 0}
+                              style={{ background: 'rgba(37, 211, 102, 0.2)', border: '1px solid #25d366', color: '#25d366', padding: '0.5rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                            >
+                              <Copy size={14} /> Copiar Correos
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleExportEmailsToCSV(marketingEmails, 'correos_con_marketing_vapex')}
+                              disabled={marketingEmails.length === 0}
+                              style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                            >
+                              <Download size={14} /> Exportar CSV
+                            </button>
+                          </div>
+                        </div>
+
+                        {marketingEmails.length === 0 ? (
+                          <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                            No hay ningún correo registrado en este apartado con permiso de envío de novedades.
+                          </div>
+                        ) : (
+                          <div className="table-responsive-wrapper">
+                            <table className="admin-custom-table">
+                              <thead>
+                                <tr>
+                                  <th>ID</th>
+                                  <th>Correo Electrónico</th>
+                                  <th>Estado Promocional</th>
+                                  <th>Origen</th>
+                                  <th>Fecha de Registro</th>
+                                  <th>Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {marketingEmails.map((item) => (
+                                  <tr key={item.id}>
+                                    <td>#{item.id}</td>
+                                    <td>
+                                      <span style={{ fontWeight: '700', color: 'white', fontSize: '0.95rem' }}>{item.email}</span>
+                                    </td>
+                                    <td>
+                                      <span style={{ background: 'rgba(37, 211, 102, 0.2)', color: '#25d366', border: '1px solid #25d366', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                        <CheckCircle2 size={12} /> Acepta Novedades
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                                        {item.source === 'whatsapp_cart' ? '🛒 Carrito' : item.source === 'whatsapp_product' ? '📦 Ficha Producto' : '💬 WhatsApp Directo'}
+                                      </span>
+                                    </td>
+                                    <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                                      {item.created_at ? new Date(item.created_at).toLocaleString('es-ES') : 'N/A'}
+                                    </td>
+                                    <td>
+                                      <div className="table-action-btns">
+                                        <button
+                                          className="action-btn"
+                                          title="Copiar correo"
+                                          onClick={() => handleCopyEmailsToClipboard([item], item.email)}
+                                          style={{ background: 'rgba(255,255,255,0.08)', color: 'white' }}
+                                        >
+                                          <Copy size={14} />
+                                        </button>
+                                        <button
+                                          className="action-btn btn-delete"
+                                          title="Eliminar registro"
+                                          onClick={() => handleDeleteCustomerEmailItem(item.id, item.email)}
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+
+
+                      {/* SECTION 2: NO MARKETING (DARK SLATE / CYAN CARD) */}
+                      <div className="admin-email-section-card non-marketing-card" style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(102, 252, 241, 0.3)', borderRadius: '16px', padding: '1.5rem' }}>
+                        <div className="section-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem', marginBottom: '1.2rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ background: 'rgba(102, 252, 241, 0.15)', color: 'var(--neon-cyan)', padding: '6px', borderRadius: '8px', display: 'flex', alignItems: 'center', border: '1px solid var(--neon-cyan)' }}>
+                              <MailX size={22} />
+                            </div>
+                            <div>
+                              <h3 style={{ fontSize: '1.25rem', color: 'white', fontWeight: '700', margin: 0 }}>
+                                2. Correos solo para GESTIÓN DE PEDIDOS - Sin Promociones ({nonMarketingEmails.length})
+                              </h3>
+                              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0, marginTop: '2px' }}>
+                                Clientes que solo aceptaron el almacenamiento obligatorio para tramitar su pedido o duda. NO desean spam.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyEmailsToClipboard(nonMarketingEmails, "Solo Gestión")}
+                              disabled={nonMarketingEmails.length === 0}
+                              style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                            >
+                              <Copy size={14} /> Copiar Correos
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleExportEmailsToCSV(nonMarketingEmails, 'correos_solo_gestion_vapex')}
+                              disabled={nonMarketingEmails.length === 0}
+                              style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                            >
+                              <Download size={14} /> Exportar CSV
+                            </button>
+                          </div>
+                        </div>
+
+                        {nonMarketingEmails.length === 0 ? (
+                          <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                            No hay ningún correo registrado en este apartado.
+                          </div>
+                        ) : (
+                          <div className="table-responsive-wrapper">
+                            <table className="admin-custom-table">
+                              <thead>
+                                <tr>
+                                  <th>ID</th>
+                                  <th>Correo Electrónico</th>
+                                  <th>Estado Promocional</th>
+                                  <th>Origen</th>
+                                  <th>Fecha de Registro</th>
+                                  <th>Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {nonMarketingEmails.map((item) => (
+                                  <tr key={item.id}>
+                                    <td>#{item.id}</td>
+                                    <td>
+                                      <span style={{ fontWeight: '600', color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{item.email}</span>
+                                    </td>
+                                    <td>
+                                      <span style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                        <ShieldAlert size={12} /> Solo Gestión (Sin Spam)
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                                        {item.source === 'whatsapp_cart' ? '🛒 Carrito' : item.source === 'whatsapp_product' ? '📦 Ficha Producto' : '💬 WhatsApp Directo'}
+                                      </span>
+                                    </td>
+                                    <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                                      {item.created_at ? new Date(item.created_at).toLocaleString('es-ES') : 'N/A'}
+                                    </td>
+                                    <td>
+                                      <div className="table-action-btns">
+                                        <button
+                                          className="action-btn"
+                                          title="Copiar correo"
+                                          onClick={() => handleCopyEmailsToClipboard([item], item.email)}
+                                          style={{ background: 'rgba(255,255,255,0.08)', color: 'white' }}
+                                        >
+                                          <Copy size={14} />
+                                        </button>
+                                        <button
+                                          className="action-btn btn-delete"
+                                          title="Eliminar registro"
+                                          onClick={() => handleDeleteCustomerEmailItem(item.id, item.email)}
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          )}
         </div>
       </main>
     </div>
   );
 }
+

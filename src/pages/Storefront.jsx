@@ -4,6 +4,7 @@ import Hero from '../components/Hero';
 import ProductGrid from '../components/ProductGrid';
 import ProductModal from '../components/ProductModal';
 import AgeVerificationModal from '../components/AgeVerificationModal';
+import WhatsAppEmailModal from '../components/WhatsAppEmailModal';
 import { supabase } from '../lib/supabaseClient';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleGeneralWhatsAppContact } from '../lib/whatsapp';
@@ -15,6 +16,12 @@ export default function Storefront() {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+
+  const handleConfirmGeneralWhatsApp = ({ email }) => {
+    handleGeneralWhatsAppContact(t, email);
+  };
+
 
   const defaultCategories = [
     { id: 'vapers', name: 'Vapers' },
@@ -124,7 +131,7 @@ export default function Storefront() {
         <div className="whatsapp-direct-container">
           <button 
             className="btn-whatsapp-large-direct" 
-            onClick={() => handleGeneralWhatsAppContact(t)}
+            onClick={() => setIsEmailModalOpen(true)}
             id="whatsapp-general-btn"
           >
             <svg 
@@ -265,6 +272,14 @@ export default function Storefront() {
           onClose={() => setSelectedProduct(null)} 
         />
       )}
+
+      <WhatsAppEmailModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        onConfirm={handleConfirmGeneralWhatsApp}
+        actionType="general"
+      />
     </>
   );
 }
+
