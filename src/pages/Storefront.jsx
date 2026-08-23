@@ -5,6 +5,7 @@ import ProductGrid from '../components/ProductGrid';
 import ProductModal from '../components/ProductModal';
 import AgeVerificationModal from '../components/AgeVerificationModal';
 import WhatsAppEmailModal from '../components/WhatsAppEmailModal';
+import WhatsAppFloatingButton from '../components/WhatsAppFloatingButton';
 import { supabase } from '../lib/supabaseClient';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleGeneralWhatsAppContact } from '../lib/whatsapp';
@@ -272,6 +273,8 @@ export default function Storefront() {
           onClose={() => setSelectedProduct(null)} 
         />
       )}
+
+      <WhatsAppFloatingButton onClick={() => setIsEmailModalOpen(true)} />
 
       <WhatsAppEmailModal
         isOpen={isEmailModalOpen}
