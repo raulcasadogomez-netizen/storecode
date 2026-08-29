@@ -8,8 +8,8 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
   const [discountPercent, setDiscountPercent] = useState(0);
   const [couponError, setCouponError] = useState('');
   const [couponApplied, setCouponApplied] = useState('');
-  const [checkoutStep, setCheckoutStep] = useState('cart'); // 'cart', 'paying', 'success'
-  
+  const [checkoutStep, setCheckoutStep] = useState('cart');
+
   // B2B Customer States
   const [companyName, setCompanyName] = useState('');
   const [cifNif, setCifNif] = useState('');
@@ -62,28 +62,28 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
     setCheckoutStep('paying');
 
     const WHATSAPP_PHONE = (import.meta.env.VITE_WHATSAPP_PHONE || '34641867400').replace(/[^0-9]/g, '');
-    
+
     const localeString = language === 'zh' ? 'zh-CN' : language === 'en' ? 'en-US' : 'es-ES';
-    
+
     let text = t('whatsapp_order_title');
     text += `${t('whatsapp_company')}${companyName.trim()}\n`;
     text += `${t('whatsapp_cif')}${cifNif.trim().toUpperCase()}\n`;
     text += `📧 *Correo:* ${customerEmail.trim().toLowerCase()}\n`;
     text += `${t('whatsapp_datetime')}${new Date().toLocaleString(localeString)}\n`;
     text += `----------------------------------------------\n`;
-    
+
     cartItems.forEach((item) => {
       const translatedName = t(`p_${item.id}_name`, {}, item.name);
       const nicText = item.hasNicotine ? t('whatsapp_item_nic', { nic: item.selectedNicotine }) : '';
-      
+
       const units = item.unitsPerPackage;
       const num = units ? parseInt(units) : 1;
       const showUnits = units && (isNaN(num) || num > 1);
       const packText = showUnits ? ` (Ux/ ${units})` : '';
-      
+
       text += `• ${item.quantity}x ${translatedName}${nicText}${packText} - ${(item.price * item.quantity).toFixed(2)} €\n`;
     });
-    
+
     text += `----------------------------------------------\n`;
     if (couponApplied) {
       text += `${t('whatsapp_subtotal')}${subtotal.toFixed(2)} €\n`;
@@ -116,7 +116,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
   return (
     <div className="cart-overlay" onClick={onClose}>
       <div className="cart-panel" onClick={(e) => e.stopPropagation()}>
-        
+
         {/* Header */}
         <div className="cart-header">
           <div className="title-wrapper">
@@ -184,8 +184,8 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                           </div>
                         </div>
                       </div>
-                      <button 
-                        className="btn-remove-item" 
+                      <button
+                        className="btn-remove-item"
                         onClick={() => onRemoveItem(item.id, item.selectedNicotine)}
                         title={t('cart_coupon_remove')}
                       >
@@ -258,9 +258,9 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
 
                   <div className="b2b-input-group">
                     <label>{t('cart_company_name_label')}</label>
-                    <input 
-                      type="text" 
-                      placeholder={t('cart_company_name_placeholder')} 
+                    <input
+                      type="text"
+                      placeholder={t('cart_company_name_placeholder')}
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       required
@@ -269,9 +269,9 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
 
                   <div className="b2b-input-group">
                     <label>{t('cart_cif_label')}</label>
-                    <input 
-                      type="text" 
-                      placeholder={t('cart_cif_placeholder')} 
+                    <input
+                      type="text"
+                      placeholder={t('cart_cif_placeholder')}
                       value={cifNif}
                       onChange={(e) => setCifNif(e.target.value)}
                       required
@@ -280,9 +280,9 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
 
                   <div className="b2b-input-group">
                     <label>{t('email_label', {}, 'Correo Electrónico')} *</label>
-                    <input 
-                      type="email" 
-                      placeholder="ejemplo@empresa.com" 
+                    <input
+                      type="email"
+                      placeholder="ejemplo@empresa.com"
                       value={customerEmail}
                       onChange={(e) => setCustomerEmail(e.target.value)}
                       required
@@ -291,8 +291,8 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
 
                   <div className="b2b-checkbox-wrapper">
                     <label className="b2b-checkbox-label">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={acceptB2B}
                         onChange={(e) => setAcceptB2B(e.target.checked)}
                       />
@@ -300,8 +300,8 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                     </label>
 
                     <label className="b2b-checkbox-label">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={acceptPrivacy}
                         onChange={(e) => setAcceptPrivacy(e.target.checked)}
                       />
@@ -309,8 +309,8 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                     </label>
 
                     <label className="b2b-checkbox-label" style={{ opacity: 0.9 }}>
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={acceptMarketing}
                         onChange={(e) => setAcceptMarketing(e.target.checked)}
                       />
@@ -319,8 +319,8 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
                   </div>
                 </div>
 
-                <button 
-                  className="btn-primary-neon checkout-btn" 
+                <button
+                  className="btn-primary-neon checkout-btn"
                   onClick={handleCheckoutSubmit}
                   disabled={!companyName.trim() || !cifNif.trim() || !customerEmail.trim() || !acceptB2B || !acceptPrivacy}
                 >
