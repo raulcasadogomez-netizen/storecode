@@ -211,7 +211,7 @@ export default function Storefront() {
       <footer className="main-footer">
         <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem' }}>
           <div className="footer-col brand-col">
-            <h3>EL PATINOSO IMPORT</h3>
+            <h3>EL PATINOSO</h3>
             <p>{t('footer_brand_desc')}</p>
             <p style={{ marginTop: '1.5rem' }}>
               <a href="/admin" className="text-neon-cyan" style={{ fontSize: '0.85rem', textDecoration: 'underline' }}>

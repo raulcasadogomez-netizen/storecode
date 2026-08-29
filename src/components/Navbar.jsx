@@ -69,7 +69,7 @@ export default function Navbar({ searchVal, onSearchChange }) {
         <div className="navbar-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <img src="/images/logovapers.webp" alt="El Patinoso Logo" className="logo-img" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span className="logo-text" style={{ lineHeight: '1.1' }}>EL PATINOSO IMPORT</span>
+            <span className="logo-text" style={{ lineHeight: '1.1' }}>EL PATINOSO</span>
             <span style={{ fontSize: '0.6rem', color: 'var(--neon-purple)', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase', textShadow: 'var(--neon-purple-glow)' }}>{t('nav_b2b')}</span>
           </div>
         </div>
