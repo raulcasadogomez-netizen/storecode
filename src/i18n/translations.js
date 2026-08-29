@@ -169,7 +169,7 @@ export const translations = {
     footer_legal_terms: "Términos B2B",
     footer_contact_title: "Contacto",
     footer_contact_email: "Soporte B2B: info@elpatinoso.com",
-    footer_contact_phone: "Teléfono: +34 900 123 456",
+    footer_contact_phone: "Teléfono: +34 641 86 74 00",
     footer_contact_hours: "Horario: L-V 9:00 a 19:00",
     footer_rights: "Todos los derechos reservados. Diseñado por Antigravity.",
     
@@ -401,7 +401,7 @@ export const translations = {
     footer_legal_terms: "B2B 销售条款",
     footer_contact_title: "联系我们",
     footer_contact_email: "企业支持: info@elpatinoso.com",
-    footer_contact_phone: "客服热线: +34 900 123 456",
+    footer_contact_phone: "客服热线: +34 641 86 74 00",
     footer_contact_hours: "工作时间: 周一至周五 9:00 - 19:00",
     footer_rights: "保留所有权利。由 Antigravity 设计开发。",
     
@@ -633,7 +633,7 @@ export const translations = {
     footer_legal_terms: "B2B Terms",
     footer_contact_title: "Contact",
     footer_contact_email: "B2B Support: info@elpatinoso.com",
-    footer_contact_phone: "Phone: +34 900 123 456",
+    footer_contact_phone: "Phone: +34 641 86 74 00",
     footer_contact_hours: "Hours: M-F 9:00 to 19:00",
     footer_rights: "All rights reserved. Designed by Antigravity.",
     

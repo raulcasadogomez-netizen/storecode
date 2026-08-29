@@ -61,7 +61,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
 
     setCheckoutStep('paying');
 
-    const WHATSAPP_PHONE = import.meta.env.VITE_WHATSAPP_PHONE || '34641324707';
+    const WHATSAPP_PHONE = (import.meta.env.VITE_WHATSAPP_PHONE || '34641867400').replace(/[^0-9]/g, '');
     
     const localeString = language === 'zh' ? 'zh-CN' : language === 'en' ? 'en-US' : 'es-ES';
     
