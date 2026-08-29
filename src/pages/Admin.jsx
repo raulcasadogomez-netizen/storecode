@@ -514,12 +514,12 @@ export default function Admin() {
     setCategoriesLoading(true);
     try {
       if (!supabase) {
-        const savedCats = localStorage.getItem('vapex-categories');
+        const savedCats = localStorage.getItem('elpatinoso-categories') || localStorage.getItem('vapex-categories');
         if (savedCats) {
           setCategories(JSON.parse(savedCats));
         } else {
           setCategories(defaultCategories);
-          localStorage.setItem('vapex-categories', JSON.stringify(defaultCategories));
+          localStorage.setItem('elpatinoso-categories', JSON.stringify(defaultCategories));
         }
         return;
       }
@@ -539,7 +539,7 @@ export default function Admin() {
       }
     } catch (err) {
       console.error("Error fetching categories in Admin:", err);
-      const savedCats = localStorage.getItem('vapex-categories');
+      const savedCats = localStorage.getItem('elpatinoso-categories') || localStorage.getItem('vapex-categories');
       if (savedCats) {
         setCategories(JSON.parse(savedCats));
       } else {
@@ -675,7 +675,7 @@ export default function Admin() {
     try {
       if (!supabase) {
         const updatedCats = [...categories, payload];
-        localStorage.setItem('vapex-categories', JSON.stringify(updatedCats));
+        localStorage.setItem('elpatinoso-categories', JSON.stringify(updatedCats));
         setCategories(updatedCats);
         setNewCategoryName('');
       } else {
@@ -717,7 +717,7 @@ export default function Admin() {
     try {
       if (!supabase) {
         const updatedCats = categories.map((c) => c.id === editingCategory.id ? payload : c);
-        localStorage.setItem('vapex-categories', JSON.stringify(updatedCats));
+        localStorage.setItem('elpatinoso-categories', JSON.stringify(updatedCats));
         setCategories(updatedCats);
         setNewCategoryName('');
         setEditingCategory(null);
@@ -757,7 +757,7 @@ export default function Admin() {
     try {
       if (!supabase) {
         const updatedCats = categories.filter((c) => c.id !== catId);
-        localStorage.setItem('vapex-categories', JSON.stringify(updatedCats));
+        localStorage.setItem('elpatinoso-categories', JSON.stringify(updatedCats));
         setCategories(updatedCats);
         if (editingCategory && editingCategory.id === catId) {
           setEditingCategory(null);
@@ -1110,9 +1110,9 @@ export default function Admin() {
 
         <div className="admin-login-card">
           <div className="login-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-            <img src="/images/logovapers.webp" alt="VAPEX Logo" className="modal-logo-img" style={{ height: '80px' }} />
+            <img src="/images/logovapers.webp" alt="El Patinoso Logo" className="modal-logo-img" style={{ height: '80px' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span className="logo-neon-text" style={{ fontSize: '2rem' }}>VAPEX</span>
+              <span className="logo-neon-text" style={{ fontSize: '2rem' }}>EL PATINOSO</span>
               <span className="badge-admin">ADMIN</span>
             </div>
           </div>
@@ -1125,7 +1125,7 @@ export default function Admin() {
               <label>Email</label>
               <input
                 type="email"
-                placeholder="admin@vapex.com"
+                placeholder="admin@elpatinoso.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -1172,8 +1172,8 @@ export default function Admin() {
       {/* Top Header */}
       <header className="admin-dashboard-header">
         <div className="header-logo-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <img src="/images/logovapers.webp" alt="VAPEX Logo" style={{ height: '36px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 5px rgba(102, 252, 241, 0.35))' }} />
-          <span className="logo-neon-text" style={{ fontSize: '1.5rem' }}>VAPEX</span>
+          <img src="/images/logovapers.webp" alt="El Patinoso Logo" style={{ height: '36px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 5px rgba(102, 252, 241, 0.35))' }} />
+          <span className="logo-neon-text" style={{ fontSize: '1.5rem' }}>EL PATINOSO</span>
           <span className="badge-admin">CONSOLE</span>
         </div>
         
@@ -1340,7 +1340,7 @@ export default function Admin() {
                         type="text"
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
-                        placeholder="Ej. VAPEX"
+                        placeholder="Ej. El Patinoso"
                         required
                       />
                     </div>
@@ -2077,7 +2077,7 @@ export default function Admin() {
                             </button>
                             <button
                               type="button"
-                              onClick={() => handleExportEmailsToCSV(marketingEmails, 'correos_con_marketing_vapex')}
+                              onClick={() => handleExportEmailsToCSV(marketingEmails, 'correos_con_marketing_elpatinoso')}
                               disabled={marketingEmails.length === 0}
                               style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                             >
@@ -2179,7 +2179,7 @@ export default function Admin() {
                             </button>
                             <button
                               type="button"
-                              onClick={() => handleExportEmailsToCSV(nonMarketingEmails, 'correos_solo_gestion_vapex')}
+                              onClick={() => handleExportEmailsToCSV(nonMarketingEmails, 'correos_solo_gestion_elpatinoso')}
                               disabled={nonMarketingEmails.length === 0}
                               style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--glass-border)', color: 'white', padding: '0.5rem 0.9rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                             >

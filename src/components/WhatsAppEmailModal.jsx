@@ -158,7 +158,7 @@ export default function WhatsAppEmailModal({ isOpen, onClose, onConfirm, actionT
               <span className="checkbox-custom"></span>
               <span className="checkbox-text">
                 <strong>{t('email_marketing_optional_label', {}, 'Acepto recibir novedades y promociones')} <span className="opt-badge">Opcional</span></strong>
-                <small>{t('email_marketing_optional_desc', {}, 'Deseo recibir correos con descuentos exclusivos, catálogos nuevos y ofertas especiales de VAPEX.')}</small>
+                <small>{t('email_marketing_optional_desc', {}, 'Deseo recibir correos con descuentos exclusivos, catálogos nuevos y ofertas especiales de El Patinoso.')}</small>
               </span>
             </label>
           </div>

@@ -7,7 +7,7 @@ const LanguageContext = createContext(null);
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(() => {
     // 1. Check local storage
-    const saved = localStorage.getItem('vapex-lang');
+    const saved = localStorage.getItem('elpatinoso-lang') || localStorage.getItem('vapex-lang');
     if (saved && ['es', 'zh', 'en'].includes(saved)) {
       return saved;
     }
@@ -59,7 +59,7 @@ export const LanguageProvider = ({ children }) => {
   const changeLanguage = (lang) => {
     if (['es', 'zh', 'en'].includes(lang)) {
       setLanguage(lang);
-      localStorage.setItem('vapex-lang', lang);
+      localStorage.setItem('elpatinoso-lang', lang);
     }
   };
 

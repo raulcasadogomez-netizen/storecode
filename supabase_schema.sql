@@ -1,5 +1,5 @@
 -- ==========================================================================
--- SCRIPT DE CONFIGURACIÓN DE BASE DE DATOS PARA SUPABASE (VAPEX)
+-- SCRIPT DE CONFIGURACIÓN DE BASE DE DATOS PARA SUPABASE (EL PATINOSO)
 -- Ejecuta este script en el editor SQL de Supabase para crear las tablas
 -- e insertar los productos iniciales.
 -- ==========================================================================
@@ -49,7 +49,7 @@ INSERT INTO public.products (name, brand, category, price, rating, reviews, imag
 VALUES 
 (
   'Mango Peach Fusion Disposable', 
-  'VAPEX Neon', 
+  'El Patinoso Neon', 
   'vapers', 
   12.99, 
   4.8, 
@@ -235,7 +235,7 @@ ON CONFLICT (id) DO UPDATE SET
 INSERT INTO public.site_texts (id, es, en, zh) VALUES
 ('exp_tag', 'PROCESO DE IMPORTACIÓN', 'IMPORTATION PROCESS', '进口与通关流程'),
 ('exp_title_part1', 'Garantías de ', 'Guarantees of ', '我们的 '),
-('exp_title_purple', 'VAPEX Import', 'VAPEX Import', 'VAPEX 进口保障'),
+('exp_title_purple', 'El Patinoso Import', 'El Patinoso Import', 'El Patinoso 进口保障'),
 ('exp_desc', 'Nos encargamos de todo el proceso de importación y aduanas para traer a España los artículos más exclusivos y de alta demanda del mercado internacional. Garantizamos la trazabilidad total y el cumplimiento legal de cada producto.', 'We manage the entire import and customs clearance process to bring Spain the most exclusive and highly demanded items from the international market. We guarantee full traceability and legal compliance for each product.', '我们全权负责所有进口、清关及商检手续，为西班牙市场引入最独特、高品质、高需求的国际热销商品。保障每一件商品的百分百可追溯性 y 合法合规。'),
 ('exp_bullet1_title', 'Regulación Europea TPD:', 'European TPD Regulation:', '欧盟 TPD 烟草指令合规：'),
 ('exp_bullet1_desc', ' Todos los vapers cumplen estrictamente con la directiva europea de tabaco y pureza.', ' All vapes comply strictly with the European tobacco directive and purity standards.', ' 所有电子烟产品均严格执行欧盟烟草指令与纯度标准。'),
@@ -250,7 +250,7 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- Semilla de textos de la sección Sobre Nosotros
 INSERT INTO public.site_texts (id, es, en, zh) VALUES
-('about_title', 'Sobre VAPEX Import', 'About VAPEX Import', '关于 VAPEX Import'),
+('about_title', 'Sobre El Patinoso Import', 'About El Patinoso Import', '关于 El Patinoso Import'),
 ('about_desc', 'Somos una importadora especializada fundada en 2026 con la misión de facilitar el acceso a productos internacionales exclusivos de alta demanda. Gestionamos directamente el transporte y los despachos aduaneros para ofrecer a nuestros clientes en España vapers de gama alta, óxido nitroso certificado para repostería profesional y piezas limitadas de coleccionismo con entrega express desde nuestro almacén local.', 'We are a specialized importer founded in 2026 with the mission of facilitating access to exclusive, high-demand international products. We directly handle shipping and customs clearance to offer our clients in Spain high-end vapes, certified nitrous oxide for professional pastry, and limited pieces of collectibles with express delivery from our local warehouse.', '我们是一家成立于 2026 年的专业进口分销企业，致力于消除贸易壁垒，使高端国际独家商品变得触手可及。我们绕过层层中间商直接与原厂对接物流与清关，为西班牙本土商户提供高端电子烟、烘焙专用高纯气罐和限量版潮流艺术收藏品，并从本地仓库进行闪电式发货。'),
 ('about_stat1_num', '+10K', '+10K', '10K+'),
 ('about_stat1_desc', 'Clientes Satisfechos', 'Satisfied Clients', '商户满意信任'),
@@ -267,7 +267,7 @@ ON CONFLICT (id) DO UPDATE SET
 INSERT INTO public.site_texts (id, es, en, zh) VALUES
 ('footer_warning_b2b', 'ADVERTENCIA B2B: Portal exclusivo de venta mayorista para profesionales. De acuerdo con el R.D. Ley 17/2017 de España, los vapers con nicotina solo se distribuyen a establecimientos físicos autorizados y no a consumidores finales. El óxido nitroso se comercializa estrictamente para hostelería y repostería culinaria; su inhalación con otros fines es peligrosa y está prohibida.', 'B2B WARNING: Exclusive wholesale portal for professionals. Under Spanish R.D. Ley 17/2017, nicotine vapes are only distributed to authorized physical establishments and not to end consumers. Nitrous oxide is marketed strictly for hospitality and culinary pastry; inhalation for other purposes is dangerous and prohibited.', 'B2B 批发警示：本网站为仅限商户使用的批发门户。根据西班牙 R.D. Ley 17/2017，含尼古丁电子烟只能分销给授权实体零售点，禁止向最终消费者直销。一氧化二氮仅限餐饮烘焙专业用途使用，吸食吸入该气体具有极高危险性且属于违法行为。'),
 ('footer_brand_desc', 'Distribuidora e importadora mayorista online de vapeo premium, gases alimentarios y coleccionables.', 'Online wholesale distributor and importer of premium vaping, culinary gas, and limited collectibles.', '一站式高端电子烟、食品级特种气体及潮流限量艺术品大宗进口批发分销平台。'),
-('alert_legal_notice', 'AVISO LEGAL:\nEste sitio web es operado por VAPEX Import S.L., con CIF B-12345678, domicilio social en Madrid, España. Portal de comercio electrónico exclusivo para profesionales (B2B).', 'LEGAL NOTICE:\nThis website is operated by VAPEX Import S.L., CIF B-12345678, registered address in Madrid, Spain. Exclusive e-commerce portal for professionals (B2B).', '法律声明：\n本网站由 VAPEX Import S.L. 运营。注册地址位于西班牙马德里，税号 CIF B-12345678。本网站属于专属 B2B 商户电子商务平台。'),
+('alert_legal_notice', 'AVISO LEGAL:\nEste sitio web es operado por El Patinoso Import S.L., con CIF B-12345678, domicilio social en Madrid, España. Portal de comercio electrónico exclusivo para profesionales (B2B).', 'LEGAL NOTICE:\nThis website is operated by El Patinoso Import S.L., CIF B-12345678, registered address in Madrid, Spain. Exclusive e-commerce portal for professionals (B2B).', '法律声明：\n本网站由 El Patinoso Import S.L. 运营。注册地址位于西班牙马德里，税号 CIF B-12345678。本网站属于专属 B2B 商户电子商务平台。'),
 ('alert_privacy_policy', 'POLÍTICA DE PRIVACIDAD:\nEn cumplimiento del RGPD, tus datos personales de contacto facilitados para la tramitación de pedidos a través de WhatsApp son procesados con la única finalidad de facturación y envío comercial.', 'PRIVACY POLICY:\nIn compliance with GDPR, your personal contact details provided for order processing through WhatsApp are processed solely for billing and commercial shipping purposes.', '隐私政策：\n根据 GDPR 规范，您为了通过 WhatsApp 进行订单结算而提交 de 商业联系数据，将仅用于发票开具及商业物流派送 de 目的进行处理。'),
 ('alert_cookies_policy', 'POLÍTICA DE COOKIES:\nEste sitio web utiliza almacenamiento técnico obligatorio (local storage) para gestionar tu verificación de edad y tu carrito de compras de forma anónima.', 'COOKIES POLICY:\nThis website uses required technical local storage to manage your age verification and your shopping cart anonymously.', 'Cookie 政策：\n本网站仅使用必要 de 技术型本地存储 (local storage) 以匿名方式管理您的年龄验证状态以及购物车内 de 商品。'),
 ('alert_b2b_terms', 'TÉRMINOS Y CONDICIONES B2B:\nTodas las ventas se gestionan mediante cierre comercial por WhatsApp. Se requiere acreditación fiscal (Modelo 036 o IAE) para validar transacciones mayoristas.', 'B2B TERMS AND CONDITIONS:\nAll sales are completed commercial closing via WhatsApp. Fiscal credentials (Model 036 or IAE) are required to validate wholesale transactions.', 'B2B 条款与条件：\n所有订单最终都通过 WhatsApp 确认闭环交易。商户须提供税务证明 (Modelo 036 或 IAE) 以验证大宗批发资质。')

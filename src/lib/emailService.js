@@ -1,11 +1,11 @@
 import { supabase } from './supabaseClient';
 
-const LOCAL_STORAGE_KEY = 'vapex_customer_emails';
+const LOCAL_STORAGE_KEY = 'elpatinoso_customer_emails';
 
 // Get local emails array from localStorage
 function getLocalEmails() {
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY) || localStorage.getItem('vapex_customer_emails');
     return raw ? JSON.parse(raw) : [];
   } catch (err) {
     console.error("Error reading customer emails from localStorage:", err);

@@ -6,14 +6,14 @@ export default function AgeVerificationModal() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const isVerified = localStorage.getItem('vapex-age-verified');
+    const isVerified = localStorage.getItem('elpatinoso-age-verified') || localStorage.getItem('vapex-age-verified');
     if (isVerified !== 'true') {
       setShowModal(true);
     }
   }, []);
 
   const handleVerify = () => {
-    localStorage.setItem('vapex-age-verified', 'true');
+    localStorage.setItem('elpatinoso-age-verified', 'true');
     setShowModal(false);
   };
 
@@ -27,7 +27,7 @@ export default function AgeVerificationModal() {
     <div className="age-verification-overlay">
       <div className="age-verification-card">
         <div className="logo-container">
-          <img src="/images/logovapers.webp" alt="VAPEX Logo" className="modal-logo-img" />
+          <img src="/images/logovapers.webp" alt="El Patinoso Logo" className="modal-logo-img" />
         </div>
         
         <h2>{t('age_title')}</h2>

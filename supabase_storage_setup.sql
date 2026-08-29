@@ -1,5 +1,5 @@
 -- ==========================================================================
--- SCRIPT DE CONFIGURACIÓN PARA SUPABASE STORAGE (VAPEX)
+-- SCRIPT DE CONFIGURACIÓN PARA SUPABASE STORAGE (EL PATINOSO)
 -- Ejecuta este script en el editor SQL de Supabase para configurar el Bucket
 -- de almacenamiento de imágenes de productos y habilitar las políticas de seguridad.
 -- ==========================================================================

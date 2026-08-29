@@ -34,7 +34,7 @@ export function handleBuyViaWhatsApp(product, quantity = 1, nicotineVal = null, 
 export function getGeneralWhatsAppLink(t, userEmail = '') {
   const rawPhone = import.meta.env.VITE_WHATSAPP_PHONE || "+34 900 123 456";
   const phone = rawPhone.replace(/[^0-9]/g, '');
-  let message = t('whatsapp_general_msg', {}, 'Hola VAPEX, me gustaría obtener más información sobre sus productos de importación mayorista B2B.');
+  let message = t('whatsapp_general_msg', {}, 'Hola El Patinoso, me gustaría obtener más información sobre sus productos de importación mayorista B2B.');
   
   if (userEmail) {
     message += `\n\n📧 *Correo de contacto:* ${userEmail}`;

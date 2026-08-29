@@ -37,7 +37,7 @@ export default function Storefront() {
         if (!supabase) {
           setProducts([]);
           // Load offline fallback categories
-          const savedCats = localStorage.getItem('vapex-categories');
+          const savedCats = localStorage.getItem('elpatinoso-categories') || localStorage.getItem('vapex-categories');
           if (savedCats) {
             try {
               setCategories(JSON.parse(savedCats));
@@ -68,7 +68,7 @@ export default function Storefront() {
         }
 
         if (catsData.length === 0) {
-          const savedCats = localStorage.getItem('vapex-categories');
+          const savedCats = localStorage.getItem('elpatinoso-categories') || localStorage.getItem('vapex-categories');
           if (savedCats) {
             try {
               catsData = JSON.parse(savedCats);
@@ -211,7 +211,7 @@ export default function Storefront() {
       <footer className="main-footer">
         <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem' }}>
           <div className="footer-col brand-col">
-            <h3>VAPEX IMPORT</h3>
+            <h3>EL PATINOSO IMPORT</h3>
             <p>{t('footer_brand_desc')}</p>
             <p style={{ marginTop: '1.5rem' }}>
               <a href="/admin" className="text-neon-cyan" style={{ fontSize: '0.85rem', textDecoration: 'underline' }}>
@@ -244,7 +244,7 @@ export default function Storefront() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} VAPEX. {t('footer_rights')}</p>
+          <p>&copy; {new Date().getFullYear()} El Patinoso. {t('footer_rights')}</p>
         </div>
       </footer>
 

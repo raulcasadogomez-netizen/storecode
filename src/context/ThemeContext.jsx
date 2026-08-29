@@ -4,7 +4,7 @@ const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    const saved = localStorage.getItem('vapex-theme');
+    const saved = localStorage.getItem('elpatinoso-theme') || localStorage.getItem('vapex-theme');
     if (saved === 'light' || saved === 'dark') {
       return saved;
     }
@@ -14,7 +14,7 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('vapex-theme', theme);
+    localStorage.setItem('elpatinoso-theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

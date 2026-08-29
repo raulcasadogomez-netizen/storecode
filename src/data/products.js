@@ -2,7 +2,7 @@ export const products = [
   {
     id: 1,
     name: "Mango Peach Fusion Disposable",
-    brand: "VAPEX Neon",
+    brand: "El Patinoso Neon",
     category: "vapers",
     price: 12.99,
     rating: 4.8,
