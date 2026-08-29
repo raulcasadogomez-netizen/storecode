@@ -3,6 +3,7 @@ import { X, Star, Plus, Minus, ShieldCheck, Heart } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleBuyViaWhatsApp } from '../lib/whatsapp';
 import WhatsAppEmailModal from './WhatsAppEmailModal';
+import SiphonConfirmationModal from './SiphonConfirmationModal';
 
 export default function ProductModal({ product, onClose }) {
   const { t } = useTranslation();
@@ -12,6 +13,13 @@ export default function ProductModal({ product, onClose }) {
   const [quantity, setQuantity] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [isSiphonModalOpen, setIsSiphonModalOpen] = useState(false);
+
+  const isNitrousOxide = 
+    product.category === 'reposteria' || 
+    product.category?.includes('repost') || 
+    product.category?.includes('n2o') || 
+    product.category?.includes('nitro');
 
   const handleQtyChange = (val) => {
     const newQty = quantity + val;
@@ -21,6 +29,15 @@ export default function ProductModal({ product, onClose }) {
   };
 
   const handleBuy = () => {
+    if (isNitrousOxide) {
+      setIsSiphonModalOpen(true);
+      return;
+    }
+    setIsEmailModalOpen(true);
+  };
+
+  const handleConfirmSiphon = () => {
+    setIsSiphonModalOpen(false);
     setIsEmailModalOpen(true);
   };
 
@@ -208,8 +225,15 @@ export default function ProductModal({ product, onClose }) {
         onConfirm={handleConfirmEmail}
         actionType="product"
       />
+
+      <SiphonConfirmationModal
+        isOpen={isSiphonModalOpen}
+        onConfirm={handleConfirmSiphon}
+        onCancel={() => setIsSiphonModalOpen(false)}
+      />
     </div>
   );
 }
+
 
 

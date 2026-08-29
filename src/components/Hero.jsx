@@ -13,18 +13,18 @@ export default function Hero() {
 
   return (
     <header className="hero-container">
-      {/* Background neon glows */}
+      {/* Background  glows */}
       <div className="hero-glow-cyan"></div>
       <div className="hero-glow-purple"></div>
 
       <div className="hero-content">
         <div className="hero-tag">{t('hero_b2b_tag')}</div>
-        
+
         <h1 className="hero-title">
           {t('hero_title_part1')} <br />
           <span className="gradient-text">{t('hero_title_part2')}</span>
         </h1>
-        
+
         <p className="hero-description">
           {t('hero_desc')}
         </p>
@@ -69,10 +69,10 @@ export default function Hero() {
           <div className="floating-smoke"></div>
           {/* We will place a floating mock vape device or graphical representation */}
           <div className="hero-device-wrapper">
-            <img 
-              src="/images/vape_mango_peach.png" 
-              alt="Vape Principal" 
-              className="hero-floating-device" 
+            <img
+              src="/images/vape_mango_peach.png"
+              alt="Vape Principal"
+              className="hero-floating-device"
             />
             <div className="device-shadow"></div>
           </div>

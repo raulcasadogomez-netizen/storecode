@@ -72,6 +72,24 @@ export const translations = {
     btn_reset: "Restablecer Filtros",
     b2b_iva_tag: "+ IVA (Mayorista)",
 
+    // Category Disclaimer & Terms
+    terms_coleccionismo_title: "Aviso Legal - Coleccionismo",
+    terms_coleccionismo_text: "Es un producto diseñado para coleccionismo y exhibición, usted al comprar este producto nos compromete que no le va a dar un uso distinto al señalado anteriormente, ya que no es apto para el consumo humano. Además, queda totalmente prohibida la venta a menores de edad según la legislación local, en España 18 años.",
+    terms_coleccionismo_question: "¿Aceptas estos términos?",
+    terms_reposteria_title: "Aviso Legal - Óxido Nitroso",
+    terms_reposteria_text: "Este producto es ÚNICAMENTE para uso en repostería y gastronomía profesional, y no es apto para ningún otro uso. Usted al comprar este producto nos compromete que no le va a dar un uso distinto al señalado anteriormente.",
+    terms_reposteria_question: "¿Aceptas estos términos?",
+    terms_btn_accept: "Sí, acepto los términos",
+    terms_btn_decline: "No acepto",
+
+    // Siphon Confirmation Modal for Nitrous Oxide products
+    siphon_confirm_tag: "REQUISITO OBLIGATORIO - ÓXIDO NITROSO",
+    siphon_confirm_title: "Confirmación de Sifón de Repostería",
+    siphon_confirm_text: "La venta sin sifón se realiza únicamente en caso de que confirmes que dispones de uno actualmente en tu propiedad.",
+    siphon_confirm_question: "¿Confirmas que dispones de uno?",
+    siphon_btn_confirm: "Sí, confirmo que dispongo de uno",
+    siphon_btn_cancel: "No dispongo de sifón",
+
     // Product Modal
     modal_out_stock: "Sin Stock",
     modal_low_stock: "¡Pocas unidades!",
@@ -304,6 +322,24 @@ export const translations = {
     btn_reset: "重置筛选条件",
     b2b_iva_tag: "+ 增值税 (批发价)",
 
+    // Category Disclaimer & Terms
+    terms_coleccionismo_title: "法律声明与责任告知 - 潮流收藏品",
+    terms_coleccionismo_text: "本产品专为收藏与展示用途设计。购买本产品即代表您承诺绝不将其用于上述规定以外的任何用途，本品不适合人类食用或人体消耗。此外，根据当地法律法规，严禁向未成年人销售（在西班牙为 18 岁以上）。",
+    terms_coleccionismo_question: "您是否接受上述条款？",
+    terms_reposteria_title: "法律声明与责任告知 - 一氧化二氮",
+    terms_reposteria_text: "本产品仅限用于专业西点烘焙及餐饮制作，严禁用于任何其他用途。购买本产品即代表您承诺绝不将其用于上述规定以外的用途。",
+    terms_reposteria_question: "您是否接受上述条款？",
+    terms_btn_accept: "是的，我接受条款",
+    terms_btn_decline: "不接受并返回",
+
+    // Siphon Confirmation Modal for Nitrous Oxide products
+    siphon_confirm_tag: "重要确认 - 一氧化二氮",
+    siphon_confirm_title: "西点发泡枪拥有确认",
+    siphon_confirm_text: "不含发泡枪的单独气瓶/气弹销售，仅在您确认本人目前已拥有发泡枪设备的情况下方可进行。",
+    siphon_confirm_question: "您是否确认当前已拥有发泡枪？",
+    siphon_btn_confirm: "是的，我确认拥有",
+    siphon_btn_cancel: "没有发泡枪，取消",
+
     // Product Modal
     modal_out_stock: "暂时缺货",
     modal_low_stock: "库存有限！",
@@ -535,6 +571,24 @@ export const translations = {
     no_results_desc: "Try adjusting your filters or searching for another term.",
     btn_reset: "Reset Filters",
     b2b_iva_tag: "+ VAT (Wholesale)",
+
+    // Category Disclaimer & Terms
+    terms_coleccionismo_title: "Legal Notice - Collectibles",
+    terms_coleccionismo_text: "This product is designed for collectibles and exhibition. By purchasing this product, you agree and commit not to give it any use other than that stated above, as it is not suitable for human consumption. In addition, sales to minors are strictly prohibited under local legislation (18 years in Spain).",
+    terms_coleccionismo_question: "Do you accept these terms?",
+    terms_reposteria_title: "Legal Notice - Nitrous Oxide",
+    terms_reposteria_text: "This product is SOLELY for use in professional pastry and culinary hospitality, and is not suitable for any other use. By purchasing this product, you agree and commit not to give it any use other than that stated above.",
+    terms_reposteria_question: "Do you accept these terms?",
+    terms_btn_accept: "Yes, I accept the terms",
+    terms_btn_decline: "I do not accept",
+
+    // Siphon Confirmation Modal for Nitrous Oxide products
+    siphon_confirm_tag: "MANDATORY REQUIREMENT - NITROUS OXIDE",
+    siphon_confirm_title: "Pastry Siphon Confirmation",
+    siphon_confirm_text: "Sales without a siphon are only made if you confirm that you currently own one on your property.",
+    siphon_confirm_question: "Do you confirm that you own one?",
+    siphon_btn_confirm: "Yes, I confirm I have one",
+    siphon_btn_cancel: "I do not own a siphon",
 
     // Product Modal
     modal_out_stock: "Out of Stock",

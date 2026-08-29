@@ -3,11 +3,19 @@ import { Star, Eye } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleBuyViaWhatsApp } from '../lib/whatsapp';
 import WhatsAppEmailModal from './WhatsAppEmailModal';
+import SiphonConfirmationModal from './SiphonConfirmationModal';
 
 export default function ProductCard({ product, categoryName, onQuickView }) {
   const { name, brand, price, rating, reviews, image, inStock, details } = product;
   const { t } = useTranslation();
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [isSiphonModalOpen, setIsSiphonModalOpen] = useState(false);
+
+  const isNitrousOxide = 
+    product.category === 'reposteria' || 
+    product.category?.includes('repost') || 
+    product.category?.includes('n2o') || 
+    product.category?.includes('nitro');
 
   const getUnitPrice = () => {
     if (!details.units_per_package) return null;
@@ -18,6 +26,19 @@ export default function ProductCard({ product, categoryName, onQuickView }) {
     return null;
   };
   const unitPrice = getUnitPrice();
+
+  const handleBuyClick = () => {
+    if (isNitrousOxide) {
+      setIsSiphonModalOpen(true);
+      return;
+    }
+    setIsEmailModalOpen(true);
+  };
+
+  const handleConfirmSiphon = () => {
+    setIsSiphonModalOpen(false);
+    setIsEmailModalOpen(true);
+  };
 
   const handleConfirmEmail = ({ email }) => {
     const defaultNicotine = product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0 ? product.details.nicotine[0] : null;
@@ -129,7 +150,7 @@ export default function ProductCard({ product, categoryName, onQuickView }) {
             
             <button 
               className="whatsapp-buy-btn" 
-              onClick={() => setIsEmailModalOpen(true)}
+              onClick={handleBuyClick}
               disabled={!inStock}
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor">
@@ -148,7 +169,14 @@ export default function ProductCard({ product, categoryName, onQuickView }) {
         onConfirm={handleConfirmEmail}
         actionType="product"
       />
+
+      <SiphonConfirmationModal
+        isOpen={isSiphonModalOpen}
+        onConfirm={handleConfirmSiphon}
+        onCancel={() => setIsSiphonModalOpen(false)}
+      />
     </>
   );
 }
+
 

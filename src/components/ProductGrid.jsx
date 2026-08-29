@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import ProductCard from './ProductCard';
+import CategoryTermsModal from './CategoryTermsModal';
 import { SlidersHorizontal } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 
@@ -8,12 +9,29 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
   const [sortBy, setSortBy] = useState('recommended');
   const { t } = useTranslation();
 
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [pendingCategory, setPendingCategory] = useState(null);
+  const [pendingProduct, setPendingProduct] = useState(null);
+
   const categoryTabs = useMemo(() => {
     return [
       { id: 'todos', name: t('cat_all') },
       ...categories
     ];
   }, [categories, t]);
+
+  const isRestrictedCategory = (catId) => {
+    if (!catId || catId === 'todos' || catId === 'vapers') return false;
+    const lower = catId.toLowerCase();
+    return (
+      lower === 'coleccionismo' ||
+      lower === 'reposteria' ||
+      lower.includes('colecc') ||
+      lower.includes('repost') ||
+      lower.includes('n2o') ||
+      lower.includes('nitro')
+    );
+  };
 
   const getCategoryName = (catId) => {
     const cat = categories.find((c) => c.id === catId);
@@ -25,6 +43,49 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
       (catId ? catId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '');
       
     return t('cat_' + catId, {}, dbName || fallbackName);
+  };
+
+  const handleCategoryClick = (catId) => {
+    if (catId === selectedCategory) return;
+
+    // Show warning every time user enters a restricted category
+    if (isRestrictedCategory(catId)) {
+      setPendingCategory(catId);
+      setPendingProduct(null);
+      setIsTermsModalOpen(true);
+      return;
+    }
+    setSelectedCategory(catId);
+  };
+
+  const handleQuickViewProtected = (product) => {
+    // If viewing from outside the category, show warning if restricted
+    if (selectedCategory !== product.category && isRestrictedCategory(product.category)) {
+      setPendingCategory(product.category);
+      setPendingProduct(product);
+      setIsTermsModalOpen(true);
+      return;
+    }
+    onQuickView(product);
+  };
+
+  const handleAcceptTerms = () => {
+    if (pendingProduct) {
+      onQuickView(pendingProduct);
+    } else if (pendingCategory) {
+      setSelectedCategory(pendingCategory);
+    }
+
+    setIsTermsModalOpen(false);
+    setPendingCategory(null);
+    setPendingProduct(null);
+  };
+
+  const handleDeclineTerms = () => {
+    setIsTermsModalOpen(false);
+    setPendingCategory(null);
+    setPendingProduct(null);
+    // User declined: do NOT allow entry, stay in current category
   };
 
   // Filtering & Sorting logic
@@ -66,69 +127,80 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
   };
 
   return (
-    <section id="catalogo" className="catalog-section">
-      <div className="catalog-header">
-        <h2 className="section-title">
-          {t('catalog_title')} <span className="text-neon-cyan">{t('catalog_subtitle_cyan')}</span>
-        </h2>
-        <p className="section-subtitle">
-          {t('catalog_desc')}
-        </p>
-      </div>
+    <>
+      <section id="catalogo" className="catalog-section">
+        <div className="catalog-header">
+          <h2 className="section-title">
+            {t('catalog_title')} <span className="text-neon-cyan">{t('catalog_subtitle_cyan')}</span>
+          </h2>
+          <p className="section-subtitle">
+            {t('catalog_desc')}
+          </p>
+        </div>
 
-      {/* Filters and Controls Bar */}
-      <div className="catalog-controls">
-        {/* Category Chips */}
-        <div className="category-chips">
-          {categoryTabs.map((cat) => (
-            <button
-              key={cat.id}
-              className={`chip ${selectedCategory === cat.id ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat.id)}
+        {/* Filters and Controls Bar */}
+        <div className="catalog-controls">
+          {/* Category Chips */}
+          <div className="category-chips">
+            {categoryTabs.map((cat) => (
+              <button
+                key={cat.id}
+                className={`chip ${selectedCategory === cat.id ? 'active' : ''}`}
+                onClick={() => handleCategoryClick(cat.id)}
+              >
+                {cat.id === 'todos' ? t('cat_all') : t('cat_' + cat.id, {}, cat.name)}
+              </button>
+            ))}
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="sort-wrapper">
+            <SlidersHorizontal size={16} className="sort-icon" />
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className="sort-select"
             >
-              {cat.id === 'todos' ? t('cat_all') : t('cat_' + cat.id, {}, cat.name)}
+              <option value="recommended">{t('sort_recommended')}</option>
+              <option value="price-asc">{t('sort_price_asc')}</option>
+              <option value="price-desc">{t('sort_price_desc')}</option>
+              <option value="rating">{t('sort_rating')}</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Product List Grid */}
+        {filteredAndSortedProducts.length > 0 ? (
+          <div className="products-grid">
+            {filteredAndSortedProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                categoryName={getCategoryName(product.category)}
+                onQuickView={handleQuickViewProtected}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="no-results">
+            <h3>{t('no_results_title')}</h3>
+            <p>{t('no_results_desc')}</p>
+            <button className="btn-primary-neon reset-btn" onClick={handleResetFilters}>
+              {t('btn_reset')}
             </button>
-          ))}
-        </div>
+          </div>
+        )}
+      </section>
 
-        {/* Sort Dropdown */}
-        <div className="sort-wrapper">
-          <SlidersHorizontal size={16} className="sort-icon" />
-          <select 
-            value={sortBy} 
-            onChange={(e) => setSortBy(e.target.value)}
-            className="sort-select"
-          >
-            <option value="recommended">{t('sort_recommended')}</option>
-            <option value="price-asc">{t('sort_price_asc')}</option>
-            <option value="price-desc">{t('sort_price_desc')}</option>
-            <option value="rating">{t('sort_rating')}</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Product List Grid */}
-      {filteredAndSortedProducts.length > 0 ? (
-        <div className="products-grid">
-          {filteredAndSortedProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              categoryName={getCategoryName(product.category)}
-              onQuickView={onQuickView}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="no-results">
-          <h3>{t('no_results_title')}</h3>
-          <p>{t('no_results_desc')}</p>
-          <button className="btn-primary-neon reset-btn" onClick={handleResetFilters}>
-            {t('btn_reset')}
-          </button>
-        </div>
-      )}
-    </section>
+      {/* Category Disclaimer & Terms Modal */}
+      <CategoryTermsModal
+        isOpen={isTermsModalOpen}
+        categoryId={pendingCategory}
+        onAccept={handleAcceptTerms}
+        onDecline={handleDeclineTerms}
+      />
+    </>
   );
 }
+
 
