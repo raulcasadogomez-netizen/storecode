@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Trash2, Plus, Minus, ShoppingBag, Sparkles, CheckCircle2, MessageSquare } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
-import { saveCustomerEmail } from '../lib/emailService';
+import { saveCustomerEmail, getSavedUserEmail } from '../lib/emailService';
 
 export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, onRemoveItem, onClearCart }) {
   const [couponCode, setCouponCode] = useState('');
@@ -13,7 +13,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
   // B2B Customer States
   const [companyName, setCompanyName] = useState('');
   const [cifNif, setCifNif] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerEmail, setCustomerEmail] = useState(() => getSavedUserEmail() || '');
   const [acceptB2B, setAcceptB2B] = useState(false);
   const [acceptPrivacy, setAcceptPrivacy] = useState(false);
   const [acceptMarketing, setAcceptMarketing] = useState(false);

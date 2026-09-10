@@ -1,6 +1,100 @@
 import { supabase } from './supabaseClient';
 
 const LOCAL_STORAGE_KEY = 'elpatinoso_customer_emails';
+const SAVED_EMAIL_KEY = 'elpatinoso_saved_user_email';
+const COOKIE_NAME = 'elpatinoso_user_email';
+
+// Helper to get cookie value by name
+function getCookie(name) {
+  try {
+    if (typeof document === 'undefined') return '';
+    const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+    return match ? decodeURIComponent(match[3]) : '';
+  } catch (err) {
+    return '';
+  }
+}
+
+// Helper to set cookie with long expiration (1 year)
+function setCookie(name, value, days = 365) {
+  try {
+    if (typeof document === 'undefined') return;
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+  } catch (err) {
+    console.error("Error setting cookie:", err);
+  }
+}
+
+// Helper to remove cookie
+function removeCookie(name) {
+  try {
+    if (typeof document === 'undefined') return;
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax`;
+  } catch (err) {
+    console.error("Error removing cookie:", err);
+  }
+}
+
+/**
+ * Get remembered/consented user email from cookies or localStorage
+ */
+export function getSavedUserEmail() {
+  try {
+    // 1. Check cookie first
+    const cookieEmail = getCookie(COOKIE_NAME);
+    if (cookieEmail && cookieEmail.includes('@')) {
+      return cookieEmail.trim().toLowerCase();
+    }
+
+    // 2. Check localStorage key
+    const localEmail = localStorage.getItem(SAVED_EMAIL_KEY) || localStorage.getItem('vapex_saved_user_email');
+    if (localEmail && localEmail.includes('@')) {
+      // Synchronize to cookie for longevity
+      setCookie(COOKIE_NAME, localEmail.trim().toLowerCase());
+      return localEmail.trim().toLowerCase();
+    }
+
+    // 3. Fallback to the latest email in the local emails list if present
+    const emailsList = getLocalEmails();
+    if (emailsList.length > 0 && emailsList[0].email && emailsList[0].email.includes('@')) {
+      const email = emailsList[0].email.trim().toLowerCase();
+      setSavedUserEmail(email);
+      return email;
+    }
+  } catch (err) {
+    console.error("Error reading saved user email:", err);
+  }
+  return '';
+}
+
+/**
+ * Store remembered/consented user email in both cookies and localStorage
+ */
+export function setSavedUserEmail(email) {
+  const cleanEmail = email ? email.trim().toLowerCase() : '';
+  if (!cleanEmail || !cleanEmail.includes('@')) return;
+
+  try {
+    localStorage.setItem(SAVED_EMAIL_KEY, cleanEmail);
+    setCookie(COOKIE_NAME, cleanEmail);
+  } catch (err) {
+    console.error("Error persisting saved user email:", err);
+  }
+}
+
+/**
+ * Remove saved user email
+ */
+export function clearSavedUserEmail() {
+  try {
+    localStorage.removeItem(SAVED_EMAIL_KEY);
+    localStorage.removeItem('vapex_saved_user_email');
+    removeCookie(COOKIE_NAME);
+  } catch (err) {
+    console.error("Error clearing saved user email:", err);
+  }
+}
 
 // Get local emails array from localStorage
 function getLocalEmails() {
@@ -30,6 +124,9 @@ export async function saveCustomerEmail({ email, acceptTerms = true, acceptMarke
   if (!cleanEmail) {
     return { success: false, error: 'Email invalid' };
   }
+
+  // Persist email in cookie & localStorage so user is not asked again
+  setSavedUserEmail(cleanEmail);
 
   const now = new Date().toISOString();
   const newRecord = {

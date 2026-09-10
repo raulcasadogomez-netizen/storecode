@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Mail, ShieldAlert, MessageSquare, ArrowRight, Lock } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
-import { saveCustomerEmail } from '../lib/emailService';
+import { saveCustomerEmail, getSavedUserEmail } from '../lib/emailService';
 
 export default function WhatsAppEmailModal({ isOpen, onClose, onConfirm, actionType = 'general' }) {
   const { t } = useTranslation();
@@ -14,9 +14,10 @@ export default function WhatsAppEmailModal({ isOpen, onClose, onConfirm, actionT
 
   useEffect(() => {
     if (isOpen) {
-      // Reset form when modal opens
-      setEmail('');
-      setAcceptTerms(false);
+      // Reset form or prefill with saved email
+      const saved = getSavedUserEmail();
+      setEmail(saved || '');
+      setAcceptTerms(Boolean(saved));
       setAcceptMarketing(false);
       setShowWarning(false);
       setEmailError('');

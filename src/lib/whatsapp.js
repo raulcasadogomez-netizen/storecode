@@ -10,6 +10,12 @@ export function getWhatsAppLink(product, quantity = 1, nicotineVal = null, t, us
     nicotineStr = t('whatsapp_msg_nicotine', { nic: nicotineVal }, `- Nicotina: *${nicotineVal} mg/ml*\n`);
   }
 
+  const isNitrousOxide =
+    product.category === 'reposteria' ||
+    product.category?.includes('repost') ||
+    product.category?.includes('n2o') ||
+    product.category?.includes('nitro');
+
   let message = t('whatsapp_product_msg', {
     name: product.name,
     brand: product.brand,
@@ -18,6 +24,11 @@ export function getWhatsAppLink(product, quantity = 1, nicotineVal = null, t, us
     nicotine: nicotineStr,
     total: total
   });
+
+  if (isNitrousOxide) {
+    const siphonDeclaration = t('whatsapp_msg_siphon', {}, '📌 *Declaración:* Confirmo de que ya dispongo de un Sifón en propiedad');
+    message += `\n\n${siphonDeclaration}`;
+  }
 
   if (userEmail) {
     message += `\n\n📧 *Correo de contacto:* ${userEmail}`;

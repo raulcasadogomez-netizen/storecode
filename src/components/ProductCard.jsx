@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Star, Eye } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleBuyViaWhatsApp } from '../lib/whatsapp';
+import { getSavedUserEmail } from '../lib/emailService';
 import WhatsAppEmailModal from './WhatsAppEmailModal';
 import SiphonConfirmationModal from './SiphonConfirmationModal';
 
@@ -32,11 +33,23 @@ export default function ProductCard({ product, categoryName, onQuickView }) {
       setIsSiphonModalOpen(true);
       return;
     }
+    const savedEmail = getSavedUserEmail();
+    if (savedEmail) {
+      const defaultNicotine = product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0 ? product.details.nicotine[0] : null;
+      handleBuyViaWhatsApp(product, 1, defaultNicotine, t, savedEmail);
+      return;
+    }
     setIsEmailModalOpen(true);
   };
 
   const handleConfirmSiphon = () => {
     setIsSiphonModalOpen(false);
+    const savedEmail = getSavedUserEmail();
+    if (savedEmail) {
+      const defaultNicotine = product.category === 'vapers' && product.details.nicotine && product.details.nicotine.length > 0 ? product.details.nicotine[0] : null;
+      handleBuyViaWhatsApp(product, 1, defaultNicotine, t, savedEmail);
+      return;
+    }
     setIsEmailModalOpen(true);
   };
 

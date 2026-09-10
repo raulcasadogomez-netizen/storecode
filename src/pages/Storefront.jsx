@@ -9,6 +9,7 @@ import WhatsAppFloatingButton from '../components/WhatsAppFloatingButton';
 import { supabase } from '../lib/supabaseClient';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleGeneralWhatsAppContact } from '../lib/whatsapp';
+import { getSavedUserEmail } from '../lib/emailService';
 
 export default function Storefront() {
   const { t } = useTranslation();
@@ -18,6 +19,15 @@ export default function Storefront() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+
+  const handleFloatingWhatsAppClick = () => {
+    const savedEmail = getSavedUserEmail();
+    if (savedEmail) {
+      handleGeneralWhatsAppContact(t, savedEmail);
+      return;
+    }
+    setIsEmailModalOpen(true);
+  };
 
   const handleConfirmGeneralWhatsApp = ({ email }) => {
     handleGeneralWhatsAppContact(t, email);
@@ -256,7 +266,7 @@ export default function Storefront() {
         />
       )}
 
-      <WhatsAppFloatingButton onClick={() => setIsEmailModalOpen(true)} />
+      <WhatsAppFloatingButton onClick={handleFloatingWhatsAppClick} />
 
       <WhatsAppEmailModal
         isOpen={isEmailModalOpen}

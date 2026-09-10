@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Star, Plus, Minus, ShieldCheck, Heart } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleBuyViaWhatsApp } from '../lib/whatsapp';
+import { getSavedUserEmail } from '../lib/emailService';
 import WhatsAppEmailModal from './WhatsAppEmailModal';
 import SiphonConfirmationModal from './SiphonConfirmationModal';
 
@@ -33,11 +34,23 @@ export default function ProductModal({ product, onClose }) {
       setIsSiphonModalOpen(true);
       return;
     }
+    const savedEmail = getSavedUserEmail();
+    if (savedEmail) {
+      handleBuyViaWhatsApp(product, quantity, selectedNicotine, t, savedEmail);
+      onClose();
+      return;
+    }
     setIsEmailModalOpen(true);
   };
 
   const handleConfirmSiphon = () => {
     setIsSiphonModalOpen(false);
+    const savedEmail = getSavedUserEmail();
+    if (savedEmail) {
+      handleBuyViaWhatsApp(product, quantity, selectedNicotine, t, savedEmail);
+      onClose();
+      return;
+    }
     setIsEmailModalOpen(true);
   };
 
