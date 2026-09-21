@@ -4610,4 +4610,20 @@
   }
 }
 
+/* ==========================================================================
+   HIDE NETLIFY BADGES / DRAWER WIDGETS
+   ========================================================================== */
+iframe[src*="netlify"],
+[data-netlify-deploy-preview],
+#netlify-drawer-root,
+.netlify-badge,
+div[id*="netlify"],
+div[class*="netlify-drawer"] {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+
 
