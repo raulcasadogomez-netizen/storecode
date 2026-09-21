@@ -309,3 +309,41 @@ CREATE POLICY "Permitir borrado de correos"
 ON public.customer_emails 
 FOR DELETE 
 USING (true);
+
+-- ==========================================================================
+-- 12. Crear tabla de imágenes de la web (site_media) y políticas RLS
+-- ==========================================================================
+CREATE TABLE IF NOT EXISTS public.site_media (
+    id TEXT PRIMARY KEY,
+    url TEXT NOT NULL,
+    title TEXT,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Habilitar RLS en site_media
+ALTER TABLE public.site_media ENABLE ROW LEVEL SECURITY;
+
+-- Políticas de RLS para site_media
+DROP POLICY IF EXISTS "Permitir lectura publica de medios" ON public.site_media;
+CREATE POLICY "Permitir lectura publica de medios" 
+ON public.site_media 
+FOR SELECT 
+USING (true);
+
+DROP POLICY IF EXISTS "Permitir escrituras de medios a usuarios autenticados" ON public.site_media;
+CREATE POLICY "Permitir escrituras de medios a usuarios autenticados" 
+ON public.site_media 
+FOR ALL 
+TO authenticated
+USING (true)
+WITH CHECK (true);
+
+-- Semilla de imágenes por defecto
+INSERT INTO public.site_media (id, url, title) VALUES
+('logo', '/images/logovapers.webp', 'Logotipo Principal de la Tienda'),
+('hero_image', '/images/vape_mango_peach.png', 'Imagen Principal del Hero (Portada)'),
+('experience_image', '/images/vape_pod_kit.png', 'Imagen de Sección Proceso y Garantías')
+ON CONFLICT (id) DO UPDATE SET
+  url = EXCLUDED.url,
+  title = EXCLUDED.title,
+  updated_at = NOW();

@@ -2,11 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { Search, Menu, X, Sun, Moon } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useSiteMedia } from '../context/SiteMediaContext';
 
 export default function Navbar({ searchVal, onSearchChange }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { language, changeLanguage, t } = useTranslation();
   const { theme, toggleTheme } = useTheme();
+  const { getMedia } = useSiteMedia();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -30,9 +32,9 @@ export default function Navbar({ searchVal, onSearchChange }) {
 
   const LanguageSelector = () => (
     <div className="language-selector" ref={dropdownRef}>
-      <button 
-        type="button" 
-        className="lang-btn" 
+      <button
+        type="button"
+        className="lang-btn"
         onClick={() => setLangDropdownOpen(!langDropdownOpen)}
         aria-expanded={langDropdownOpen}
       >
@@ -67,7 +69,7 @@ export default function Navbar({ searchVal, onSearchChange }) {
       <div className="navbar-content">
         {/* Logo */}
         <div className="navbar-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <img src="/images/logovapers.webp" alt="El Patinoso Logo" className="logo-img" />
+          <img src={getMedia('logo', '/images/logovapers.webp')} alt="El Patinoso Logo" className="logo-img" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span className="logo-text" style={{ lineHeight: '1.1' }}>EL PATINOSO</span>
             <span style={{ fontSize: '0.6rem', color: 'var(--neon-purple)', fontWeight: '800', letterSpacing: '0.08em', textTransform: 'uppercase', textShadow: 'var(--neon-purple-glow)' }}>{t('nav_b2b')}</span>
@@ -92,9 +94,9 @@ export default function Navbar({ searchVal, onSearchChange }) {
           <a href="#experiencia" onClick={() => setMobileMenuOpen(false)}>{t('nav_import')}</a>
           <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>{t('nav_about')}</a>
           <LanguageSelector />
-          <button 
-            type="button" 
-            className="theme-toggle-btn" 
+          <button
+            type="button"
+            className="theme-toggle-btn"
             onClick={toggleTheme}
             aria-label={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
             title={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
@@ -105,8 +107,8 @@ export default function Navbar({ searchVal, onSearchChange }) {
 
         {/* Mobile Buttons */}
         <div className="navbar-mobile-controls">
-          <button 
-            className="mobile-menu-toggle" 
+          <button
+            className="mobile-menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -133,9 +135,9 @@ export default function Navbar({ searchVal, onSearchChange }) {
             <a href="#nosotros" onClick={() => setMobileMenuOpen(false)}>{t('nav_about')}</a>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', width: '100%', padding: '0.5rem 0' }}>
               <LanguageSelector />
-              <button 
-                type="button" 
-                className="theme-toggle-btn mobile-theme-toggle" 
+              <button
+                type="button"
+                className="theme-toggle-btn mobile-theme-toggle"
                 onClick={toggleTheme}
                 aria-label={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}
                 title={theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro'}

@@ -1,8 +1,10 @@
 import { Flame, ShieldCheck, Truck } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
+import { useSiteMedia } from '../context/SiteMediaContext';
 
 export default function Hero() {
   const { t } = useTranslation();
+  const { getMedia } = useSiteMedia();
 
   const scrollToCatalog = () => {
     const catalogElement = document.getElementById('catalogo');
@@ -67,10 +69,10 @@ export default function Hero() {
       <div className="hero-visual">
         <div className="hero-image-backdrop">
           <div className="floating-smoke"></div>
-          {/* We will place a floating mock vape device or graphical representation */}
+          {/* Floating vape device or graphic */}
           <div className="hero-device-wrapper">
             <img
-              src="/images/vape_mango_peach.png"
+              src={getMedia('hero_image', '/images/vape_mango_peach.png')}
               alt="Vape Principal"
               className="hero-floating-device"
             />
@@ -81,4 +83,5 @@ export default function Hero() {
     </header>
   );
 }
+
 

@@ -8,12 +8,15 @@ import WhatsAppEmailModal from '../components/WhatsAppEmailModal';
 import WhatsAppFloatingButton from '../components/WhatsAppFloatingButton';
 import { supabase } from '../lib/supabaseClient';
 import { useTranslation } from '../i18n/LanguageContext';
+import { useSiteMedia } from '../context/SiteMediaContext';
 import { handleGeneralWhatsAppContact } from '../lib/whatsapp';
 import { getSavedUserEmail } from '../lib/emailService';
 
 export default function Storefront() {
   const { t } = useTranslation();
+  const { getMedia } = useSiteMedia();
   const [products, setProducts] = useState([]);
+
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -182,7 +185,7 @@ export default function Storefront() {
               </div>
             </div>
             <div className="experience-visual">
-              <img src="/images/vape_pod_kit.png" alt="Dispositivo de tecnología" className="tech-image" />
+              <img src={getMedia('experience_image', '/images/vape_pod_kit.png')} alt="Dispositivo de tecnología" className="tech-image" />
             </div>
           </div>
         </section>

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../i18n/LanguageContext';
+import { useSiteMedia } from '../context/SiteMediaContext';
 
 export default function AgeVerificationModal() {
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
+  const { getMedia } = useSiteMedia();
 
   useEffect(() => {
     const isVerified = localStorage.getItem('elpatinoso-age-verified') || localStorage.getItem('vapex-age-verified');
@@ -27,7 +29,7 @@ export default function AgeVerificationModal() {
     <div className="age-verification-overlay">
       <div className="age-verification-card">
         <div className="logo-container">
-          <img src="/images/logovapers.webp" alt="El Patinoso Logo" className="modal-logo-img" />
+          <img src={getMedia('logo', '/images/logovapers.webp')} alt="El Patinoso Logo" className="modal-logo-img" />
         </div>
         
         <h2>{t('age_title')}</h2>

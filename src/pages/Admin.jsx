@@ -1,9 +1,22 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database, UploadCloud, X, Mail, Copy, Download, Search, CheckCircle2, ShieldAlert, MailCheck, MailX } from 'lucide-react';
+import { LogOut, Trash2, Edit2, Check, RefreshCw, AlertCircle, Home, Database, UploadCloud, X, Mail, Copy, Download, Search, CheckCircle2, ShieldAlert, MailCheck, MailX, Image as ImageIcon, RotateCcw, Sparkles, ExternalLink, Eye, Layers } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { translations } from '../i18n/translations';
 import { getCustomerEmails, deleteCustomerEmail } from '../lib/emailService';
+import { useSiteMedia, SITE_MEDIA_SLOTS, DEFAULT_SITE_MEDIA } from '../context/SiteMediaContext';
+
+const STORE_PRESET_IMAGES = [
+  { label: 'Logotipo Oficial', path: '/images/logovapers.webp' },
+  { label: 'Mango Peach (Hero)', path: '/images/vape_mango_peach.png' },
+  { label: 'AeroPod Kit (Azul)', path: '/images/vape_pod_kit.png' },
+  { label: 'E-Liquid Fresa (Rojo)', path: '/images/vape_eliquid_bottle.png' },
+  { label: 'Cyber Mod Box (Oro)', path: '/images/vape_mod_cyber.png' },
+  { label: 'Blueberry Sour (Lila)', path: '/images/vape_blueberry.png' },
+  { label: 'Mint Frost (Verde)', path: '/images/vape_mint_bottle.png' },
+  { label: 'N2O Charger (Gas Plata)', path: '/images/n2o_charger.png' },
+  { label: 'Zippo Dragon (Latón)', path: '/images/collectible_dragon.png' }
+];
 
 
 // List of editable texts keys for Admin panel
@@ -263,8 +276,24 @@ const EDITABLE_TEXT_KEYS = [
 ];
 
 // Utility to compress image files client-side before uploading or saving as Base64
-const compressImage = (file, maxWidth = 800, maxHeight = 800, quality = 0.75) => {
+const compressImage = (file, maxWidth = 1000, maxHeight = 1000, quality = 0.85) => {
   return new Promise((resolve, reject) => {
+    const isPng = file.type === 'image/png';
+    const isWebp = file.type === 'image/webp';
+    const isSvg = file.type === 'image/svg+xml';
+    
+    // If SVG, return directly without canvas compression
+    if (isSvg) {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve({ file, dataUrl: e.target.result });
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const outputMime = isPng ? 'image/png' : isWebp ? 'image/webp' : 'image/jpeg';
+    const outputExt = isPng ? '.png' : isWebp ? '.webp' : '.jpg';
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
@@ -292,27 +321,30 @@ const compressImage = (file, maxWidth = 800, maxHeight = 800, quality = 0.75) =>
         canvas.height = height;
 
         const ctx = canvas.getContext('2d');
+        // Clear canvas with transparent pixels
+        ctx.clearRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
 
         // Convert canvas to Blob (for storage) and DataURL (for base64 fallback)
         canvas.toBlob((blob) => {
           if (blob) {
-            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
-              type: 'image/jpeg',
+            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + outputExt, {
+              type: outputMime,
               lastModified: Date.now()
             });
-            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            const dataUrl = canvas.toDataURL(outputMime, isPng ? undefined : quality);
             resolve({ file: compressedFile, dataUrl });
           } else {
             reject(new Error("Canvas toBlob failed"));
           }
-        }, 'image/jpeg', quality);
+        }, outputMime, isPng ? undefined : quality);
       };
       img.onerror = (err) => reject(err);
     };
     reader.onerror = (err) => reject(err);
   });
 };
+
 
 const slugify = (text) => {
   return text
@@ -336,9 +368,181 @@ export default function Admin() {
   const [authError, setAuthError] = useState('');
 
   const { refreshDbTranslations } = useTranslation();
+  const { siteMedia, getMedia, updateMedia, resetMediaToDefault, refreshSiteMedia } = useSiteMedia();
 
   // Navigation State
-  const [activeTab, setActiveTab] = useState('products'); // 'products', 'categories', or 'texts'
+  const [activeTab, setActiveTab] = useState('products'); // 'products', 'categories', 'texts', 'emails', or 'media'
+
+  // Site Media Management State
+  const [mediaSlotStates, setMediaSlotStates] = useState({});
+  const [mediaToast, setMediaToast] = useState({ show: false, message: '', type: 'success' });
+
+  const showMediaToast = (message, type = 'success') => {
+    setMediaToast({ show: true, message, type });
+    setTimeout(() => {
+      setMediaToast(prev => ({ ...prev, show: false }));
+    }, 4000);
+  };
+
+  const getSlotState = (slotId) => {
+    return mediaSlotStates[slotId] || {
+      mode: 'upload', // 'upload' | 'url' | 'preset'
+      urlInput: '',
+      file: null,
+      preview: '',
+      isUploading: false,
+      isSaving: false,
+      dragActive: false
+    };
+  };
+
+  const setSlotField = (slotId, field, value) => {
+    setMediaSlotStates(prev => ({
+      ...prev,
+      [slotId]: {
+        ...getSlotState(slotId),
+        [field]: value
+      }
+    }));
+  };
+
+  const handleMediaFileSelect = (slotId, file) => {
+    if (!file || !file.type.startsWith('image/')) {
+      showMediaToast('Por favor, selecciona un archivo de imagen válido (PNG, JPG, WebP, SVG).', 'error');
+      return;
+    }
+    const previewUrl = URL.createObjectURL(file);
+    setMediaSlotStates(prev => ({
+      ...prev,
+      [slotId]: {
+        ...getSlotState(slotId),
+        file,
+        preview: previewUrl,
+        mode: 'upload',
+        dragActive: false
+      }
+    }));
+  };
+
+  const handleMediaDrop = (slotId, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSlotField(slotId, 'dragActive', false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleMediaFileSelect(slotId, e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleMediaSlotSave = async (slotId, slotTitle) => {
+    const state = getSlotState(slotId);
+    let finalUrl = '';
+
+    setSlotField(slotId, 'isSaving', true);
+
+    try {
+      if (state.mode === 'url') {
+        if (!state.urlInput || !state.urlInput.trim()) {
+          showMediaToast('Por favor, introduce una URL de imagen válida.', 'error');
+          setSlotField(slotId, 'isSaving', false);
+          return;
+        }
+        finalUrl = state.urlInput.trim();
+      } else if (state.mode === 'preset') {
+        if (!state.urlInput) {
+          showMediaToast('Por favor, selecciona una imagen de la galería.', 'error');
+          setSlotField(slotId, 'isSaving', false);
+          return;
+        }
+        finalUrl = state.urlInput;
+      } else if (state.mode === 'upload') {
+        if (!state.file) {
+          showMediaToast('Por favor, selecciona o arrastra una foto antes de guardar.', 'error');
+          setSlotField(slotId, 'isSaving', false);
+          return;
+        }
+
+        setSlotField(slotId, 'isUploading', true);
+        const { file: compressedFile, dataUrl: compressedDataUrl } = await compressImage(state.file, 1200, 1200, 0.85);
+
+        try {
+          if (supabase) {
+            const ext = state.file.name.split('.').pop() || 'png';
+            const fileName = `site_${slotId}_${Date.now()}.${ext}`;
+            const filePath = `site_media/${fileName}`;
+
+            const { error: uploadErr } = await supabase.storage
+              .from('products')
+              .upload(filePath, compressedFile, { upsert: true });
+
+            if (uploadErr) throw uploadErr;
+
+            const { data: { publicUrl } } = supabase.storage
+              .from('products')
+              .getPublicUrl(filePath);
+
+            finalUrl = publicUrl;
+          } else {
+            finalUrl = compressedDataUrl;
+          }
+        } catch (storageErr) {
+          console.warn("Supabase Storage upload failed, using high-res Base64 fallback:", storageErr);
+          finalUrl = compressedDataUrl;
+        } finally {
+          setSlotField(slotId, 'isUploading', false);
+        }
+      }
+
+      if (!finalUrl) {
+        showMediaToast('No se pudo procesar la imagen.', 'error');
+        setSlotField(slotId, 'isSaving', false);
+        return;
+      }
+
+      await updateMedia(slotId, finalUrl, slotTitle);
+      
+      // Clean up local temp file state
+      setMediaSlotStates(prev => ({
+        ...prev,
+        [slotId]: {
+          ...getSlotState(slotId),
+          file: null,
+          preview: '',
+          urlInput: '',
+          isSaving: false
+        }
+      }));
+
+      showMediaToast(`¡"${slotTitle}" actualizado correctamente en toda la web!`, 'success');
+    } catch (err) {
+      console.error("Error updating media slot:", err);
+      showMediaToast(err.message || 'Error al guardar la imagen.', 'error');
+      setSlotField(slotId, 'isSaving', false);
+    }
+  };
+
+  const handleMediaSlotReset = async (slotId, slotTitle) => {
+    if (!window.confirm(`¿Restaurar "${slotTitle}" a la imagen original por defecto?`)) return;
+    try {
+      await resetMediaToDefault(slotId);
+      setMediaSlotStates(prev => ({
+        ...prev,
+        [slotId]: {
+          mode: 'upload',
+          urlInput: '',
+          file: null,
+          preview: '',
+          isUploading: false,
+          isSaving: false,
+          dragActive: false
+        }
+      }));
+      showMediaToast(`"${slotTitle}" restaurado a la imagen original por defecto.`, 'success');
+    } catch (err) {
+      console.error("Error resetting media slot:", err);
+      showMediaToast('Error al restaurar imagen.', 'error');
+    }
+  };
+
 
   // CRUD Product State
   const [products, setProducts] = useState([]);
@@ -1110,7 +1314,7 @@ export default function Admin() {
 
         <div className="admin-login-card">
           <div className="login-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-            <img src="/images/logovapers.webp" alt="El Patinoso Logo" className="modal-logo-img" style={{ height: '80px' }} />
+            <img src={getMedia('logo', '/images/logovapers.webp')} alt="El Patinoso Logo" className="modal-logo-img" style={{ height: '80px' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span className="logo-neon-text" style={{ fontSize: '2rem' }}>EL PATINOSO</span>
               <span className="badge-admin">ADMIN</span>
@@ -1172,7 +1376,7 @@ export default function Admin() {
       {/* Top Header */}
       <header className="admin-dashboard-header">
         <div className="header-logo-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <img src="/images/logovapers.webp" alt="El Patinoso Logo" style={{ height: '36px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 5px rgba(102, 252, 241, 0.35))' }} />
+          <img src={getMedia('logo', '/images/logovapers.webp')} alt="El Patinoso Logo" style={{ height: '36px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 5px rgba(102, 252, 241, 0.35))' }} />
           <span className="logo-neon-text" style={{ fontSize: '1.5rem' }}>EL PATINOSO</span>
           <span className="badge-admin">CONSOLE</span>
         </div>
@@ -1218,6 +1422,14 @@ export default function Admin() {
             onClick={() => setActiveTab('texts')}
           >
             Textos de la Web
+          </button>
+          <button 
+            type="button"
+            className={`admin-nav-tab-btn ${activeTab === 'media' ? 'active' : ''}`}
+            onClick={() => setActiveTab('media')}
+          >
+            <ImageIcon size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+            Imágenes de la Web
           </button>
           <button 
             type="button"
@@ -2258,9 +2470,404 @@ export default function Admin() {
               })()}
             </div>
           )}
+
+          {/* ========================================================================= */}
+          {/* TAB 5: GESTIÓN DE IMÁGENES Y MEDIOS DE LA WEB */}
+          {/* ========================================================================= */}
+          {activeTab === 'media' && (
+            <div className="admin-media-management-container" style={{ width: '100%' }}>
+              {/* Header */}
+              <div className="panel-header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <ImageIcon className="text-cyan" />
+                    Gestor de Imágenes y Fotos de la Web
+                  </h2>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px', maxWidth: '850px' }}>
+                    Modifica y personaliza todas las fotografías y logotipos de la tienda online en tiempo real. Puedes <strong>subir cualquier foto desde tu ordenador</strong> (se optimizará y subirá a la nube), escribir una <strong>URL externa</strong> o seleccionar imágenes del <strong>catálogo existente</strong>.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button className="btn-refresh" onClick={refreshSiteMedia} title="Recargar imágenes">
+                    <RefreshCw size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Toast / Notification Banner */}
+              {mediaToast.show && (
+                <div 
+                  className={`media-toast-banner ${mediaToast.type === 'error' ? 'crud-error-banner' : 'crud-success-banner'}`}
+                  style={{ 
+                    marginBottom: '1.5rem', 
+                    padding: '0.9rem 1.3rem', 
+                    borderRadius: '10px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '10px', 
+                    fontWeight: '600',
+                    background: mediaToast.type === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(37, 211, 102, 0.15)',
+                    border: mediaToast.type === 'error' ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(37, 211, 102, 0.4)',
+                    color: mediaToast.type === 'error' ? '#ef4444' : '#25d366'
+                  }}
+                >
+                  {mediaToast.type === 'error' ? <AlertCircle size={20} /> : <CheckCircle2 size={20} />}
+                  <span>{mediaToast.message}</span>
+                </div>
+              )}
+
+              {/* Media Cards Grid */}
+              <div className="admin-media-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+                {SITE_MEDIA_SLOTS.map((slot) => {
+                  const currentSavedUrl = getMedia(slot.id, slot.defaultUrl);
+                  const isDefault = currentSavedUrl === slot.defaultUrl;
+                  const slotState = getSlotState(slot.id);
+                  const currentPreview = slotState.preview || (slotState.mode === 'url' && slotState.urlInput) || (slotState.mode === 'preset' && slotState.urlInput) || currentSavedUrl;
+
+                  return (
+                    <div 
+                      key={slot.id} 
+                      className="admin-media-slot-card"
+                      style={{
+                        background: 'rgba(15, 23, 42, 0.75)',
+                        border: '1px solid var(--glass-border)',
+                        borderRadius: '16px',
+                        padding: '1.5rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                        position: 'relative'
+                      }}
+                    >
+                      {/* Slot Top Meta */}
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                          <span className="section-tag" style={{ fontSize: '0.7rem', padding: '2px 8px' }}>{slot.section}</span>
+                          <span 
+                            style={{ 
+                              fontSize: '0.75rem', 
+                              padding: '2px 8px', 
+                              borderRadius: '12px',
+                              background: isDefault ? 'rgba(255,255,255,0.08)' : 'rgba(102, 252, 241, 0.15)',
+                              color: isDefault ? 'var(--text-muted)' : 'var(--neon-cyan)',
+                              border: isDefault ? '1px solid rgba(255,255,255,0.1)' : '1px solid var(--neon-cyan)',
+                              fontWeight: '600'
+                            }}
+                          >
+                            {isDefault ? 'Por Defecto' : 'Personalizada'}
+                          </span>
+                        </div>
+
+                        <h3 style={{ fontSize: '1.2rem', color: 'white', fontWeight: '700', margin: '0 0 4px 0' }}>
+                          {slot.title}
+                        </h3>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: '1.4' }}>
+                          {slot.description}
+                        </p>
+
+                        {/* Live Image Preview Window */}
+                        <div 
+                          className="media-preview-box"
+                          style={{
+                            width: '100%',
+                            height: '190px',
+                            background: '#090d16',
+                            backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0)',
+                            backgroundSize: '16px 16px',
+                            borderRadius: '12px',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            marginBottom: '1rem'
+                          }}
+                        >
+                          <img 
+                            src={currentPreview} 
+                            alt={slot.title} 
+                            style={{
+                              maxHeight: '160px',
+                              maxWidth: '90%',
+                              objectFit: 'contain',
+                              filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5))',
+                              transition: 'transform 0.3s ease'
+                            }}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = slot.defaultUrl;
+                            }}
+                          />
+                          <div 
+                            style={{
+                              position: 'absolute',
+                              bottom: '6px',
+                              right: '8px',
+                              background: 'rgba(0,0,0,0.7)',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontSize: '0.65rem',
+                              color: 'var(--text-muted)'
+                            }}
+                          >
+                            {slot.aspect}
+                          </div>
+                        </div>
+
+                        {/* Source Mode Selectors */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px', background: 'rgba(255,255,255,0.04)', padding: '4px', borderRadius: '8px', marginBottom: '1rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => setSlotField(slot.id, 'mode', 'upload')}
+                            style={{
+                              padding: '6px 4px',
+                              borderRadius: '6px',
+                              fontSize: '0.75rem',
+                              fontWeight: '600',
+                              border: 'none',
+                              cursor: 'pointer',
+                              background: slotState.mode === 'upload' ? 'var(--neon-cyan)' : 'transparent',
+                              color: slotState.mode === 'upload' ? '#000' : 'var(--text-secondary)',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            Subir Foto
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSlotField(slot.id, 'mode', 'url')}
+                            style={{
+                              padding: '6px 4px',
+                              borderRadius: '6px',
+                              fontSize: '0.75rem',
+                              fontWeight: '600',
+                              border: 'none',
+                              cursor: 'pointer',
+                              background: slotState.mode === 'url' ? 'var(--neon-cyan)' : 'transparent',
+                              color: slotState.mode === 'url' ? '#000' : 'var(--text-secondary)',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            Pegar URL
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSlotField(slot.id, 'mode', 'preset')}
+                            style={{
+                              padding: '6px 4px',
+                              borderRadius: '6px',
+                              fontSize: '0.75rem',
+                              fontWeight: '600',
+                              border: 'none',
+                              cursor: 'pointer',
+                              background: slotState.mode === 'preset' ? 'var(--neon-cyan)' : 'transparent',
+                              color: slotState.mode === 'preset' ? '#000' : 'var(--text-secondary)',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            Catálogo
+                          </button>
+                        </div>
+
+                        {/* MODE 1: UPLOAD FROM PC */}
+                        {slotState.mode === 'upload' && (
+                          <div style={{ marginBottom: '1.2rem' }}>
+                            <div 
+                              className={`media-dropzone ${slotState.dragActive ? 'drag-active' : ''}`}
+                              onDragEnter={(e) => { e.preventDefault(); setSlotField(slot.id, 'dragActive', true); }}
+                              onDragOver={(e) => { e.preventDefault(); setSlotField(slot.id, 'dragActive', true); }}
+                              onDragLeave={(e) => { e.preventDefault(); setSlotField(slot.id, 'dragActive', false); }}
+                              onDrop={(e) => handleMediaDrop(slot.id, e)}
+                              onClick={() => document.getElementById(`file-input-${slot.id}`)?.click()}
+                              style={{
+                                border: slotState.dragActive ? '2px dashed var(--neon-cyan)' : '2px dashed rgba(255,255,255,0.15)',
+                                background: slotState.dragActive ? 'rgba(102, 252, 241, 0.08)' : 'rgba(255,255,255,0.02)',
+                                borderRadius: '10px',
+                                padding: '1.2rem',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                            >
+                              <input 
+                                type="file" 
+                                id={`file-input-${slot.id}`} 
+                                accept="image/*" 
+                                style={{ display: 'none' }} 
+                                onChange={(e) => {
+                                  if (e.target.files && e.target.files[0]) {
+                                    handleMediaFileSelect(slot.id, e.target.files[0]);
+                                  }
+                                }}
+                              />
+                              <UploadCloud size={28} className="text-cyan" style={{ margin: '0 auto 6px auto', display: 'block' }} />
+                              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'white', display: 'block' }}>
+                                {slotState.file ? slotState.file.name : 'Arrastra una foto o haz clic para examinar'}
+                              </span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px', display: 'block' }}>
+                                {slotState.file ? `${(slotState.file.size / 1024).toFixed(1)} KB seleccionado` : 'Formatos: PNG, JPG, WebP, SVG'}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* MODE 2: DIRECT URL */}
+                        {slotState.mode === 'url' && (
+                          <div style={{ marginBottom: '1.2rem' }}>
+                            <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px', display: 'block' }}>
+                              Enlace Web de la Imagen (HTTPS):
+                            </label>
+                            <input 
+                              type="text"
+                              placeholder="https://ejemplo.com/mi-imagen.png"
+                              value={slotState.urlInput || ''}
+                              onChange={(e) => setSlotField(slot.id, 'urlInput', e.target.value)}
+                              style={{
+                                width: '100%',
+                                padding: '0.75rem 1rem',
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid var(--glass-border)',
+                                borderRadius: '8px',
+                                color: 'white',
+                                fontSize: '0.85rem'
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        {/* MODE 3: PRESET CATALOG */}
+                        {slotState.mode === 'preset' && (
+                          <div style={{ marginBottom: '1.2rem' }}>
+                            <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '6px', display: 'block' }}>
+                              Elige una imagen de la galería:
+                            </label>
+                            <div 
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(65px, 1fr))',
+                                gap: '6px',
+                                maxHeight: '140px',
+                                overflowY: 'auto',
+                                padding: '6px',
+                                background: 'rgba(0,0,0,0.3)',
+                                borderRadius: '8px'
+                              }}
+                            >
+                              {STORE_PRESET_IMAGES.map((preset, pIdx) => {
+                                const isSelected = (slotState.urlInput || currentSavedUrl) === preset.path;
+                                return (
+                                  <div
+                                    key={pIdx}
+                                    onClick={() => setSlotField(slot.id, 'urlInput', preset.path)}
+                                    title={preset.label}
+                                    style={{
+                                      border: isSelected ? '2px solid var(--neon-cyan)' : '1px solid rgba(255,255,255,0.1)',
+                                      borderRadius: '6px',
+                                      padding: '4px',
+                                      cursor: 'pointer',
+                                      background: isSelected ? 'rgba(102, 252, 241, 0.15)' : 'rgba(255,255,255,0.03)',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      height: '50px'
+                                    }}
+                                  >
+                                    <img 
+                                      src={preset.path} 
+                                      alt={preset.label} 
+                                      style={{ maxHeight: '42px', maxWidth: '100%', objectFit: 'contain' }}
+                                    />
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Card Action Buttons */}
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleMediaSlotReset(slot.id, slot.title)}
+                          disabled={isDefault || slotState.isSaving}
+                          style={{
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                            color: isDefault ? 'var(--text-muted)' : 'white',
+                            padding: '0.65rem 0.9rem',
+                            borderRadius: '8px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            cursor: isDefault ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            opacity: isDefault ? 0.5 : 1
+                          }}
+                          title="Restaurar a la imagen predeterminada original"
+                        >
+                          <RotateCcw size={14} /> Restaurar
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleMediaSlotSave(slot.id, slot.title)}
+                          disabled={slotState.isSaving || slotState.isUploading}
+                          className="btn-primary-neon"
+                          style={{
+                            flex: 1,
+                            padding: '0.65rem 1rem',
+                            fontSize: '0.85rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px'
+                          }}
+                        >
+                          {slotState.isSaving || slotState.isUploading ? (
+                            <>
+                              <RefreshCw size={14} className="animate-spin" />
+                              <span>{slotState.isUploading ? 'Subiendo...' : 'Guardando...'}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Check size={16} />
+                              <span>Guardar en la Web</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Useful Info Note */}
+              <div 
+                style={{
+                  background: 'rgba(102, 252, 241, 0.04)',
+                  border: '1px solid rgba(102, 252, 241, 0.2)',
+                  borderRadius: '12px',
+                  padding: '1.2rem',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '12px'
+                }}
+              >
+                <Sparkles size={20} className="text-cyan" style={{ marginTop: '2px', flexShrink: 0 }} />
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                  <strong style={{ color: 'white' }}>Actualizaciones en tiempo real:</strong> Cuando guardas una nueva imagen, se sincroniza automáticamente con la base de datos de Supabase y el almacenamiento local. Cualquier cliente que visite la tienda verá tus fotos actualizadas inmediatamente.
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
+
   );
 }
 
