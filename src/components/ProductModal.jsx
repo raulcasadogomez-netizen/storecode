@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Star, Plus, Minus, ShieldCheck, Heart } from 'lucide-react';
+import { X, Plus, Minus, ShieldCheck, Heart } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleBuyViaWhatsApp } from '../lib/whatsapp';
 import { getSavedUserEmail } from '../lib/emailService';
@@ -81,14 +81,6 @@ export default function ProductModal({ product, onClose }) {
           <div className="modal-info-panel">
             <span className="info-brand">{product.brand}</span>
             <h2 className="info-name">{t(`p_${product.id}_name`, {}, product.name)}</h2>
-
-            <div className="info-meta">
-              <div className="stars-wrapper">
-                <Star size={16} className="star-filled" fill="currentColor" />
-                <span className="rating-num">{product.rating}</span>
-              </div>
-              <span className="reviews-num">{product.reviews} {t('modal_reviews')}</span>
-            </div>
 
             <div className="info-price" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
               <div>

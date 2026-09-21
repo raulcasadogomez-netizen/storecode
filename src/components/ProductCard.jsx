@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Star, Eye } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { useTranslation } from '../i18n/LanguageContext';
 import { handleBuyViaWhatsApp } from '../lib/whatsapp';
 import { getSavedUserEmail } from '../lib/emailService';
@@ -7,7 +7,7 @@ import WhatsAppEmailModal from './WhatsAppEmailModal';
 import SiphonConfirmationModal from './SiphonConfirmationModal';
 
 export default function ProductCard({ product, categoryName, onQuickView }) {
-  const { name, brand, price, rating, reviews, image, inStock, details } = product;
+  const { name, brand, price, image, inStock, details } = product;
   const { t } = useTranslation();
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isSiphonModalOpen, setIsSiphonModalOpen] = useState(false);
@@ -58,37 +58,9 @@ export default function ProductCard({ product, categoryName, onQuickView }) {
     handleBuyViaWhatsApp(product, 1, defaultNicotine, t, email);
   };
 
-  // Helper to render stars
-  const renderStars = (ratingVal) => {
-    const stars = [];
-    const fullStars = Math.floor(ratingVal);
-    const hasHalf = ratingVal % 1 !== 0;
-
-    for (let i = 1; i <= 5; i++) {
-      if (i <= fullStars) {
-        stars.push(<Star key={i} size={14} className="star-filled" fill="currentColor" />);
-      } else if (i === fullStars + 1 && hasHalf) {
-        stars.push(<Star key={i} size={14} className="star-half" fill="url(#star-grad)" />);
-      } else {
-        stars.push(<Star key={i} size={14} className="star-empty" />);
-      }
-    }
-    return stars;
-  };
-
   return (
     <>
       <div className={`product-card ${!inStock ? 'out-of-stock' : ''}`}>
-        {/* Star SVG gradient definition wrapper */}
-        <svg width="0" height="0" style={{ position: 'absolute' }}>
-          <defs>
-            <linearGradient id="star-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="50%" stopColor="#ffb800" />
-              <stop offset="50%" stopColor="rgba(255,255,255,0.2)" />
-            </linearGradient>
-          </defs>
-        </svg>
-
         {/* Stock Label */}
         {!inStock && <div className="stock-badge-out">{t('stock_out')}</div>}
 
@@ -114,12 +86,7 @@ export default function ProductCard({ product, categoryName, onQuickView }) {
             </span>
           </div>
           <h3 className="product-name" onClick={() => onQuickView(product)}>{t(`p_${product.id}_name`, {}, name)}</h3>
-          
-          {/* Rating */}
-          <div className="product-rating">
-            <div className="stars-wrapper">{renderStars(rating)}</div>
-            <span className="rating-count">({reviews})</span>
-          </div>
+
 
           {/* Dynamic Tags */}
           <div className="product-specs-preview">
