@@ -122,9 +122,9 @@ export const SiteMediaProvider = ({ children }) => {
         .upsert([payload], { onConflict: 'id' });
 
       if (error) {
-        console.warn("Error saving site_media to Supabase (table may not exist yet in SQL schema):", error);
-        if (error.message && (error.message.includes('schema cache') || error.message.includes('does not exist') || error.code === 'PGRST204')) {
-          throw new Error("La tabla 'site_media' aún no ha sido creada en tu base de datos de Supabase. Por favor, ejecuta el script SQL de creación en el panel de Supabase.");
+        console.warn("Error saving site_media to Supabase (table may not exist yet in SQL schema or schema cache needs reload):", error);
+        if (error.message && (error.message.toLowerCase().includes('schema cache') || error.message.includes('does not exist') || error.code === 'PGRST204' || error.code === 'PGRST205')) {
+          throw new Error("La tabla 'site_media' no está en la caché de Supabase. Para solucionarlo, ejecuta en el SQL Editor de Supabase: NOTIFY pgrst, 'reload schema'; o pulsa 'Reload schema cache' en Settings > API.");
         }
         throw error;
       }
