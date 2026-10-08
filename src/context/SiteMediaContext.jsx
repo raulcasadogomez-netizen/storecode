@@ -122,12 +122,16 @@ export const SiteMediaProvider = ({ children }) => {
         .upsert([payload], { onConflict: 'id' });
 
       if (error) {
-        console.error("Error saving site_media to Supabase:", error);
+        console.warn("Error saving site_media to Supabase (table may not exist yet in SQL schema):", error);
+        if (error.message && (error.message.includes('schema cache') || error.message.includes('does not exist') || error.code === 'PGRST204')) {
+          throw new Error("La tabla 'site_media' aún no ha sido creada en tu base de datos de Supabase. Por favor, ejecuta el script SQL de creación en el panel de Supabase.");
+        }
         throw error;
       }
     }
     return true;
   };
+
 
   const resetMediaToDefault = async (key) => {
     const defaultUrl = DEFAULT_SITE_MEDIA[key];

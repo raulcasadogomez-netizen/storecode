@@ -39,7 +39,7 @@ export default function Storefront() {
 
   const defaultCategories = [
     { id: 'vapers', name: 'Vapers' },
-    { id: 'reposteria', name: 'Óxido Nitroso' },
+    { id: 'reposteria', name: 'Repostería' },
     { id: 'coleccionismo', name: 'Coleccionismo' }
   ];
 
@@ -91,6 +91,13 @@ export default function Storefront() {
           } else {
             catsData = defaultCategories;
           }
+        } else {
+          // Ensure base predefined categories exist even if only custom ones or partial ones are in Supabase
+          defaultCategories.forEach((defCat) => {
+            if (!catsData.some(c => c.id === defCat.id)) {
+              catsData.push(defCat);
+            }
+          });
         }
         setCategories(catsData);
 

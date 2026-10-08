@@ -181,7 +181,7 @@ WITH CHECK (true);
 INSERT INTO public.categories (id, name)
 VALUES 
 ('vapers', 'Vapers'),
-('reposteria', 'Óxido Nitroso'),
+('reposteria', 'Repostería'),
 ('coleccionismo', 'Coleccionismo')
 ON CONFLICT (id) DO NOTHING;
 

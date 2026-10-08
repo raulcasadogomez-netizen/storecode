@@ -7,7 +7,7 @@ import { useTranslation } from '../i18n/LanguageContext';
 export default function ProductGrid({ products, categories = [], searchQuery, onQuickView }) {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [sortBy, setSortBy] = useState('recommended');
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [pendingCategory, setPendingCategory] = useState(null);
@@ -35,14 +35,16 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
 
   const getCategoryName = (catId) => {
     const cat = categories.find((c) => c.id === catId);
-    const dbName = cat ? cat.name : '';
+    if (language === 'es' && cat?.name) {
+      return cat.name;
+    }
     const fallbackName = 
       catId === 'vapers' ? 'Vapers' : 
-      catId === 'reposteria' ? 'Óxido Nitroso' : 
+      catId === 'reposteria' ? 'Repostería' : 
       catId === 'coleccionismo' ? 'Coleccionismo' : 
-      (catId ? catId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '');
+      (cat?.name || (catId ? catId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : ''));
       
-    return t('cat_' + catId, {}, dbName || fallbackName);
+    return t('cat_' + catId, {}, cat?.name || fallbackName);
   };
 
   const handleCategoryClick = (catId) => {
@@ -148,7 +150,11 @@ export default function ProductGrid({ products, categories = [], searchQuery, on
                 className={`chip ${selectedCategory === cat.id ? 'active' : ''}`}
                 onClick={() => handleCategoryClick(cat.id)}
               >
-                {cat.id === 'todos' ? t('cat_all') : t('cat_' + cat.id, {}, cat.name)}
+                {cat.id === 'todos' 
+                  ? t('cat_all') 
+                  : (language === 'es' && cat.name 
+                      ? cat.name 
+                      : t('cat_' + cat.id, {}, cat.name))}
               </button>
             ))}
           </div>

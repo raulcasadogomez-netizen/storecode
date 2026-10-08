@@ -8,7 +8,7 @@ import SiphonConfirmationModal from './SiphonConfirmationModal';
 
 export default function ProductCard({ product, categoryName, onQuickView }) {
   const { name, brand, price, image, inStock, details } = product;
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isSiphonModalOpen, setIsSiphonModalOpen] = useState(false);
 
@@ -82,7 +82,7 @@ export default function ProductCard({ product, categoryName, onQuickView }) {
           <div className="product-card-brand-row">
             <span className="product-brand">{brand}</span>
             <span className="product-category-tag">
-              {t('cat_' + product.category, {}, categoryName || (product.category === 'reposteria' ? 'Óxido Nitroso' : product.category === 'coleccionismo' ? 'Coleccionismo' : 'Vapers'))}
+              {categoryName || (language === 'es' ? (product.category === 'reposteria' ? 'Repostería' : product.category === 'coleccionismo' ? 'Coleccionismo' : 'Vapers') : t('cat_' + product.category, {}, product.category))}
             </span>
           </div>
           <h3 className="product-name" onClick={() => onQuickView(product)}>{t(`p_${product.id}_name`, {}, name)}</h3>

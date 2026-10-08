@@ -43,6 +43,27 @@ const EDITABLE_TEXT_KEYS = [
     description: 'Segunda línea del título principal (con degradado neón).'
   },
   {
+    key: 'cat_vapers',
+    label: 'Nombre Categoría: Vapers',
+    section: 'Categorías y Catálogo',
+    type: 'input',
+    description: 'Nombre para la categoría Vapers en el catálogo.'
+  },
+  {
+    key: 'cat_reposteria',
+    label: 'Nombre Categoría: Repostería',
+    section: 'Categorías y Catálogo',
+    type: 'input',
+    description: 'Nombre para la categoría Repostería (anteriormente Óxido Nitroso).'
+  },
+  {
+    key: 'cat_collecting',
+    label: 'Nombre Categoría: Coleccionismo',
+    section: 'Categorías y Catálogo',
+    type: 'input',
+    description: 'Nombre para la categoría Coleccionismo en el catálogo.'
+  },
+  {
     key: 'hero_desc',
     label: 'Descripción del Hero',
     section: 'Hero',
@@ -553,6 +574,7 @@ export default function Admin() {
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoryError, setCategoryError] = useState('');
+  const [categorySuccess, setCategorySuccess] = useState('');
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isSavingCategory, setIsSavingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -676,7 +698,7 @@ export default function Admin() {
 
   const defaultCategories = [
     { id: 'vapers', name: 'Vapers' },
-    { id: 'reposteria', name: 'Óxido Nitroso' },
+    { id: 'reposteria', name: 'Repostería' },
     { id: 'coleccionismo', name: 'Coleccionismo' }
   ];
 
@@ -736,9 +758,16 @@ export default function Admin() {
       if (error) throw error;
 
       if (data) {
-        setCategories(data);
-        if (!category && data.length > 0) {
-          setCategory(data[0].id);
+        // Merge predefined default categories if any are missing from Supabase
+        const merged = [...data];
+        defaultCategories.forEach((defCat) => {
+          if (!merged.some((c) => c.id === defCat.id)) {
+            merged.push(defCat);
+          }
+        });
+        setCategories(merged);
+        if (!category && merged.length > 0) {
+          setCategory(merged[0].id);
         }
       }
     } catch (err) {
@@ -877,21 +906,22 @@ export default function Admin() {
     };
 
     try {
-      if (!supabase) {
-        const updatedCats = [...categories, payload];
-        localStorage.setItem('elpatinoso-categories', JSON.stringify(updatedCats));
-        setCategories(updatedCats);
-        setNewCategoryName('');
-      } else {
+      const updatedCats = [...categories, payload];
+      localStorage.setItem('elpatinoso-categories', JSON.stringify(updatedCats));
+      setCategories(updatedCats);
+      setNewCategoryName('');
+
+      if (supabase) {
         const { error } = await supabase
           .from('categories')
           .insert([payload]);
 
         if (error) throw error;
         
-        fetchCategories();
-        setNewCategoryName('');
+        await fetchCategories();
       }
+
+      setCategorySuccess(`Categoría "${trimmedName}" creada con éxito.`);
     } catch (err) {
       console.error("Error saving category:", err);
       setCategoryError(err.message || "Error al crear la categoría.");
@@ -904,6 +934,7 @@ export default function Admin() {
     e.preventDefault();
     if (!editingCategory) return;
     setCategoryError('');
+    setCategorySuccess('');
     setIsSavingCategory(true);
 
     const trimmedName = newCategoryName.trim();
@@ -919,24 +950,37 @@ export default function Admin() {
     };
 
     try {
-      if (!supabase) {
-        const updatedCats = categories.map((c) => c.id === editingCategory.id ? payload : c);
-        localStorage.setItem('elpatinoso-categories', JSON.stringify(updatedCats));
-        setCategories(updatedCats);
-        setNewCategoryName('');
-        setEditingCategory(null);
-      } else {
+      // 1. Always update local storage and in-memory categories state
+      const updatedCats = categories.map((c) => c.id === editingCategory.id ? payload : c);
+      localStorage.setItem('elpatinoso-categories', JSON.stringify(updatedCats));
+      setCategories(updatedCats);
+
+      // 2. If supabase is connected, upsert into categories
+      if (supabase) {
         const { error } = await supabase
           .from('categories')
-          .update({ name: trimmedName })
-          .eq('id', editingCategory.id);
+          .upsert([payload], { onConflict: 'id' });
 
         if (error) throw error;
-        
+
+        // Also sync to site_texts for immediate multilingual context
+        try {
+          await supabase
+            .from('site_texts')
+            .upsert([{
+              id: 'cat_' + editingCategory.id,
+              es: trimmedName
+            }], { onConflict: 'id' });
+        } catch (stErr) {
+          console.warn("Could not sync category to site_texts:", stErr);
+        }
+
         await fetchCategories();
-        setNewCategoryName('');
-        setEditingCategory(null);
       }
+
+      setCategorySuccess(`Categoría "${trimmedName}" actualizada con éxito.`);
+      setNewCategoryName('');
+      setEditingCategory(null);
     } catch (err) {
       console.error("Error updating category:", err);
       setCategoryError(err.message || "Error al actualizar la categoría.");
@@ -1897,7 +1941,7 @@ export default function Admin() {
                               <td>{prodCount} productos</td>
                               <td>
                                 {isSystem ? (
-                                  <span className="lock-badge">Sistema</span>
+                                  <span className="table-stock-tag" style={{ background: 'rgba(0, 240, 255, 0.12)', color: '#00f0ff', borderColor: 'rgba(0, 240, 255, 0.35)' }} title="Categoría predefinida del sistema (puedes cambiar su nombre cuando desees)">Predeterminada</span>
                                 ) : (
                                   <span className="table-stock-tag in-stock">Personalizada</span>
                                 )}
@@ -1910,6 +1954,7 @@ export default function Admin() {
                                       setEditingCategory(cat);
                                       setNewCategoryName(cat.name);
                                       setCategoryError('');
+                                      setCategorySuccess('');
                                     }}
                                     title="Editar Categoría"
                                   >
@@ -1936,13 +1981,27 @@ export default function Admin() {
               {/* RIGHT: CREATE / EDIT CATEGORY FORM */}
               <div className="dashboard-column form-column">
                 <div className="panel-header">
-                  <h2>{editingCategory ? 'Editar Categoría' : 'Añadir Nueva Categoría'}</h2>
+                  <h2>{editingCategory ? `Editar Categoría: ${editingCategory.name}` : 'Añadir Nueva Categoría'}</h2>
                 </div>
 
                 {categoryError && (
                   <div className="crud-error-banner" style={{ marginBottom: '1.5rem' }}>
                     <AlertCircle size={20} />
                     <span>{categoryError}</span>
+                  </div>
+                )}
+
+                {categorySuccess && (
+                  <div className="crud-success-banner" style={{ marginBottom: '1.5rem', padding: '0.8rem 1rem', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '8px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <Check size={18} />
+                    <span>{categorySuccess}</span>
+                  </div>
+                )}
+
+                {editingCategory && (
+                  <div style={{ marginBottom: '1.2rem', padding: '0.8rem 1rem', background: 'rgba(0, 240, 255, 0.08)', border: '1px solid rgba(0, 240, 255, 0.25)', borderRadius: '8px', fontSize: '0.85rem', color: '#00f0ff', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <Check size={16} />
+                    <span>Puedes cambiar el nombre visible de esta categoría (ej. cambiar a &quot;Repostería&quot;). El nuevo nombre se reflejará en los filtros y el catálogo de la tienda.</span>
                   </div>
                 )}
 
@@ -2003,6 +2062,7 @@ export default function Admin() {
                           setEditingCategory(null);
                           setNewCategoryName('');
                           setCategoryError('');
+                          setCategorySuccess('');
                         }}
                         style={{ padding: '0.8rem 1.8rem', borderRadius: '50px' }}
                       >
