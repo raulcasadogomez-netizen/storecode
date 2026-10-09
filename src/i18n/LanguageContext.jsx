@@ -25,7 +25,17 @@ export const LanguageProvider = ({ children }) => {
     return 'es';
   });
 
-  const [dbTranslations, setDbTranslations] = useState({});
+  const [dbTranslations, setDbTranslations] = useState(() => {
+    try {
+      const saved = localStorage.getItem('elpatinoso-site-texts');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn("Could not read site-texts from localStorage:", e);
+    }
+    return {};
+  });
 
   const fetchDbTranslations = async () => {
     if (!supabase) return;
@@ -46,6 +56,11 @@ export const LanguageProvider = ({ children }) => {
           };
         });
         setDbTranslations(dict);
+        try {
+          localStorage.setItem('elpatinoso-site-texts', JSON.stringify(dict));
+        } catch (e) {
+          // ignore quota error
+        }
       }
     } catch (err) {
       console.warn("Failed to fetch site_texts from Supabase, using local translations:", err);
@@ -54,7 +69,40 @@ export const LanguageProvider = ({ children }) => {
 
   useEffect(() => {
     fetchDbTranslations();
+
+    // Listen for cross-tab updates to site texts
+    const handleStorageChange = (e) => {
+      if (e.key === 'elpatinoso-site-texts' && e.newValue) {
+        try {
+          setDbTranslations(JSON.parse(e.newValue));
+        } catch (err) {
+          console.warn("Error parsing updated site-texts from storage event:", err);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  const updateDbTranslation = (id, { es, en, zh }) => {
+    setDbTranslations((prev) => {
+      const updated = {
+        ...prev,
+        [id]: {
+          es: es !== undefined ? es : prev[id]?.es || '',
+          en: en !== undefined ? (en || es) : prev[id]?.en || '',
+          zh: zh !== undefined ? (zh || es) : prev[id]?.zh || ''
+        }
+      };
+      try {
+        localStorage.setItem('elpatinoso-site-texts', JSON.stringify(updated));
+      } catch (e) {
+        // ignore
+      }
+      return updated;
+    });
+  };
 
   const changeLanguage = (lang) => {
     if (['es', 'zh', 'en'].includes(lang)) {
@@ -68,17 +116,17 @@ export const LanguageProvider = ({ children }) => {
     let translation = dbTranslations[key]?.[language];
 
     // 2. Fallback to static local translations in chosen language
-    if (translation === undefined) {
+    if (translation === undefined || translation === null || translation === '') {
       translation = translations[language]?.[key];
     }
 
     // 3. Fallback to Spanish static local translations
-    if (translation === undefined) {
+    if (translation === undefined || translation === null || translation === '') {
       translation = translations['es']?.[key];
     }
 
     // 4. Final fallback
-    if (translation === undefined) {
+    if (translation === undefined || translation === null || translation === '') {
       translation = fallback !== undefined ? fallback : key;
     }
 
@@ -93,7 +141,7 @@ export const LanguageProvider = ({ children }) => {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, changeLanguage, t, refreshDbTranslations: fetchDbTranslations }}>
+    <LanguageContext.Provider value={{ language, changeLanguage, t, refreshDbTranslations: fetchDbTranslations, updateDbTranslation }}>
       {children}
     </LanguageContext.Provider>
   );

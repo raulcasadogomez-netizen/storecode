@@ -226,10 +226,7 @@ INSERT INTO public.site_texts (id, es, en, zh) VALUES
 ('hero_usp2_desc', 'Homologado TPD y E942', 'TPD and E942 Approved', '符合 TPD 及 E942 认证'),
 ('hero_usp3_title', 'Catálogo Exclusivo', 'Exclusive Catalog', '独家选品'),
 ('hero_usp3_desc', 'Piezas y marcas de tendencia', 'Trend-setting parts and brands', '潮流新品与限量版珍品')
-ON CONFLICT (id) DO UPDATE SET
-  es = EXCLUDED.es,
-  en = EXCLUDED.en,
-  zh = EXCLUDED.zh;
+ON CONFLICT (id) DO NOTHING;
 
 -- Semilla de textos de la sección Proceso de Importación
 INSERT INTO public.site_texts (id, es, en, zh) VALUES
@@ -243,10 +240,7 @@ INSERT INTO public.site_texts (id, es, en, zh) VALUES
 ('exp_bullet2_desc', ' Nuestro óxido nitroso culinario posee certificación de calidad alimentaria para cocina gourmet.', ' Our culinary nitrous oxide carries food-grade quality certification for gourmet kitchens.', ' 我们的美食一氧化二氮具备完整的食品级检测证书，可安全用于高端西点及创意分子料理。'),
 ('exp_bullet3_title', 'Coleccionables Verificados:', 'Verified Collectibles:', '官方原装收藏品认证：'),
 ('exp_bullet3_desc', ' Cada artículo de colección es de importación genuina y seleccionado por su estado premium.', ' Each collectible item is of genuine import origin and selected for its premium condition.', ' 每一件潮流收藏品均源自正规原产地进口，经过专家品质核验，保证完美成色。')
-ON CONFLICT (id) DO UPDATE SET
-  es = EXCLUDED.es,
-  en = EXCLUDED.en,
-  zh = EXCLUDED.zh;
+ON CONFLICT (id) DO NOTHING;
 
 -- Semilla de textos de la sección Sobre Nosotros
 INSERT INTO public.site_texts (id, es, en, zh) VALUES
@@ -258,10 +252,7 @@ INSERT INTO public.site_texts (id, es, en, zh) VALUES
 ('about_stat2_desc', 'Envío Express', 'Express Shipping', '本土特快发货'),
 ('about_stat3_num', '100%', '100%', '100%'),
 ('about_stat3_desc', 'Original y Seguro', 'Original & Safe', '原装正品保障')
-ON CONFLICT (id) DO UPDATE SET
-  es = EXCLUDED.es,
-  en = EXCLUDED.en,
-  zh = EXCLUDED.zh;
+ON CONFLICT (id) DO NOTHING;
 
 -- Semilla de textos Legales y Advertencias
 INSERT INTO public.site_texts (id, es, en, zh) VALUES
@@ -271,10 +262,7 @@ INSERT INTO public.site_texts (id, es, en, zh) VALUES
 ('alert_privacy_policy', 'POLÍTICA DE PRIVACIDAD:\nEn cumplimiento del RGPD, tus datos personales de contacto facilitados para la tramitación de pedidos a través de WhatsApp son procesados con la única finalidad de facturación y envío comercial.', 'PRIVACY POLICY:\nIn compliance with GDPR, your personal contact details provided for order processing through WhatsApp are processed solely for billing and commercial shipping purposes.', '隐私政策：\n根据 GDPR 规范，您为了通过 WhatsApp 进行订单结算而提交 de 商业联系数据，将仅用于发票开具及商业物流派送 de 目的进行处理。'),
 ('alert_cookies_policy', 'POLÍTICA DE COOKIES:\nEste sitio web utiliza almacenamiento técnico obligatorio (local storage) para gestionar tu verificación de edad y tu carrito de compras de forma anónima.', 'COOKIES POLICY:\nThis website uses required technical local storage to manage your age verification and your shopping cart anonymously.', 'Cookie 政策：\n本网站仅使用必要 de 技术型本地存储 (local storage) 以匿名方式管理您的年龄验证状态以及购物车内 de 商品。'),
 ('alert_b2b_terms', 'TÉRMINOS Y CONDICIONES B2B:\nTodas las ventas se gestionan mediante cierre comercial por WhatsApp. Se requiere acreditación fiscal (Modelo 036 o IAE) para validar transacciones mayoristas.', 'B2B TERMS AND CONDITIONS:\nAll sales are completed commercial closing via WhatsApp. Fiscal credentials (Model 036 or IAE) are required to validate wholesale transactions.', 'B2B 条款与条件：\n所有订单最终都通过 WhatsApp 确认闭环交易。商户须提供税务证明 (Modelo 036 或 IAE) 以验证大宗批发资质。')
-ON CONFLICT (id) DO UPDATE SET
-  es = EXCLUDED.es,
-  en = EXCLUDED.en,
-  zh = EXCLUDED.zh;
+ON CONFLICT (id) DO NOTHING;
 
 -- ==========================================================================
 -- 11. Crear tabla de correos de clientes y políticas RLS
@@ -343,7 +331,4 @@ INSERT INTO public.site_media (id, url, title) VALUES
 ('logo', '/images/logovapers.webp', 'Logotipo Principal de la Tienda'),
 ('hero_image', '/images/vape_mango_peach.png', 'Imagen Principal del Hero (Portada)'),
 ('experience_image', '/images/vape_pod_kit.png', 'Imagen de Sección Proceso y Garantías')
-ON CONFLICT (id) DO UPDATE SET
-  url = EXCLUDED.url,
-  title = EXCLUDED.title,
-  updated_at = NOW();
+ON CONFLICT (id) DO NOTHING;
