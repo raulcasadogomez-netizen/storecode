@@ -88,20 +88,6 @@ export const SiteMediaProvider = ({ children }) => {
 
   useEffect(() => {
     fetchSiteMedia();
-
-    // Listen for cross-tab updates to site media
-    const handleStorageChange = (e) => {
-      if (e.key === 'elpatinoso-site-media' && e.newValue) {
-        try {
-          setSiteMedia(JSON.parse(e.newValue));
-        } catch (err) {
-          console.warn("Error parsing updated site-media from storage event:", err);
-        }
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
   }, [fetchSiteMedia]);
 
   const getMedia = useCallback((key, fallbackUrl) => {

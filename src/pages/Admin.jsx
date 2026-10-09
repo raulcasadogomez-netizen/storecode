@@ -8,8 +8,7 @@ import { useSiteMedia, SITE_MEDIA_SLOTS, DEFAULT_SITE_MEDIA } from '../context/S
 
 const STORE_PRESET_IMAGES = [
   { label: 'Logotipo Oficial', path: '/images/logovapers.webp' },
-  { label: 'Mango Peach (Hero Original)', path: '/images/vape_mango_peach.png' },
-  { label: 'Hero Personalizado (Última Subida)', path: 'https://bmslrciddkuvradgrsbt.supabase.co/storage/v1/object/public/products/site_media/site_hero_image_1791125952061.png' },
+  { label: 'Mango Peach (Hero)', path: '/images/vape_mango_peach.png' },
   { label: 'AeroPod Kit (Azul)', path: '/images/vape_pod_kit.png' },
   { label: 'E-Liquid Fresa (Rojo)', path: '/images/vape_eliquid_bottle.png' },
   { label: 'Cyber Mod Box (Oro)', path: '/images/vape_mod_cyber.png' },
@@ -389,7 +388,7 @@ export default function Admin() {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
 
-  const { refreshDbTranslations, updateDbTranslation } = useTranslation();
+  const { refreshDbTranslations } = useTranslation();
   const { siteMedia, getMedia, updateMedia, resetMediaToDefault, refreshSiteMedia } = useSiteMedia();
 
   // Navigation State
@@ -860,10 +859,6 @@ export default function Admin() {
         });
 
       if (error) throw error;
-      
-      if (updateDbTranslation) {
-        updateDbTranslation(selectedTextKey, { es: textEs, en: textEn, zh: textZh });
-      }
 
       setTextSuccess("Texto guardado correctamente en la base de datos.");
       await fetchSiteTexts();
